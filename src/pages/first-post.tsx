@@ -1,6 +1,12 @@
 import Link from "next/link";
 import Head from "next/head";
 import Layout from "../components/layout";
+import LinkButton from "../components/button/linkButton";
+
+const testFnc = (e) => {
+  console.log(e);
+  console.log("あいうえお");
+};
 
 export default function FirstPost() {
   return (
@@ -14,6 +20,7 @@ export default function FirstPost() {
           <a>Back to home</a>
         </Link>
       </h2>
+      <LinkButton href="/" clickFnk={testFnc} value="ボタン"></LinkButton>
     </Layout>
   );
 }
