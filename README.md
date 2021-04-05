@@ -4,9 +4,10 @@
 
 npx create-next-app boardgamefront --use-npm --example "https://github.com/FukaseDaichi/BoardGameFront/tree/develop"
 
-- アップデート（必要だった）
+- 各種
 
   npx browserslist@latest --update-db
+  npm install --save react-stomp
 
 - 追跡
 

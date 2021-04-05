@@ -5,6 +5,7 @@ export namespace SystemConst {
 		/** ホスト名 */
 		export const AP_HOST = "http://localhost:8080/";
 		export const CREATE_ROOM = "createroom";
+		export const ENDPOINT = "boardgame-endpoint";
 	}
 
 	export namespace Message {
