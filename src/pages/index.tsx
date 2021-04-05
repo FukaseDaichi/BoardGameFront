@@ -1,43 +1,59 @@
-import Head from "next/head";
-import Layout, { siteTitle } from "../components/layout";
-import { getSortedPostsData } from "../lib/posts";
+import Link from "next/link";
+import Layout from "../components/layout";
+import { SystemConst } from "../const/next.config";
 
-export async function getStaticProps() {
-  const allPostsData = getSortedPostsData();
-  return {
-    props: {
-      allPostsData,
-    },
-  };
-}
+const createRoombtn = async () => {
+	const url: string =
+		SystemConst.Server.AP_HOST + SystemConst.Server.CREATE_ROOM;
+	const room = await fetch(url)
+		.then((res) => {
+			if (res.ok) {
+				return res.json();
+			} else {
+				throw new Error();
+			}
+		})
+		.then((resJson) => {
+			return resJson;
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	const roomUrlDom = document.querySelector("#room-url") as HTMLElement;
+	roomUrlDom.innerText = location.href + "timebomb/" + room.roomId;
+};
 
-export default function Home({ allPostsData }) {
-  return (
-    <Layout home={true}>
-      <Head>
-        <title>{siteTitle}</title>
-      </Head>
-      <section>
-        <p>こんにちはああ　寿司が好きです</p>
-        <p>
-          (This is a sample website - you’ll be building a site like this on{" "}
-          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
-        </p>
-      </section>
-      <section>
-        <h2>Blog</h2>
-        <ul>
-          {allPostsData.map(({ id, date, title }) => (
-            <li key={id}>
-              {title}
-              <br />
-              {id}
-              <br />
-              {date}
-            </li>
-          ))}
-        </ul>
-      </section>
-    </Layout>
-  );
+const copyText = () => {
+	const roomUrlDom = document.querySelector("#room-url");
+	document.getSelection().selectAllChildren(roomUrlDom);
+	// 選択範囲のコピー
+	document.execCommand("copy");
+	// テキスト選択の解除
+	document.getSelection().empty();
+};
+
+export default function CreateRoom() {
+	return (
+		<Layout home={true}>
+			<div>
+				<button
+					type="button"
+					className="btn btn-outline-secondary"
+					onClick={createRoombtn}
+				>
+					部屋作成
+				</button>
+			</div>
+
+			<div className="btn-group">
+				<button type="button" className="btn btn-secondary" onClick={copyText}>
+					コピー
+				</button>
+				<div id="room-url">aaaaaaaaaaaafda</div>
+				<button type="button" className="btn btn-outline-secondary">
+					入室
+				</button>
+			</div>
+		</Layout>
+	);
 }
