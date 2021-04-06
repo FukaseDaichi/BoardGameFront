@@ -8,6 +8,7 @@ npx create-next-app boardgamefront --use-npm --example "https://github.com/Fukas
 
   npx browserslist@latest --update-db
   npm install --save react-stomp
+  npm i sass
 
 - 追跡
 
