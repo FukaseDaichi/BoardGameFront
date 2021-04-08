@@ -1,44 +1,89 @@
-import Head from "next/head";
-import Layout, { siteTitle } from "../components/layout";
-import utilStyles from "../styles/utils.module.css";
-import { getSortedPostsData } from "../lib/posts";
+import Layout from "../components/layout";
+import House from "../components/house";
+import PulsingButton from "../components/button/pulsingbutton";
+import { useState } from "react";
+import { SystemConst } from "../const/next.config";
+import styles from "../styles/home.module.scss";
+import Router from "next/router";
 
-export async function getStaticProps() {
-  const allPostsData = getSortedPostsData();
-  return {
-    props: {
-      allPostsData,
-    },
-  };
-}
+const copyText = () => {
+	const roomUrlDom = document.querySelector("#room-url");
+	document.getSelection().selectAllChildren(roomUrlDom);
+	// 選択範囲のコピー
+	document.execCommand("copy");
+	// テキスト選択の解除
+	document.getSelection().empty();
 
-export default function Home({ allPostsData }) {
-  return (
-    <Layout home={true}>
-      <Head>
-        <title>{siteTitle}</title>
-      </Head>
-      <section className={utilStyles.headingMd}>
-        <p>こんにちはああ　寿司が好きです</p>
-        <p>
-          (This is a sample website - you’ll be building a site like this on{" "}
-          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
-        </p>
-      </section>
-      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-        <h2 className={utilStyles.headingLg}>Blog</h2>
-        <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
-            <li className={utilStyles.listItem} key={id}>
-              {title}
-              <br />
-              {id}
-              <br />
-              {date}
-            </li>
-          ))}
-        </ul>
-      </section>
-    </Layout>
-  );
+	const btnDom = document.getElementById("copy-btn");
+	btnDom.classList.add(styles.copyed);
+	btnDom.innerText = "COPYED!";
+};
+
+export default function CreateRoom() {
+	const [createFlg, setCreateFlg] = useState(false);
+	const [roomId, setRoomId] = useState("");
+
+	// ルーム作成
+	const createRoombtn = async () => {
+		if (createFlg) {
+			return;
+		}
+		const url: string =
+			SystemConst.Server.AP_HOST + SystemConst.Server.CREATE_ROOM;
+		await fetch(url)
+			.then((res) => {
+				if (res.ok) {
+					return res.json();
+				} else {
+					throw new Error();
+				}
+			})
+			.then((resJson) => {
+				setRoomId(resJson.roomId);
+				const roomUrlDom = document.querySelector("#room-url") as HTMLElement;
+				roomUrlDom.innerText = location.href + "timebomb/" + resJson.roomId;
+				setCreateFlg(true);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	// ルーム入室
+	const roomIn = () => {
+		Router.push("/timebomb/" + roomId);
+	};
+
+	return (
+		<Layout home={true}>
+			<House />
+			<div className={`${styles.home} ${!createFlg && styles.non}`}>
+				<div id="room-url" className="h2"></div>
+				<section>
+					<button
+						type="button"
+						className={`${styles.lined} ${styles.thick}}`}
+						onClick={copyText}
+						id="copy-btn"
+					>
+						URL COPY
+					</button>
+					<button
+						type="button"
+						className={`${styles.lined} ${styles.thick}`}
+						onClick={roomIn}
+					>
+						ROOMIN!
+					</button>
+				</section>
+			</div>
+			<div className="">
+				<PulsingButton
+					value="CREATE!"
+					onClickFnc={createRoombtn}
+					viewFlg={createFlg}
+				/>
+			</div>
+		</Layout>
+	);
 }
