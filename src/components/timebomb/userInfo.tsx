@@ -1,5 +1,5 @@
 import { TimeBombUser, LeadCards } from "../../type";
-import styles from "../../styles/userinfo.module.scss";
+import styles from "../../styles/components/timebomb/userinfo.module.scss";
 
 const getImgUrl = (cardType: number) => {
 	let url = null;
@@ -18,6 +18,12 @@ const getImgUrl = (cardType: number) => {
 	return url;
 };
 
+const getIconImgUrl = (userNo: number) => {
+	let url = null;
+
+	return "/images/icon" + String(userNo) + ".jpeg";
+};
+
 type UserInfoProps = {
 	user: TimeBombUser;
 	cardlist: Array<LeadCards>;
@@ -27,10 +33,17 @@ type UserInfoProps = {
 
 export default function UserInfo(userInfoProps: UserInfoProps) {
 	return (
-		<>
-			{userInfoProps.user.turnFlg && <label>あなたの番です</label>}
-			<label>{userInfoProps.user.userNo}:</label>
-			<label>{userInfoProps.user.userName}</label>
+		<div
+			className={`${styles.main} ${userInfoProps.user.turnFlg && styles.turn} ${
+				userInfoProps.ownFlg && styles.own
+			}`}
+		>
+			<div className={styles.icon}>
+				<div>
+					<img src={getIconImgUrl(userInfoProps.user.userNo)} alt="アイコン" />
+				</div>
+				<label>{userInfoProps.user.userName}</label>
+			</div>
 			<div className={`row ${styles.handcatd}`}>
 				{userInfoProps.cardlist.map((value: LeadCards, index: number) => {
 					const id: string =
@@ -60,6 +73,6 @@ export default function UserInfo(userInfoProps: UserInfoProps) {
 					);
 				})}
 			</div>
-		</>
+		</div>
 	);
 }
