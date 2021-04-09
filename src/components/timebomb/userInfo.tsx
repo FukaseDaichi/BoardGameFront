@@ -28,6 +28,7 @@ type UserInfoProps = {
 	user: TimeBombUser;
 	cardlist: Array<LeadCards>;
 	ownFlg: boolean;
+	round: number;
 	playfnc: (cardIndex: number) => void;
 };
 
@@ -44,10 +45,13 @@ export default function UserInfo(userInfoProps: UserInfoProps) {
 				</div>
 				<label>{userInfoProps.user.userName}</label>
 			</div>
+
 			<div className={`row ${styles.handcatd}`}>
 				{userInfoProps.cardlist.map((value: LeadCards, index: number) => {
 					const id: string =
-						(userInfoProps.user.userNo - 1) * 5 + index + "_cards";
+						(userInfoProps.user.userNo - 1) * (6 - userInfoProps.round) +
+						index +
+						"_cards";
 					return (
 						<div
 							key={index}

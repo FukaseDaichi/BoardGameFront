@@ -2,3 +2,18 @@
 	display: flex;
 	flex-flow: column;
 }
+
+.roundMessage {
+	color: white;
+	font-size: 100px;
+	position: relative;
+	width: 400px;
+	margin: 0 auto;
+	font-family: "Patrick Hand SC", cursive;
+}
+
+.result {
+	img {
+		width: 100%;
+	}
+}

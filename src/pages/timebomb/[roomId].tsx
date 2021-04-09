@@ -6,6 +6,7 @@ import Start from "../../components/timebomb/start";
 import { useCallback, useEffect, useState } from "react";
 import { RoomUserInfo, TimeBombUser, LeadCards } from "../../type";
 import UserInfo from "../../components/timebomb/userInfo";
+import Modal from "../../components/modal";
 import Chatmessage from "../../components/message/chatmessage";
 import styles from "../../styles/components/timebomb/room.module.scss";
 
@@ -26,10 +27,16 @@ export default function Room() {
 	const [timeBombUserList, setTimeBombUserList] = useState([]);
 	const [leadCardsList, setLeadCardsList] = useState([]);
 	const [startFlg, setStartFlg] = useState(false);
+
+	// メッセージ用データセット
 	const [messageFlg, setMessageFlg] = useState(false);
 	const [message, setMessage] = useState("ようこそ！");
 
-	// スタートフラグの監視
+	// ラウンドメッセージ用データセット
+	const [round, setRound] = useState(0);
+	const [roundMessageFlg, setRoundMessageFlg] = useState(false);
+
+	// フラグの監視
 	useEffect(() => {
 		if (startFlg) {
 			window.setTimeout(() => {
@@ -43,7 +50,13 @@ export default function Room() {
 				setMessage("");
 			}, 4000);
 		}
-	}, [startFlg, messageFlg]);
+
+		if (roundMessageFlg) {
+			window.setTimeout(() => {
+				setRoundMessageFlg(false);
+			}, 5000);
+		}
+	}, [startFlg, messageFlg, roundMessageFlg]);
 
 	// ルーム入室
 	const roomIn = (msg: RoomUserInfo) => {
@@ -66,10 +79,7 @@ export default function Room() {
 				case 200:
 					setMessageFlg(true);
 					setMessage(msg.message);
-					setTimeBombUserList(msg.obj.userList);
-					if (msg.obj.leadCardsList) {
-						setLeadCardsList(msg.obj.leadCardsList);
-					}
+					setData(msg.obj);
 					return;
 				case 404:
 					setMessageFlg(true);
@@ -81,17 +91,11 @@ export default function Room() {
 					setMessage(msg.message);
 			}
 		}
-
-		setTimeBombUserList(msg.userList);
-		if (msg.leadCardsList) {
-			setLeadCardsList(msg.leadCardsList);
-		}
-
+		setData(msg);
 		// 開始判定
 		if (msg.turn === 1) {
 			setStartFlg(true);
 		}
-
 		// 勝敗判定
 		if (msg.winnerTeam > 0) {
 			switch (msg.winnerTeam) {
@@ -101,6 +105,20 @@ export default function Room() {
 				case 2:
 					console.log("ボマーの勝ち");
 					break;
+			}
+		}
+	};
+
+	// データセット
+	const setData: any = (room) => {
+		setTimeBombUserList(room.userList);
+		if (room.leadCardsList) {
+			setLeadCardsList(room.leadCardsList);
+		}
+		if (round != room.round) {
+			setRound(room.round);
+			if (room.round > 1) {
+				setRoundMessageFlg(true);
 			}
 		}
 	};
@@ -121,6 +139,18 @@ export default function Room() {
 	return (
 		<Layout home={false}>
 			{startFlg && <Start />}
+			{roundMessageFlg && (
+				<Modal type="one">
+					<div className={styles.roundMessage} data-text={`Round${round}`}>
+						{round <= 3 ? `ROUND${round}` : "FINAL"}
+					</div>
+				</Modal>
+			)}
+			{/* <Modal type={"seven"}>
+				<div className={styles.result}>
+					<img src="/images/failed.jpg" alt="結果" />
+				</div>
+			</Modal> */}
 			{messageFlg && <Chatmessage value={message} type="info" />}
 			<SockJsClient
 				url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
@@ -129,7 +159,8 @@ export default function Room() {
 					clientObj = client;
 				}}
 				onMessage={(msg) => {
-					console.log(msg);
+					// デバッグ用
+					// console.log(msg);
 					receve(msg);
 				}}
 				onDisconnect={disconnect}
@@ -170,7 +201,7 @@ export default function Room() {
 					const cardsList: Array<LeadCards> = [];
 					if (leadCardsList) {
 						leadCardsList.forEach((value: LeadCards, cardIndex: number) => {
-							if (Math.floor(cardIndex / 5) === index) {
+							if (Math.floor(cardIndex / (6 - round)) === index) {
 								cardsList.push(leadCardsList[cardIndex]);
 							}
 						});
@@ -182,6 +213,7 @@ export default function Room() {
 							key={index}
 							ownFlg={playerName === value.userName}
 							playfnc={play}
+							round={round}
 						></UserInfo>
 					);
 				})}

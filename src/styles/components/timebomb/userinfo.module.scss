@@ -23,7 +23,6 @@ div.main {
 			label {
 				font-weight: 700;
 				color: #252525;
-				left: 80px;
 			}
 		}
 	}
@@ -53,15 +52,19 @@ div.main {
 			width: 60px;
 			border-radius: 50%;
 			overflow: hidden;
+			/* box-shadow */
+			box-shadow: 8px 4px 14px 6px rgba(0, 0, 0, 0.6);
 			img {
 				width: 100%;
 			}
 		}
 		label {
+			font-size: 1rem;
 			color: #252525;
 			position: absolute;
 			background-color: #fff;
-			left: 70px;
+			left: 100px;
+			text-decoration: underline;
 		}
 	}
 
