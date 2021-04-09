@@ -40,12 +40,18 @@ export default function UserInfo(userInfoProps: UserInfoProps) {
 			}`}
 		>
 			<div className={styles.icon}>
-				<div>
+				<div className={styles.imgdiv}>
 					<img src={getIconImgUrl(userInfoProps.user.userNo)} alt="アイコン" />
 				</div>
-				<label>{userInfoProps.user.userName}</label>
+				<div className={styles.content}>
+					<div className={styles.text}>
+						<label>{userInfoProps.user.userName}</label>
+					</div>
+					<div className={styles.btn}>
+						<span></span>
+					</div>
+				</div>
 			</div>
-
 			<div className={`row ${styles.handcatd}`}>
 				{userInfoProps.cardlist.map((value: LeadCards, index: number) => {
 					const id: string =

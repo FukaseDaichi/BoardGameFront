@@ -44,27 +44,54 @@ div.main {
 	}
 
 	div.icon {
-		display: flex;
 		position: relative;
+		top: -50px;
 		align-items: flex-end;
-		div {
+
+		div.imgdiv {
 			position: absolute;
 			width: 60px;
 			border-radius: 50%;
 			overflow: hidden;
 			/* box-shadow */
-			box-shadow: 8px 4px 14px 6px rgba(0, 0, 0, 0.6);
+			box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
+			z-index: 2;
 			img {
 				width: 100%;
 			}
 		}
-		label {
-			font-size: 1rem;
-			color: #252525;
+		div.content {
 			position: absolute;
-			background-color: #fff;
-			left: 100px;
-			text-decoration: underline;
+			background-color: white;
+			height: 40px;
+			width: 200px;
+			left: 35px;
+			top: 15px;
+			z-index: 1;
+			border-radius: 5px;
+			overflow: hidden;
+			box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
+
+			div.text {
+				&:before {
+					content: "";
+					position: absolute;
+					width: 150px;
+					height: 100px;
+					background-color: #e9f3e6;
+					left: 0;
+					top: -20px;
+					z-index: -1;
+					transform: rotate(-8deg);
+				}
+				label {
+					font-size: 1rem;
+					color: #252525;
+					position: absolute;
+					top: 25%;
+					left: 50px;
+				}
+			}
 		}
 	}
 
