@@ -189,10 +189,9 @@ export default function Room() {
       <Head>
         <meta
           property="og:image"
-          content="https://board-game-blldc84hf-whitefranc.vercel.app/images/timebomblogo.png"
+          content={SystemConst.Server.SITE_URL + "/images/timebomblogo.png"}
         />
         <meta name="og:title" content="タイムボムオンライン" />
-
         <meta property="og:site_name" content="タイムボムオンライン" />
         <meta
           property="og:description"
