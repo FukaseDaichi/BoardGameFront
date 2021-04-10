@@ -187,6 +187,17 @@ export default function Room() {
   return (
     <Layout home={false}>
       <Head>
+        <meta
+          property="og:image"
+          content="https://board-game-blldc84hf-whitefranc.vercel.app/images/timebomblogo.png"
+        />
+        <meta name="og:title" content="タイムボムオンライン" />
+
+        <meta property="og:site_name" content="タイムボムオンライン" />
+        <meta
+          property="og:description"
+          content="オンライン上でみんなでタイムボム！"
+        />
         <title>タイムボム</title>
       </Head>
       {turn > 0 && (
