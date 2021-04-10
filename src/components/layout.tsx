@@ -6,22 +6,27 @@ const name: string = "Franc";
 export const siteTitle: string = "ボードゲームの部屋";
 
 export default function Layout({ children, home }) {
-	return (
-		<div className={styles.container}>
-			<Head>
-				<link rel="icon" href="/favicon.ico" />
-				<meta name="description" content="ボードゲームサイト" />
-				<meta
-					property="og:image"
-					content={`https://og-image.now.sh/${encodeURI(
-						siteTitle
-					)}.png?theme=light&md=0&fontSize=75px&images=https%3A%2F%2Fassets.zeit.co%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnextjs-black-logo.svg`}
-				/>
-				<meta name="og:title" content={siteTitle} />
-				<meta name="twitter:card" content="summary_large_image" />
-			</Head>
-			<header className={styles.header}></header>
-			<main>{children}</main>
-		</div>
-	);
+  return (
+    <div className={styles.container}>
+      <Head>
+        <link rel="icon" href="/favicon.png" />
+        <meta name="description" content={siteTitle} />
+        <meta
+          property="og:image"
+          content="https://board-game-blldc84hf-whitefranc.vercel.app/images/logo.png"
+        />
+        <meta name="og:title" content={siteTitle} />
+
+        <meta property="og:site_name" content={siteTitle} />
+        <meta
+          property="og:description"
+          content="オンライン上でボードゲームができます"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@2d7rqU5gFQ6VpGo" />
+      </Head>
+      <header className={styles.header}></header>
+      <main>{children}</main>
+    </div>
+  );
 }
