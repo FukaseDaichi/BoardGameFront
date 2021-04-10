@@ -1,39 +1,71 @@
 import styles from "../../styles/components/timebomb/headInfo.module.scss";
 
-const successScreen = document.querySelector(".success_screen");
-const header = document.querySelector(".success_screen__header");
-const toast = document.querySelector(".toast");
-const button = document.querySelector(".button") as HTMLButtonElement;
+type HeadInfoProps = {
+  releaseNo: number;
+  userSize: number;
+  limit: number;
+};
 
-button.addEventListener("click", simulateLoad);
-button.addEventListener("touchend", simulateLoad);
+const getBommer = (userSize: number) => {
+  switch (userSize) {
+    case 3:
+      return (
+        <p>
+          BOMMER <span>1</span>～<span>2</span>
+        </p>
+      );
+    case 4:
+      return (
+        <p>
+          BOMMER <span>1</span>～<span>2</span>
+        </p>
+      );
+    case 5:
+      return (
+        <p>
+          BOMMER <span>2</span>
+        </p>
+      );
+    case 6:
+      return (
+        <p>
+          BOMMER <span>2</span>
+        </p>
+      );
+    case 7:
+      return (
+        <p>
+          BOMMER <span>2</span>～<span>3</span>
+        </p>
+      );
+    case 8:
+      return (
+        <p>
+          BOMMER <span>3</span>
+        </p>
+      );
+  }
+};
 
-function simulateLoad() {
-  button.classList.add(styles.button__loading);
-  button.disabled = true;
-  button.querySelector(styles.span).innerHTML = "Loading...";
-  setTimeout(showSuccessScreen, 2000);
+export default function Modal(props: HeadInfoProps) {
+  return (
+    <div className={styles.headerinfo}>
+      <input type="checkbox" id={styles["menu-toggle"]} />
+      <label id={styles.trigger} htmlFor={styles["menu-toggle"]}></label>
+      <label id={styles.burger} htmlFor={styles["menu-toggle"]}></label>
+
+      <div id={styles.menu}>
+        <div className={styles.view}></div>
+        <div className={styles.hidden}>
+          <p>
+            TIMIE LIMIT <span>{props.limit}</span>turn
+          </p>
+          <p>
+            RELEASE <span>{props.releaseNo}</span>/<span>{props.userSize}</span>
+          </p>
+          {getBommer(props.userSize)}
+        </div>
+      </div>
+    </div>
+  );
 }
-
-function showSuccessScreen() {
-  button.classList.add(styles.button__hide);
-  successScreen.classList.add(styles.success_screen__show);
-
-  setTimeout(() => {
-    header.classList.add(styles.success_screen__header__show);
-  }, 500);
-
-  setTimeout(() => {
-    toast.classList.add(styles.toast__show);
-  }, 2000);
-}
-
-const Confetti = (function () {
-  const confettiContainer = document.querySelector(
-    styles.confetti_container
-  ) as HTMLElement;
-
-  const animationSpeeds = ["slow", "medium", "fast"];
-  const types = ["round", "rectangle"];
-  let renderInterval = null;
-})();
