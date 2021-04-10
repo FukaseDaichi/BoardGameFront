@@ -1,5 +1,5 @@
 import "../styles/bootstrap.min.css";
-import "../styles/global.css";
+import "../styles/global.scss";
 import { useEffect } from "react";
 
 export default function App({ Component, pageProps }) {

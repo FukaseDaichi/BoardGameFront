@@ -1,28 +1,50 @@
-import Link from "next/link";
-import Head from "next/head";
-import Layout from "../components/layout";
-import LinkButton from "../components/button/linkButton";
-import Chatmessage from "../components/message/chatmessage";
+import styles from "../styles/components/modal.module.scss";
 
-const testFnc = (e) => {
-	console.log(e);
-	console.log("あいうえお");
+const buttonClick = (e) => {
+	console.log(e.target.id);
+	const btnId = e.target.id;
+	document.getElementById(styles.modal_container).removeAttribute("class");
+	document.getElementById(styles.modal_container).classList.add(styles[btnId]);
+	document.querySelector("body").classList.add(styles.modal_active);
+};
+const modalClick = () => {
+	document.getElementById(styles.modal_container).classList.add(styles.out);
+	document.querySelector("body").classList.remove(styles.modal_active);
+};
+
+type ModalProps = {
+	value: string;
+	type: string;
 };
 
 export default function FirstPost() {
 	return (
-		<Layout home={false}>
-			<Chatmessage value="てすとのメッセージあいうえ" type="info" />
-			<Head>
-				<title>second Post</title>
-			</Head>
-			<h1>最初の投稿</h1>
-			<h2>
-				<Link href="/">
-					<a>Back to home</a>
-				</Link>
-			</h2>
-			<LinkButton href="/" clickFnk={testFnc} value="ボタン"></LinkButton>
-		</Layout>
+		<div className={styles.modal}>
+			<div id={styles.modal_container} onClick={modalClick}>
+				<div className={styles.modal_background}>
+					<div className={styles.modal}>
+						<h2>I'm a Modal</h2>
+						<p>Hear me roar.ああああああああああああああああ</p>
+						<svg
+							className={styles.modal_svg}
+							xmlns="http://www.w3.org/2000/svg"
+							width="100%"
+							height="100%"
+							preserveAspectRatio="none"
+						>
+							<rect
+								x="0"
+								y="0"
+								fill="none"
+								width="226"
+								height="162"
+								rx="3"
+								ry="3"
+							></rect>
+						</svg>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 }

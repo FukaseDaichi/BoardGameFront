@@ -6,4 +6,5 @@ export type TimeBombRoom = {
 	userList: Array<TimeBombUser>;
 	turn: number;
 	leadCardsList: Array<LeadCards>;
+	round: number;
 };
