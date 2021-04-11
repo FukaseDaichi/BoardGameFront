@@ -1,3 +1,5 @@
+@import "../variables";
+
 #modal_container {
   position: fixed;
   display: table;
@@ -184,6 +186,11 @@
         overflow: hidden;
         animation: bondJamesBond 1.5s cubic-bezier(0.165, 0.84, 0.44, 1)
           forwards;
+        @include mq(md) {
+          width: 350px;
+          animation: bondJamesBond_md 1.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
         h2,
         p {
           opacity: 0;
@@ -199,7 +206,6 @@
         animation: fadeToRed 2s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
         .modal {
           border-radius: 20px;
-          width: 400px;
           animation: killShot 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
           h2,
           p {
@@ -576,6 +582,27 @@
   100% {
     border-radius: 20px;
     width: 400px;
+  }
+}
+
+@keyframes bondJamesBond_md {
+  0% {
+    transform: translateX(1000px);
+  }
+  80% {
+    transform: translateX(0px);
+    border-radius: 75px;
+    height: 75px;
+    width: 75px;
+  }
+  90% {
+    border-radius: 20px;
+    height: 182px;
+    width: 247px;
+  }
+  100% {
+    border-radius: 20px;
+    width: 350px;
   }
 }
 
