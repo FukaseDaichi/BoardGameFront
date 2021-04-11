@@ -115,7 +115,6 @@ export default function Room() {
 
     // 初回入室時
     if (timeBombUserList.length === 0) {
-      console.log("test");
       document.querySelector("." + styles.roominbtn).classList.add(styles.in);
     }
 
@@ -191,8 +190,7 @@ export default function Room() {
           property="og:image"
           content={SystemConst.Server.SITE_URL + "/images/timebomblogo.png"}
         />
-        <meta name="og:title" content="タイムボムオンライン" />
-        <meta property="og:site_name" content="タイムボムオンライン" />
+        <meta property="og:title" content="タイムボムオンライン" />
         <meta
           property="og:description"
           content="オンライン上でみんなでタイムボム！"
@@ -223,7 +221,6 @@ export default function Room() {
           </div>
         </Modal>
       )}
-
       {policeFlg && (
         <Modal type={"five"}>
           <div className={styles.result}>
@@ -231,7 +228,6 @@ export default function Room() {
           </div>
         </Modal>
       )}
-
       {messageFlg && <Chatmessage value={message} type="info" />}
       <SockJsClient
         url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}

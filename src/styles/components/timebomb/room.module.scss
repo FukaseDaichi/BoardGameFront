@@ -145,9 +145,10 @@
 }
 
 .result {
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
   img {
-    width: 400px;
+    width: 100%;
     object-fit: cover;
   }
 }
