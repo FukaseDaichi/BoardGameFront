@@ -40,11 +40,26 @@ const getRollImgUrl = (rollType: number) => {
   return url;
 };
 
+const getRollMarkImgUrl = (rollType: number) => {
+  let url = null;
+
+  switch (rollType) {
+    case 1:
+      url = "/images/Pmark.png";
+      break;
+    case 2:
+      url = "/images/Bmark.png";
+      break;
+  }
+  return url;
+};
+
 type UserInfoProps = {
   user: TimeBombUser;
   cardlist: Array<LeadCards>;
   ownFlg: boolean;
   round: number;
+  endFlg: boolean;
   playfnc: (cardIndex: number) => void;
 };
 
@@ -121,7 +136,14 @@ export default function UserInfo(userInfoProps: UserInfoProps) {
           </div> */}
         </div>
       )}
-
+      {userInfoProps.endFlg && (
+        <div className={styles.roll}>
+          <img
+            src={getRollMarkImgUrl(userInfoProps.user.userRoleNo)}
+            alt="役職マーク"
+          />
+        </div>
+      )}
       <div className={`row ${styles.handcatd}`}>
         {userInfoProps.cardlist.map((value: LeadCards, index: number) => {
           const id: string =

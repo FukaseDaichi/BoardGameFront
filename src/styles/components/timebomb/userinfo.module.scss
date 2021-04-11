@@ -215,6 +215,26 @@ div.main {
     }
   }
 
+  div.roll {
+    position: relative;
+    img {
+      top: -30px;
+      left: 150px;
+      position: absolute;
+      width: 100px;
+      z-index: 2;
+      animation: fwari ease-in-out 1.5s infinite alternate;
+    }
+    @keyframes fwari {
+      0% {
+        transform: translate(0%, 0%);
+      }
+      100% {
+        transform: translate(0%, -15px);
+      }
+    }
+  }
+
   .handcatd {
     padding-top: 20px;
     div {
@@ -229,20 +249,17 @@ div.main {
 
       img {
         width: 100%;
-        transition: all 0.3s;
         position: absolute;
         top: 0;
         left: 0;
         &:first-child {
           opacity: 1;
           transform: rotateY(0deg);
-          transition: opacity 100ms 150ms, transform 300ms 150ms;
         }
 
         &:last-child {
           opacity: 0;
           transform: rotateY(90deg);
-          transition: opacity 50ms 200ms, transform 300ms;
         }
 
         &:hover,
