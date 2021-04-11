@@ -115,7 +115,7 @@ export default function Room() {
     }
 
     // 初回入室時
-    if (timeBombUserList.length === 0) {
+    if (timeBombUserList.length === 0 && playerName != null) {
       document.querySelector("." + styles.roominbtn).classList.add(styles.in);
     }
 
@@ -221,17 +221,19 @@ export default function Room() {
       {bommerFlg && (
         <Modal type={"seven"}>
           <div className={styles.result}>
-            <img src="/images/failed.jpg" alt="結果" />
+            <img src="/images/failed.png" alt="結果" />
           </div>
         </Modal>
       )}
+
       {policeFlg && (
         <Modal type={"five"}>
           <div className={styles.result}>
-            <img src="/images/success.jpg" alt="結果" />
+            <img src="/images/success.png" alt="結果" />
           </div>
         </Modal>
       )}
+
       {messageFlg && <Chatmessage value={message} type="info" />}
       <SockJsClient
         url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}

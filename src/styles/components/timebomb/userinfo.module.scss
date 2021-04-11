@@ -242,12 +242,14 @@ div.main {
       width: 100px;
       height: 140px;
       margin: 0 auto;
+
       @include mq(md) {
         width: 70px;
-        height: 98px;
+        height: 100px;
       }
 
       img {
+        border-radius: 14px;
         width: 100%;
         position: absolute;
         top: 0;

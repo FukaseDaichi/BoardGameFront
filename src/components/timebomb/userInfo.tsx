@@ -23,7 +23,7 @@ const getImgUrl = (cardType: number) => {
 const getIconImgUrl = (userNo: number) => {
   let url = null;
 
-  return "/images/icon" + String(userNo) + ".jpeg";
+  return "/images/icon" + String(userNo) + ".jpg";
 };
 
 const getRollImgUrl = (rollType: number) => {
