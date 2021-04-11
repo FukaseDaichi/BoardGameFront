@@ -44,6 +44,7 @@ export default function Room() {
   const [releaseNo, setReleaseNo] = useState(0);
 
   // 勝敗表示用
+  const [endFlg, setEndFlg] = useState(false);
   const [bommerFlg, setBommerFlg] = useState(false);
   const [policeFlg, setPoliceFlg] = useState(false);
 
@@ -143,10 +144,12 @@ export default function Room() {
         case 1:
           scrollTo(0, 0);
           setPoliceFlg(true);
+          setEndFlg(true);
           return;
         case 2:
           scrollTo(0, 0);
           setBommerFlg(true);
+          setEndFlg(true);
           return;
       }
     }
@@ -157,6 +160,7 @@ export default function Room() {
     setTimeBombUserList(room.userList);
     setTurn(room.turn);
     setReleaseNo(room.releaseNo);
+    setEndFlg(false);
 
     if (room.leadCardsList) {
       setLeadCardsList(room.leadCardsList);
@@ -332,6 +336,7 @@ export default function Room() {
               ownFlg={playerName === value.userName}
               playfnc={play}
               round={round}
+              endFlg={endFlg}
             ></UserInfo>
           );
         })}
