@@ -18,354 +18,373 @@ let playerName = null;
 
 // 接続切れ
 const disconnect = () => {
-  console.log("接続が切れました");
+	console.log("接続が切れました");
 };
 
 export default function Room() {
-  // roomId取得
-  const router = useRouter();
-  const { roomId } = router.query;
+	// roomId取得
+	const router = useRouter();
+	const { roomId } = router.query;
 
-  // react hooks state
-  const [timeBombUserList, setTimeBombUserList] = useState([]);
-  const [leadCardsList, setLeadCardsList] = useState([]);
-  const [startFlg, setStartFlg] = useState(false);
+	// react hooks state
+	const [timeBombUserList, setTimeBombUserList] = useState([]);
+	const [leadCardsList, setLeadCardsList] = useState([]);
+	const [startFlg, setStartFlg] = useState(false);
 
-  // メッセージ用データセット
-  const [messageFlg, setMessageFlg] = useState(false);
-  const [message, setMessage] = useState("ようこそ！");
+	// メッセージ用データセット
+	const [messageFlg, setMessageFlg] = useState(false);
+	const [message, setMessage] = useState("ようこそ！");
 
-  // ラウンドメッセージ用データセット
-  const [round, setRound] = useState(0);
-  const [roundMessageFlg, setRoundMessageFlg] = useState(false);
+	// ラウンドメッセージ用データセット
+	const [round, setRound] = useState(0);
+	const [roundMessageFlg, setRoundMessageFlg] = useState(false);
 
-  // ゲーム内情報
-  const [turn, setTurn] = useState(0);
-  const [releaseNo, setReleaseNo] = useState(0);
+	// ゲーム内情報
+	const [turn, setTurn] = useState(0);
+	const [releaseNo, setReleaseNo] = useState(0);
 
-  // 勝敗表示用
-  const [endFlg, setEndFlg] = useState(false);
-  const [bommerFlg, setBommerFlg] = useState(false);
-  const [policeFlg, setPoliceFlg] = useState(false);
+	// 勝敗表示用
+	const [endFlg, setEndFlg] = useState(false);
+	const [bommerFlg, setBommerFlg] = useState(false);
+	const [policeFlg, setPoliceFlg] = useState(false);
 
-  // フラグの監視
-  useEffect(() => {
-    if (startFlg) {
-      window.setTimeout(() => {
-        setStartFlg(false);
-      }, 4000);
-    }
+	// フラグの監視
+	useEffect(() => {
+		if (startFlg) {
+			window.setTimeout(() => {
+				setStartFlg(false);
+			}, 4000);
+		}
 
-    if (setMessageFlg) {
-      window.setTimeout(() => {
-        setMessageFlg(false);
-        setMessage("");
-      }, 4000);
-    }
+		if (setMessageFlg) {
+			window.setTimeout(() => {
+				setMessageFlg(false);
+				setMessage("");
+			}, 4000);
+		}
 
-    if (roundMessageFlg) {
-      window.setTimeout(() => {
-        document.querySelector("body").classList.remove("modal_active");
-        setRoundMessageFlg(false);
-      }, 5000);
-    }
-  }, [startFlg, messageFlg, roundMessageFlg]);
+		if (roundMessageFlg) {
+			window.setTimeout(() => {
+				document.querySelector("body").classList.remove("modal_active");
+				setRoundMessageFlg(false);
+			}, 5000);
+		}
+	}, [startFlg, messageFlg, roundMessageFlg]);
 
-  const coneect = (url: string, msg: RoomUserInfo) => {
-    try {
-      clientObj.sendMessage(url, JSON.stringify(msg));
-    } catch (e) {
-      setMessageFlg(true);
-      setMessage("通信エラー。再度試してください");
-    }
-  };
-  // ルーム入室
-  const roomIn = (msg: RoomUserInfo) => {
-    const url = "/app/roomin";
-    playerName = msg.userName;
+	const coneect = (url: string, msg: RoomUserInfo) => {
+		try {
+			clientObj.sendMessage(url, JSON.stringify(msg));
+		} catch (e) {
+			setMessageFlg(true);
+			setMessage("通信エラー。再度試してください");
+		}
+	};
+	// ルーム入室
+	const roomIn = (msg: RoomUserInfo) => {
+		const url = "/app/roomin";
+		playerName = msg.userName;
 
-    coneect(url, msg);
-  };
+		coneect(url, msg);
+	};
 
-  // ゲームスタート
-  const start = (msg: RoomUserInfo) => {
-    const url = "/app/start";
-    coneect(url, msg);
-  };
+	// ゲームスタート
+	const start = (msg: RoomUserInfo) => {
+		const url = "/app/start";
+		coneect(url, msg);
+	};
 
-  // メッセージ取得
-  const receve = (msg) => {
-    // エラーケース
-    if (msg.status) {
-      switch (msg.status) {
-        case 200:
-          setMessageFlg(true);
-          setMessage(msg.message);
-          setData(msg.obj);
-          return;
-        case 404:
-          setMessageFlg(true);
-          setMessage(msg.message);
+	// メッセージ取得
+	const receve = (msg) => {
+		// エラーケース
+		if (msg.status) {
+			switch (msg.status) {
+				case 200:
+					setMessageFlg(true);
+					setMessage(msg.message);
+					setData(msg.obj);
+					return;
+				case 201:
+					// アイコン変更時
+					setTimeBombUserList(msg.obj);
+					return;
+				case 404:
+					setMessageFlg(true);
+					setMessage(msg.message);
 
-          return;
-        default:
-          setMessageFlg(true);
-          setMessage(msg.message);
-      }
-    }
+					return;
+				default:
+					setMessageFlg(true);
+					setMessage(msg.message);
+					return;
+			}
+		}
 
-    // 初回入室時
-    if (timeBombUserList.length === 0 && playerName != null) {
-      document.querySelector("." + styles.roominbtn).classList.add(styles.in);
-    }
+		// 初回入室時
+		if (timeBombUserList.length === 0 && playerName != null) {
+			document.querySelector("." + styles.roominbtn).classList.add(styles.in);
+		}
 
-    // 解除メッセージ判定
-    if (releaseNo < msg.releaseNo) {
-      setMessageFlg(true);
-      setMessage("解除に成功");
-    }
+		// 解除メッセージ判定
+		if (releaseNo < msg.releaseNo) {
+			setMessageFlg(true);
+			setMessage("解除に成功");
+		}
 
-    // データ設定
-    setData(msg);
+		// データ設定
+		setData(msg);
 
-    // 開始判定
-    if (msg.turn === 1) {
-      // データリセット
-      document.querySelector("body").classList.remove("modal_active");
-      scrollTo(0, 0);
-      setBommerFlg(false);
-      setPoliceFlg(false);
-      setStartFlg(true);
-    }
+		// 開始判定
+		if (msg.turn === 1) {
+			// データリセット
+			document.querySelector("body").classList.remove("modal_active");
+			scrollTo(0, 0);
+			setBommerFlg(false);
+			setPoliceFlg(false);
+			setStartFlg(true);
+		}
 
-    // 勝敗判定
-    if (msg.winnerTeam > 0) {
-      switch (msg.winnerTeam) {
-        case 1:
-          scrollTo(0, 0);
-          setPoliceFlg(true);
-          setEndFlg(true);
-          return;
-        case 2:
-          scrollTo(0, 0);
-          setBommerFlg(true);
-          setEndFlg(true);
-          return;
-      }
-    }
-  };
+		// 勝敗判定
+		if (msg.winnerTeam > 0) {
+			switch (msg.winnerTeam) {
+				case 1:
+					scrollTo(0, 0);
+					setPoliceFlg(true);
+					setEndFlg(true);
+					return;
+				case 2:
+					scrollTo(0, 0);
+					setBommerFlg(true);
+					setEndFlg(true);
+					return;
+			}
+		}
+	};
 
-  // データセット
-  const setData: any = (room) => {
-    setTimeBombUserList(room.userList);
-    setTurn(room.turn);
-    setReleaseNo(room.releaseNo);
-    setEndFlg(false);
+	// データセット
+	const setData: any = (room) => {
+		setTimeBombUserList(room.userList);
+		setTurn(room.turn);
+		setReleaseNo(room.releaseNo);
+		setEndFlg(false);
 
-    if (room.leadCardsList) {
-      setLeadCardsList(room.leadCardsList);
-    }
-    if (round != room.round && room.winnerTeam === 0) {
-      setRound(room.round);
-      if (room.round > 1) {
-        scrollTo(0, 0);
-        setRoundMessageFlg(true);
-      }
-    }
-  };
+		if (room.leadCardsList) {
+			setLeadCardsList(room.leadCardsList);
+		}
+		if (round != room.round && room.winnerTeam === 0) {
+			setRound(room.round);
+			if (room.round > 1) {
+				scrollTo(0, 0);
+				setRoundMessageFlg(true);
+			}
+		}
+	};
 
-  // ゲームプレイ
-  const play = (cardIndex: number) => {
-    const url = "/app/play";
-    const data: RoomUserInfo = {
-      action: "play",
-      roomId: roomId as string,
-      userName: playerName,
-      cardIndex: cardIndex,
-      winTeam: 0,
-    };
-    coneect(url, data);
-  };
+	// ゲームプレイ
+	const play = (cardIndex: number) => {
+		const url = "/app/play";
+		const data: RoomUserInfo = {
+			action: "play",
+			roomId: roomId as string,
+			userName: playerName,
+			cardIndex: cardIndex,
+			winTeam: 0,
+		};
+		coneect(url, data);
+	};
 
-  return (
-    <Layout home={false}>
-      <Head>
-        <meta
-          property="og:image"
-          content={SystemConst.Server.SITE_URL + "/images/timebomblogo.png"}
-        />
-        <meta property="og:title" content="タイムボムオンライン" />
-        <meta
-          property="og:description"
-          content="オンライン上でみんなでタイムボム！"
-        />
-        <title>タイムボム</title>
-      </Head>
-      {turn > 0 && (
-        <HeaderInfo
-          releaseNo={releaseNo}
-          userSize={timeBombUserList.length}
-          limit={timeBombUserList.length * 4 - turn + 1}
-        />
-      )}
+	// アイコン変更
+	const changeIcon = (iconUrl: string) => {
+		const url = "/app/changeIcon";
+		const usrInfo: RoomUserInfo = {
+			action: iconUrl,
+			roomId: roomId as string,
+			userName: playerName,
+			cardIndex: 0,
+			winTeam: 0,
+		};
+		coneect(url, usrInfo);
+	};
 
-      {startFlg && <Start />}
-      {roundMessageFlg && (
-        <Modal type="one">
-          <div className={styles.roundMessage} data-text={`Round${round}`}>
-            {round <= 3 ? `ROUND${round}` : "FINAL"}
-          </div>
-        </Modal>
-      )}
+	return (
+		<Layout home={false}>
+			<Head>
+				<meta
+					property="og:image"
+					content={SystemConst.Server.SITE_URL + "/images/timebomblogo.png"}
+				/>
+				<meta property="og:title" content="タイムボムオンライン" />
+				<meta
+					property="og:description"
+					content="オンライン上でみんなでタイムボム！"
+				/>
+				<title>タイムボム</title>
+			</Head>
+			{turn > 0 && (
+				<HeaderInfo
+					releaseNo={releaseNo}
+					userSize={timeBombUserList.length}
+					limit={timeBombUserList.length * 4 - turn + 1}
+				/>
+			)}
 
-      {bommerFlg && (
-        <Modal type={"seven"}>
-          <div className={styles.result}>
-            <img src="/images/failed.png" alt="結果" />
-          </div>
-        </Modal>
-      )}
+			{startFlg && <Start />}
+			{roundMessageFlg && (
+				<Modal type="one">
+					<div className={styles.roundMessage} data-text={`Round${round}`}>
+						{round <= 3 ? `ROUND${round}` : "FINAL"}
+					</div>
+				</Modal>
+			)}
 
-      {policeFlg && (
-        <Modal type={"five"}>
-          <div className={styles.result}>
-            <img src="/images/success.png" alt="結果" />
-          </div>
-        </Modal>
-      )}
+			{bommerFlg && (
+				<Modal type={"seven"}>
+					<div className={styles.result}>
+						<img src="/images/failed.png" alt="結果" />
+					</div>
+				</Modal>
+			)}
 
-      {messageFlg && <Chatmessage value={message} type="info" />}
-      <SockJsClient
-        url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
-        topics={["/topic/" + roomId + "/timebomb"]}
-        ref={(client) => {
-          clientObj = client;
-        }}
-        onMessage={(msg) => {
-          // デバッグ用
-          // console.log(msg);
-          receve(msg);
-        }}
-        onDisconnect={disconnect}
-      />
+			{policeFlg && (
+				<Modal type={"five"}>
+					<div className={styles.result}>
+						<img src="/images/success.png" alt="結果" />
+					</div>
+				</Modal>
+			)}
 
-      {turn < 1 && (
-        <div className={styles.roominbtn}>
-          <p>
-            <label htmlFor="username">Name</label>
-          </p>
-          <input type="text" id="username" />
-          <button
-            onClick={() => {
-              const usernameDom: HTMLInputElement = document.getElementById(
-                "username"
-              ) as HTMLInputElement;
-              const name: string = usernameDom.value;
-              if (name === "") {
-                return false;
-              }
-              roomIn({
-                action: "roomIn",
-                roomId: roomId as string,
-                userName: name,
-                cardIndex: 0,
-                winTeam: 0,
-              });
-            }}
-          >
-            Room IN
-          </button>
-        </div>
-      )}
-      {
-        // デバッグ用
-        false && (
-          <>
-            <input type="text" id="username" />
-            <button
-              onClick={() => {
-                const usernameDom: HTMLInputElement = document.getElementById(
-                  "username"
-                ) as HTMLInputElement;
+			{messageFlg && <Chatmessage value={message} type="info" />}
+			<SockJsClient
+				url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
+				topics={["/topic/" + roomId + "/timebomb"]}
+				ref={(client) => {
+					clientObj = client;
+				}}
+				onMessage={(msg) => {
+					// デバッグ用
+					// console.log(msg);
+					receve(msg);
+				}}
+				onDisconnect={disconnect}
+			/>
 
-                roomIn({
-                  action: "roomIn",
-                  roomId: roomId as string,
-                  userName: usernameDom.value,
-                  cardIndex: 0,
-                  winTeam: 0,
-                });
-              }}
-            >
-              入室
-            </button>
-          </>
-        )
-      }
+			{turn < 1 && (
+				<div className={styles.roominbtn}>
+					<p>
+						<label htmlFor="username">Name</label>
+					</p>
+					<input type="text" id="username" />
+					<button
+						onClick={() => {
+							const usernameDom: HTMLInputElement = document.getElementById(
+								"username"
+							) as HTMLInputElement;
+							const name: string = usernameDom.value;
+							if (name === "") {
+								return false;
+							}
+							roomIn({
+								action: "roomIn",
+								roomId: roomId as string,
+								userName: name,
+								cardIndex: 0,
+								winTeam: 0,
+							});
+						}}
+					>
+						Room IN
+					</button>
+				</div>
+			)}
+			{
+				// デバッグ用
+				false && (
+					<>
+						<input type="text" id="username" />
+						<button
+							onClick={() => {
+								const usernameDom: HTMLInputElement = document.getElementById(
+									"username"
+								) as HTMLInputElement;
 
-      {turn > 0 && (
-        <div className={`d-flex justify-content-center ${styles.light}`}>
-          {timeBombUserList.map((value: TimeBombUser, index: number) => {
-            return (
-              <div
-                key={index}
-                className={releaseNo > index ? styles.opend : ""}
-              >
-                <img src="/images/rightoff.png" alt="light" />
-                <img src="/images/righton.png" alt="light" />
-              </div>
-            );
-          })}
-        </div>
-      )}
+								roomIn({
+									action: "roomIn",
+									roomId: roomId as string,
+									userName: usernameDom.value,
+									cardIndex: 0,
+									winTeam: 0,
+								});
+							}}
+						>
+							入室
+						</button>
+					</>
+				)
+			}
 
-      <div className={styles.userInfo}>
-        {timeBombUserList.map((value: TimeBombUser, index: number) => {
-          // 手札作成
-          const cardsList: Array<LeadCards> = [];
-          if (leadCardsList) {
-            leadCardsList.forEach((value: LeadCards, cardIndex: number) => {
-              if (Math.floor(cardIndex / (6 - round)) === index) {
-                cardsList.push(leadCardsList[cardIndex]);
-              }
-            });
-          }
-          return (
-            <UserInfo
-              user={value}
-              cardlist={cardsList}
-              key={index}
-              ownFlg={playerName === value.userName}
-              playfnc={play}
-              round={round}
-              endFlg={endFlg}
-            ></UserInfo>
-          );
-        })}
-      </div>
+			{turn > 0 && (
+				<div className={`d-flex justify-content-center ${styles.light}`}>
+					{timeBombUserList.map((value: TimeBombUser, index: number) => {
+						return (
+							<div
+								key={index}
+								className={releaseNo > index ? styles.opend : ""}
+							>
+								<img src="/images/rightoff.png" alt="light" />
+								<img src="/images/righton.png" alt="light" />
+							</div>
+						);
+					})}
+				</div>
+			)}
 
-      <div className={styles.btnarea}>
-        <button
-          onClick={() => {
-            Router.push("/");
-          }}
-        >
-          HOME
-        </button>
-        <button
-          onClick={() => {
-            start({
-              action: "start",
-              roomId: roomId as string,
-              userName: playerName,
-              cardIndex: 0,
-              winTeam: 0,
-            });
-          }}
-        >
-          {turn > 0 ? "GAME RESET" : "GAME START"}
-        </button>
-      </div>
-    </Layout>
-  );
+			<div className={styles.userInfo}>
+				{timeBombUserList.map((value: TimeBombUser, index: number) => {
+					// 手札作成
+					const cardsList: Array<LeadCards> = [];
+					if (leadCardsList) {
+						leadCardsList.forEach((value: LeadCards, cardIndex: number) => {
+							if (Math.floor(cardIndex / (6 - round)) === index) {
+								cardsList.push(leadCardsList[cardIndex]);
+							}
+						});
+					}
+					return (
+						<UserInfo
+							user={value}
+							cardlist={cardsList}
+							key={index}
+							ownFlg={playerName === value.userName}
+							playfnc={play}
+							round={round}
+							changeIcon={changeIcon}
+							endFlg={endFlg}
+						></UserInfo>
+					);
+				})}
+			</div>
+
+			<div className={styles.btnarea}>
+				<button
+					onClick={() => {
+						Router.push("/");
+					}}
+				>
+					HOME
+				</button>
+				<button
+					onClick={() => {
+						start({
+							action: "start",
+							roomId: roomId as string,
+							userName: playerName,
+							cardIndex: 0,
+							winTeam: 0,
+						});
+					}}
+				>
+					{turn > 0 ? "GAME RESET" : "GAME START"}
+				</button>
+			</div>
+		</Layout>
+	);
 }
