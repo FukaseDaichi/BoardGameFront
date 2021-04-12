@@ -4,4 +4,5 @@ export type TimeBombUser = {
 	userName: string;
 	userRoleNo: number;
 	turnFlg: boolean;
+	userIconUrl: string;
 };
