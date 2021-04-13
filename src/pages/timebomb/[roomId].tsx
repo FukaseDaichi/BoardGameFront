@@ -252,6 +252,7 @@ export default function Room() {
 					</div>
 				</Modal>
 			)}
+
 			{policeFlg && (
 				<Modal type={"five"}>
 					<div className={styles.result}>
