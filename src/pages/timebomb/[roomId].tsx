@@ -252,6 +252,12 @@ export default function Room() {
 					</div>
 				</Modal>
 			)}
+
+			<Modal type={"seven"}>
+				<div className={styles.result}>
+					<img src="/images/failed.png" alt="結果" />
+				</div>
+			</Modal>
 			{policeFlg && (
 				<Modal type={"five"}>
 					<div className={styles.result}>
