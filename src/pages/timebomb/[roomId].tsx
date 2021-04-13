@@ -207,6 +207,15 @@ export default function Room() {
 
 	return (
 		<Layout home={false}>
+			<style jsx global>{`
+				body {
+					background-image: url(/images/background.jpg);
+					background-attachment: fixed;
+					background-size: 400px;
+					background-position: bottom left;
+					background-repeat: no-repeat;
+				}
+			`}</style>
 			<Head>
 				<meta
 					property="og:image"
