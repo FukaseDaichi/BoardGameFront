@@ -1,7 +1,7 @@
 import { stringify } from "gray-matter";
 import Icon from "../components/userInfo/icon";
 
-export default function FirstPost() {
+export default function TestPost() {
 	return (
 		<>
 			<Icon

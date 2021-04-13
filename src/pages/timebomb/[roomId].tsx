@@ -3,7 +3,7 @@ import SockJsClient from "react-stomp";
 import { SystemConst } from "../../const/next.config";
 import Layout from "../../components/layout";
 import Start from "../../components/timebomb/start";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { RoomUserInfo, TimeBombUser, LeadCards } from "../../type";
 import UserInfo from "../../components/timebomb/userInfo";
 import Modal from "../../components/modal";
@@ -211,7 +211,7 @@ export default function Room() {
 				body {
 					background-image: url(/images/background.jpg);
 					background-attachment: fixed;
-					background-size: 400px;
+					background-size: 370px;
 					background-position: bottom left;
 					background-repeat: no-repeat;
 				}
@@ -219,7 +219,7 @@ export default function Room() {
 			<Head>
 				<meta
 					property="og:image"
-					content={SystemConst.Server.SITE_URL + "/images/timebomblogo.png"}
+					content={SystemConst.Server.SITE_URL + "/images/background.jpg"}
 				/>
 				<meta property="og:title" content="タイムボムオンライン" />
 				<meta
@@ -252,6 +252,11 @@ export default function Room() {
 					</div>
 				</Modal>
 			)}
+			<Modal type={"seven"}>
+				<div className={styles.result}>
+					<img src="/images/failed.png" alt="結果" />
+				</div>
+			</Modal>
 
 			{policeFlg && (
 				<Modal type={"five"}>
