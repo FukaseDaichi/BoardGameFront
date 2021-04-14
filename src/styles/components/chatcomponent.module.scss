@@ -1,0 +1,77 @@
+div.chat-area {
+	position: absolute;
+	height: 400px;
+	width: 300px;
+	bottom: 50px;
+	right: 0;
+	overflow: hidden;
+	border-radius: 20px;
+	background-color: rgba(0, 0, 0, 0.4);
+	box-shadow: 7px 20px 22px -1px rgba(0, 0, 0, 0.6);
+
+	div.chat-header {
+		background-color: rgba(0, 0, 0, 0.3);
+		text-align: right;
+		span {
+			color: white;
+		}
+	}
+
+	div.chat-firld {
+		height: 330px;
+		overflow-y: scroll;
+
+		div.chat {
+			position: relative;
+			display: flex;
+			align-items: center;
+			div.icon {
+				position: relative;
+				width: 60px;
+				height: 60px;
+				border-radius: 50%;
+				overflow: hidden;
+				/* box-shadow */
+				box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
+				z-index: 2;
+				img {
+					width: 100%;
+				}
+			}
+
+			div.message {
+				width: 200px;
+				font-size: 0.7rem;
+				background-color: rgba(0, 0, 0, 0.45);
+				color: white;
+				border-radius: 5px;
+				padding: 8px;
+				margin: 8px 0 8px 12px;
+				word-break: break-all;
+
+				&:after {
+					border: solid transparent;
+					content: "";
+					height: 0;
+					left: 52px;
+					pointer-events: none;
+					position: absolute;
+					border-top-width: 10px;
+					border-bottom-width: 10px;
+					border-left-width: 10px;
+					border-right-width: 10px;
+					margin-top: -10px;
+					border-right-color: rgba(0, 0, 0, 0.45);
+					right: 100%;
+					top: 50%;
+				}
+			}
+		}
+	}
+
+	div.chat-input {
+		background-color: rgba(0, 0, 0, 0.3);
+		height: 100%;
+		text-align: center;
+	}
+}
