@@ -1,3 +1,5 @@
+@import "./variables";
+
 div.non {
 	opacity: 0;
 	visibility: hidden;
@@ -15,6 +17,8 @@ div.home {
 
 	div {
 		height: 80px;
+		letter-spacing: -0.05em;
+		font-size: 1.8rem;
 	}
 
 	width: 100%;
@@ -75,7 +79,7 @@ div.home {
 		}
 	}
 }
-@media (max-width: 620px) {
+@include mq(md) {
 	div.home {
 		div {
 			font-size: 1.5rem;

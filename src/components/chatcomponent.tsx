@@ -1,8 +1,13 @@
 import styles from "../styles/components/chatcomponent.module.scss";
+import { useEffect } from "react";
 
 export default function ChatComponent() {
+	useEffect(() => {});
 	return (
-		<div className={styles["chat-area"]} draggable="true">
+		<div
+			className={`${styles["chat-area"]} ${styles["drag-and-drop"]}`}
+			draggable="true"
+		>
 			<div className={styles["chat-header"]}>
 				<span>最小化</span>
 			</div>
