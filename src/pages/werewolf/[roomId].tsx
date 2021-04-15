@@ -145,7 +145,7 @@ export default function WereWolfRoom() {
 					チャット
 				</button>
 			</div>
-			<ChatComponent />
+			<ChatComponent chatList={chatList} chat={chat} />
 		</Layout>
 	);
 }
