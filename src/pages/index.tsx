@@ -71,7 +71,7 @@ export default function CreateRoom() {
 			</Head>
 			<House />
 			<div className={`${styles.home} ${!createFlg && styles.non}`}>
-				<div id="room-url" className="h2"></div>
+				<div id="room-url"></div>
 				<section>
 					<button
 						type="button"

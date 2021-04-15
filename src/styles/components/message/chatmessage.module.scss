@@ -285,3 +285,12 @@ div.chatmessage {
 		}
 	}
 }
+
+.drag-and-drop {
+	cursor: move;
+	position: absolute;
+}
+
+.drag {
+	z-index: 1000;
+}

@@ -1,175 +1,176 @@
 .roominbtn {
-  font-family: "Patrick Hand SC", cursive;
-  p {
-    line-height: 0;
-    margin: 0;
-  }
-  input {
-    height: 2.4em;
-    width: 40%;
-    padding: 0 16px;
-    border-radius: 4px;
-    border: none;
-    box-shadow: 0 0 0 1px #ccc inset;
-    appearance: none;
-  }
-  button {
-    background: transparent;
-    color: rgb(27, 25, 25);
-    border: 3px solid rgb(27, 25, 25);
-    border-radius: 50px;
-    padding: 0.7rem 1rem;
-    font: 20px "Margarine", sans-serif;
-    outline: none;
-    cursor: pointer;
-    position: relative;
-    transition: 0.2s ease-in-out;
-    letter-spacing: 2px;
+	p {
+		font-family: "Patrick Hand SC", cursive;
+		line-height: 0;
+		margin: 0;
+	}
+	input {
+		height: 2.4em;
+		width: 40%;
+		padding: 0 16px;
+		border-radius: 4px;
+		border: none;
+		box-shadow: 0 0 0 1px #ccc inset;
+		appearance: none;
+	}
+	button {
+		font-family: "Patrick Hand SC", cursive;
+		background: transparent;
+		color: rgb(27, 25, 25);
+		border: 3px solid rgb(27, 25, 25);
+		border-radius: 50px;
+		padding: 0.7rem 1rem;
+		font-size: 20px;
+		outline: none;
+		cursor: pointer;
+		position: relative;
+		transition: 0.2s ease-in-out;
+		letter-spacing: 2px;
 
-    animation: jittery 4s infinite;
-    &:hover {
-      animation: heartbeat 0.2s infinite;
-    }
-    @keyframes jittery {
-      5%,
-      50% {
-        transform: scale(1);
-      }
-      10% {
-        transform: scale(0.9);
-      }
-      15% {
-        transform: scale(1.15);
-      }
-      20% {
-        transform: scale(1.15) rotate(-5deg);
-      }
-      25% {
-        transform: scale(1.15) rotate(5deg);
-      }
-      30% {
-        transform: scale(1.15) rotate(-3deg);
-      }
-      35% {
-        transform: scale(1.15) rotate(2deg);
-      }
-      40% {
-        transform: scale(1.15) rotate(0);
-      }
-    }
+		animation: jittery 4s infinite;
+		&:hover {
+			animation: heartbeat 0.2s infinite;
+		}
+		@keyframes jittery {
+			5%,
+			50% {
+				transform: scale(1);
+			}
+			10% {
+				transform: scale(0.9);
+			}
+			15% {
+				transform: scale(1.15);
+			}
+			20% {
+				transform: scale(1.15) rotate(-5deg);
+			}
+			25% {
+				transform: scale(1.15) rotate(5deg);
+			}
+			30% {
+				transform: scale(1.15) rotate(-3deg);
+			}
+			35% {
+				transform: scale(1.15) rotate(2deg);
+			}
+			40% {
+				transform: scale(1.15) rotate(0);
+			}
+		}
 
-    @keyframes heartbeat {
-      50% {
-        transform: scale(1.1);
-      }
-    }
-  }
+		@keyframes heartbeat {
+			50% {
+				transform: scale(1.1);
+			}
+		}
+	}
 
-  &.in {
-    animation: out 0.2s forwards;
-  }
-  @keyframes out {
-    0% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 0.1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
+	&.in {
+		animation: out 0.2s forwards;
+	}
+	@keyframes out {
+		0% {
+			opacity: 1;
+		}
+		90% {
+			opacity: 0.1;
+		}
+		100% {
+			opacity: 0;
+		}
+	}
 }
 
 .light {
-  width: 50%;
-  margin-left: 25%;
-  div {
-    position: relative;
-    width: 30px;
-    height: 80px;
-    margin: 0 auto;
+	width: 50%;
+	margin-left: 25%;
+	div {
+		position: relative;
+		width: 30px;
+		height: 80px;
+		margin: 0 auto;
 
-    img {
-      width: 100%;
-      transition: all 0.2s;
-      position: absolute;
-      top: 0;
-      left: 0;
-      &:first-child {
-        opacity: 1;
-        transform: rotateY(0deg);
-        transition: opacity 100ms 150ms, transform 300ms 150ms;
-      }
+		img {
+			width: 100%;
+			transition: all 0.2s;
+			position: absolute;
+			top: 0;
+			left: 0;
+			&:first-child {
+				opacity: 1;
+				transform: rotateY(0deg);
+				transition: opacity 100ms 150ms, transform 300ms 150ms;
+			}
 
-      &:last-child {
-        opacity: 0;
-        transform: rotateY(90deg);
-        transition: opacity 50ms 200ms, transform 300ms;
-      }
-    }
-    img.gray {
-      filter: grayscale(100%);
-      opacity: 0.6;
-    }
-  }
-  div.opend {
-    img {
-      /* 裏面の表示 */
-      &:first-child {
-        opacity: 0;
-        transform: rotateY(90deg);
-        transition: opacity 50ms 200ms, transform 300ms;
-      }
-      &:last-child {
-        opacity: 1;
-        transform: rotateY(0deg);
-        transition: opacity 100ms 150ms, transform 300ms 150ms;
-      }
-    }
-  }
+			&:last-child {
+				opacity: 0;
+				transform: rotateY(90deg);
+				transition: opacity 50ms 200ms, transform 300ms;
+			}
+		}
+		img.gray {
+			filter: grayscale(100%);
+			opacity: 0.6;
+		}
+	}
+	div.opend {
+		img {
+			/* 裏面の表示 */
+			&:first-child {
+				opacity: 0;
+				transform: rotateY(90deg);
+				transition: opacity 50ms 200ms, transform 300ms;
+			}
+			&:last-child {
+				opacity: 1;
+				transform: rotateY(0deg);
+				transition: opacity 100ms 150ms, transform 300ms 150ms;
+			}
+		}
+	}
 }
 
 .userInfo {
-  display: flex;
-  flex-flow: column;
+	display: flex;
+	flex-flow: column;
 }
 
 .roundMessage {
-  color: white;
-  font-size: 100px;
-  position: relative;
-  width: 400px;
-  margin: 0 auto;
-  font-family: "Patrick Hand SC", cursive;
+	color: white;
+	font-size: 100px;
+	position: relative;
+	width: 400px;
+	margin: 0 auto;
+	font-family: "Patrick Hand SC", cursive;
 }
 
 .result {
-  width: 100%;
-  max-width: 400px;
-  img {
-    width: 100%;
-    object-fit: cover;
-  }
+	width: 100%;
+	max-width: 400px;
+	img {
+		width: 100%;
+		object-fit: cover;
+	}
 }
 
 div.btnarea {
-  margin-top: 50px;
-  position: relative;
-  text-align: right;
+	margin-top: 50px;
+	position: relative;
+	text-align: right;
 
-  button {
-    font-family: "Patrick Hand SC", cursive;
-    font-size: 2rem;
-    transition: 0.1s;
-    border: none;
-    outline: none;
-    border-radius: 30px;
-    box-shadow: 0px 0px 21px -6px rgba(0, 0, 0, 0.6);
-    &:hover,
-    &:active,
-    &:focus {
-      transform: scale(0.9);
-    }
-  }
+	button {
+		font-family: "Patrick Hand SC", cursive;
+		font-size: 2rem;
+		transition: 0.1s;
+		border: none;
+		outline: none;
+		border-radius: 30px;
+		box-shadow: 0px 0px 21px -6px rgba(0, 0, 0, 0.6);
+		&:hover,
+		&:active,
+		&:focus {
+			transform: scale(0.9);
+		}
+	}
 }
