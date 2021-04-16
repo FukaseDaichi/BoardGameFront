@@ -48,7 +48,10 @@ export default function WereWolfRoom() {
 		coneect(url, soketInfo);
 	};
 
+	// チャット
 	const chat = (message: string) => {
+		if (playerName) {
+		}
 		const url = "/app/chat";
 		const soketInfo: SocketInfo = {
 			status: 101,
@@ -75,8 +78,9 @@ export default function WereWolfRoom() {
 				console.log(socketInfo);
 				break;
 			case 101: // チャット
-				console.log(socketInfo.obj);
 				setChatList(socketInfo.obj);
+				const messageFirld = document.getElementById("chat-firld");
+				messageFirld.scrollTop = messageFirld.scrollHeight;
 				break;
 			default:
 				console.log(socketInfo);

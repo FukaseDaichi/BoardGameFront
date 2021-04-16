@@ -20,10 +20,11 @@ export default function ChatComponent(props: ChatComponentProps) {
 		const messageDom = document.getElementById(
 			"chat-message"
 		) as HTMLInputElement;
+		if (messageDom.value === "") {
+			return false;
+		}
 		props.chat(messageDom.value);
 		messageDom.value = "";
-		const messageFirld = document.getElementById("chat-firld");
-		messageFirld.scrollTop = messageFirld.scrollHeight;
 	};
 
 	const interact = useInteractJS();
@@ -46,45 +47,10 @@ export default function ChatComponent(props: ChatComponentProps) {
 			}}
 		>
 			<div className={styles["chat-header"]}>
+				CHAT
 				<span onClick={changeClose}>　　</span>
 			</div>
 			<div className={styles["chat-firld"]} id="chat-firld">
-				<div className={styles.chat}>
-					<div className={styles.chat}>
-						<div className={styles["icon-area"]}>
-							<div className={styles.icon}>
-								<img src="/images/icon/icon1.jpg" />
-							</div>
-							<div className={styles.name}>名前</div>
-						</div>
-					</div>
-					<div className={styles.message}>
-						つぶやきああああああああああああああああああああああああああああああああああああああああああ
-					</div>
-				</div>
-				<div className={styles.chat}>
-					<div className={styles.chat}>
-						<div className={styles["icon-area"]}>
-							<div className={styles.icon}>
-								<img src="/images/icon/icon1.jpg" />
-							</div>
-							<div className={styles.name}>名前aaaaaaaaaaaaaaaaaaaaaa</div>
-						</div>
-					</div>
-					<div className={styles.message}>
-						つぶやきああああああああああああああああああああああああああああああああああああああああああ
-					</div>
-				</div>
-				<div className={styles.chat}>
-					<div className={styles["icon-area"]}>
-						<div className={styles.icon}>
-							<img src="/images/icon/icon1.jpg" />
-						</div>
-						<div className={styles.name}>名前</div>
-					</div>
-					<div className={styles.message}>つぶやきあああ</div>
-				</div>
-
 				{props.chatList.map((chatEntity, index: number) => {
 					return (
 						<div className={styles.chat} key={index}>
@@ -113,7 +79,6 @@ export default function ChatComponent(props: ChatComponentProps) {
 					id="chat-message"
 					onKeyPress={(e) => {
 						if (e.key === "Enter") {
-							console.log("エンター発火");
 							sendMessage();
 						}
 					}}
