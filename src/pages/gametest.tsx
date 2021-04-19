@@ -29,7 +29,7 @@ export default function CreateRoomWerewolf() {
 		if (createFlg) {
 			return;
 		}
-		const url: string = SystemConst.Server.AP_HOST + "createroom/werewolf";
+		const url: string = SystemConst.Server.AP_HOST + "createroom/hideout";
 		await fetch(url)
 			.then((res) => {
 				if (res.ok) {
@@ -51,7 +51,7 @@ export default function CreateRoomWerewolf() {
 
 	// ルーム入室
 	const roomIn = () => {
-		Router.push("/werewolf/" + roomId);
+		Router.push("/hideout/" + roomId);
 	};
 
 	return (
