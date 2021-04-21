@@ -4,7 +4,7 @@ import { SystemConst } from "../../const/next.config";
 import Layout from "../../components/layout";
 import Start from "../../components/timebomb/start";
 import { useEffect, useState } from "react";
-import { RoomUserInfo, TimeBombUser, LeadCards } from "../../type";
+import { RoomUserInfo, TimeBombUser, LeadCards, SocketInfo } from "../../type";
 import UserInfo from "../../components/timebomb/userInfo";
 import Modal from "../../components/modal";
 import Chatmessage from "../../components/message/chatmessage";
@@ -205,6 +205,25 @@ export default function Room() {
 		coneect(url, usrInfo);
 	};
 
+	const limittimeDone = () => {
+		const url = "/app/timebomb-limittime";
+
+		const info: SocketInfo = {
+			status: 600,
+			roomId: roomId as string,
+			userName: playerName,
+			message: null,
+			obj: turn,
+		};
+
+		try {
+			clientObj.sendMessage(url, JSON.stringify(info));
+		} catch (e) {
+			setMessageFlg(true);
+			setMessage("通信エラー。再度試してください");
+		}
+	};
+
 	return (
 		<Layout home={false}>
 			<style jsx global>{`
@@ -281,11 +300,11 @@ export default function Room() {
 					<p>
 						<label htmlFor="username">Name</label>
 					</p>
-					<input type="text" id="username" />
+					<input type="text" id="usernametest" />
 					<button
 						onClick={() => {
 							const usernameDom: HTMLInputElement = document.getElementById(
-								"username"
+								"usernametest"
 							) as HTMLInputElement;
 							const name: string = usernameDom.value;
 							if (name === "") {
@@ -326,6 +345,7 @@ export default function Room() {
 						>
 							入室
 						</button>
+						<button onClick={limittimeDone}>タイムリミット</button>
 					</>
 				)
 			}
