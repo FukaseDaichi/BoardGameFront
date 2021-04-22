@@ -10,6 +10,7 @@ import Modal from "../../components/modal";
 import Chatmessage from "../../components/message/chatmessage";
 import styles from "../../styles/components/timebomb/room.module.scss";
 import HeaderInfo from "../../components/timebomb/headInfo";
+import CountdownClock from "../../components/countdownclock";
 import Router from "next/router";
 import Head from "next/head";
 
@@ -325,7 +326,7 @@ export default function Room() {
 			)}
 			{
 				// デバッグ用
-				false && (
+				true && (
 					<>
 						<input type="text" id="username" />
 						<button
@@ -364,6 +365,14 @@ export default function Room() {
 						);
 					})}
 				</div>
+			)}
+
+			{turn > 0 && (
+				<CountdownClock
+					limitDone={() => alert("終了" + turn)}
+					timeLimit={10}
+					turn={turn}
+				/>
 			)}
 
 			<div className={styles.userInfo}>
