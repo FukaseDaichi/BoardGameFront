@@ -6,6 +6,8 @@ div.chat-area {
 	border-radius: 20px;
 	background-color: rgba(0, 0, 0, 0.4);
 	box-shadow: 7px 20px 22px -1px rgba(0, 0, 0, 0.6);
+	touch-action: none;
+	user-select: none;
 
 	&.closed {
 		div {
@@ -27,12 +29,21 @@ div.chat-area {
 	div {
 		transition: all 0.1s;
 		opacity: 1;
+		touch-action: none;
+		user-select: none;
 	}
 
 	div.chat-header {
 		background-color: rgba(0, 0, 0, 0.3);
-		text-align: right;
+		text-align: center;
+		font-weight: 700;
+		color: white;
+		font-family: "Patrick Hand SC", cursive;
+		letter-spacing: 0.5rem;
 		span {
+			position: absolute;
+			top: 5px;
+			right: 0;
 			cursor: pointer;
 			width: 30px;
 			height: 30px;
@@ -121,7 +132,6 @@ div.chat-area {
 			right: 10px;
 			padding-bottom: 5px;
 			text-align: center;
-			font-family: "Patrick Hand SC", cursive;
 			color: white;
 			transition: 0.05s;
 			background: transparent;
