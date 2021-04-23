@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 type CountdownClockProps = {
 	timeLimit: number; // 秒
 	turn: number;
-	limitDone: () => void;
+	limitDone: (pturn: number) => void;
 };
 
 export default function CountdownClock(props: CountdownClockProps) {
@@ -12,12 +12,15 @@ export default function CountdownClock(props: CountdownClockProps) {
 	const [timer, setTimer] = useState(false);
 	const [turn, setTurn] = useState(props.turn);
 
+	if (turn !== props.turn) {
+		setTurn(props.turn);
+	}
+
 	const countdown = () => {
 		setLimitTime((prevLimitTime) => prevLimitTime - 1);
 	};
 
 	useEffect(() => {
-		console.log("start");
 		setTimer(true);
 	}, []);
 
@@ -31,20 +34,34 @@ export default function CountdownClock(props: CountdownClockProps) {
 	useEffect(() => {
 		if (limitTime <= 0) {
 			setTimer(false);
-			props.limitDone();
+			props.limitDone(turn);
 		}
 	}, [limitTime]);
 
 	useEffect(() => {
-		setLimitTime(props.timeLimit);
-		console.log(props.timeLimit + "で更新");
+		if (turn !== 0) {
+			setLimitTime(props.timeLimit);
+			setTimer(true);
+		}
 	}, [turn]);
 
 	return (
 		<div className={styles.clock}>
-			LIMIT
-			<img src="/images/sunadokei.png" alt="砂時計" /> {limitTime} sec　
-			{props.turn}
+			<div>
+				LIMIT
+				<img src="/images/sunadokei.png" alt="砂時計" />
+				{Math.floor(limitTime / 60) > 0 && (
+					<span className={styles.min}>
+						<span>{Math.floor(limitTime / 60)}</span>min
+					</span>
+				)}
+				<span className={styles.sec}>
+					<span>
+						{limitTime % 60 < 10 ? "  " + (limitTime % 60) : limitTime % 60}
+					</span>
+					sec
+				</span>
+			</div>
 		</div>
 	);
 }

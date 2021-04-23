@@ -174,3 +174,59 @@ div.btnarea {
 		}
 	}
 }
+
+// 制限時間設定のラジオボタン
+.limittimeinputarea {
+	display: flex;
+	justify-content: space-around;
+
+	> div {
+		width: 25%;
+		text-align: center;
+		position: relative;
+
+		input {
+			display: none;
+
+			&:checked ~ div.teban {
+				display: block;
+			}
+		}
+		label {
+			font-size: 1.4rem;
+			font-family: "Patrick Hand SC", cursive;
+			margin: 0;
+			span {
+				font-size: 2rem;
+			}
+		}
+		&::after {
+			content: "　";
+			display: block;
+			background-image: url(../../../../public/images/underline.png);
+			width: 80px;
+			margin: -20px auto 0 auto;
+			background-size: contain;
+			background-repeat: no-repeat;
+		}
+		div.teban {
+			display: none;
+			position: absolute;
+			left: 20px;
+			top: 10px;
+			img {
+				width: 40px;
+				z-index: 1;
+				animation: fwari ease-in-out 1.5s infinite alternate;
+			}
+			@keyframes fwari {
+				0% {
+					transform: translate(0%, 0%);
+				}
+				100% {
+					transform: translate(0%, -10px);
+				}
+			}
+		}
+	}
+}

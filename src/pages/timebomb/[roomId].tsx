@@ -3,7 +3,7 @@ import SockJsClient from "react-stomp";
 import { SystemConst } from "../../const/next.config";
 import Layout from "../../components/layout";
 import Start from "../../components/timebomb/start";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { RoomUserInfo, TimeBombUser, LeadCards, SocketInfo } from "../../type";
 import UserInfo from "../../components/timebomb/userInfo";
 import Modal from "../../components/modal";
@@ -43,6 +43,7 @@ export default function Room() {
 	// ゲーム内情報
 	const [turn, setTurn] = useState(0);
 	const [releaseNo, setReleaseNo] = useState(0);
+	const [limitTime, setLimitTime] = useState(0);
 
 	// 勝敗表示用
 	const [endFlg, setEndFlg] = useState(false);
@@ -111,8 +112,13 @@ export default function Room() {
 				case 404:
 					setMessageFlg(true);
 					setMessage(msg.message);
-
 					return;
+
+				case 900:
+					// 制限時間変更
+					setLimitTime(msg.obj);
+					return;
+
 				default:
 					setMessageFlg(true);
 					setMessage(msg.message);
@@ -194,7 +200,7 @@ export default function Room() {
 	};
 
 	// アイコン変更
-	const changeIcon = (iconUrl: string) => {
+	const changeIcon = useCallback((iconUrl: string) => {
 		const url = "/app/changeIcon";
 		const usrInfo: RoomUserInfo = {
 			action: iconUrl,
@@ -204,26 +210,46 @@ export default function Room() {
 			winTeam: 0,
 		};
 		coneect(url, usrInfo);
-	};
+	}, []);
 
-	const limittimeDone = () => {
-		const url = "/app/timebomb-limittime";
+	const limittimeDone = useCallback(
+		(pturn: number) => {
+			let turnFlg: boolean = false;
+			timeBombUserList.forEach((value: TimeBombUser) => {
+				if (value.userName === playerName && value.turnFlg) {
+					turnFlg = true;
+				}
+			});
 
+			if (turnFlg) {
+				const url = "/app/timebomb-limittime";
+				const info: SocketInfo = {
+					status: 600,
+					roomId: roomId as string,
+					userName: playerName,
+					message: null,
+					obj: pturn,
+				};
+
+				clientObj.sendMessage(url, JSON.stringify(info));
+			}
+		},
+		[timeBombUserList]
+	);
+
+	// 制限時間変更
+	const changeLimitTme = useCallback((time: number) => {
+		const url = "/app/timebomb-setlimittime";
 		const info: SocketInfo = {
-			status: 600,
+			status: 900,
 			roomId: roomId as string,
 			userName: playerName,
 			message: null,
-			obj: turn,
+			obj: time,
 		};
 
-		try {
-			clientObj.sendMessage(url, JSON.stringify(info));
-		} catch (e) {
-			setMessageFlg(true);
-			setMessage("通信エラー。再度試してください");
-		}
-	};
+		clientObj.sendMessage(url, JSON.stringify(info));
+	}, []);
 
 	return (
 		<Layout home={false}>
@@ -346,7 +372,7 @@ export default function Room() {
 						>
 							入室
 						</button>
-						<button onClick={limittimeDone}>タイムリミット</button>
+						<button onClick={() => limittimeDone(turn)}>タイムリミット</button>
 					</>
 				)
 			}
@@ -367,12 +393,8 @@ export default function Room() {
 				</div>
 			)}
 
-			{turn > 0 && (
-				<CountdownClock
-					limitDone={() => alert("終了" + turn)}
-					timeLimit={10}
-					turn={turn}
-				/>
+			{turn > 0 && !endFlg && !startFlg && (
+				<CountdownClock limitDone={limittimeDone} timeLimit={183} turn={turn} />
 			)}
 
 			<div className={styles.userInfo}>
@@ -400,7 +422,72 @@ export default function Room() {
 					);
 				})}
 			</div>
-
+			<div className={styles.limittimeinputarea}>
+				<div onClick={() => changeLimitTme(0)}>
+					<input
+						type="radio"
+						id="limit-time-0"
+						name="limit-time"
+						value="0"
+						checked={limitTime === 0}
+						readOnly
+					/>
+					<label htmlFor="limit-time-0">
+						<span>NONE</span>
+					</label>
+					<div className={styles.teban}>
+						<img src={"/images/hasami.png"} alt="手番" />
+					</div>
+				</div>
+				<div onClick={() => changeLimitTme(180)}>
+					<input
+						type="radio"
+						id="limit-time-180"
+						name="limit-time"
+						value="180"
+						checked={limitTime === 180}
+						readOnly
+					/>
+					<label htmlFor="limit-time-180">
+						<span>3</span>min
+					</label>
+					<div className={styles.teban}>
+						<img src={"/images/hasami.png"} alt="手番" />
+					</div>
+				</div>
+				<div onClick={() => changeLimitTme(300)}>
+					<input
+						type="radio"
+						id="limit-time-300"
+						name="limit-time"
+						value="300"
+						checked={limitTime === 300}
+						readOnly
+					/>
+					<label htmlFor="limit-time-300">
+						<span>5</span>min
+					</label>
+					<div className={styles.teban}>
+						<img src={"/images/hasami.png"} alt="手番" />
+					</div>
+				</div>
+				<div onClick={() => changeLimitTme(420)}>
+					<input
+						type="radio"
+						id="limit-time-420"
+						name="limit-time"
+						value="420"
+						checked={limitTime === 420}
+						readOnly
+					/>
+					<label htmlFor="limit-time-420">
+						<span>7</span>min
+					</label>
+					<div className={styles.teban}>
+						<img src={"/images/hasami.png"} alt="手番" />
+					</div>
+				</div>
+			</div>
 			<div className={styles.btnarea}>
 				<button
 					onClick={() => {
