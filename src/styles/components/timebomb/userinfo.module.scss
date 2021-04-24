@@ -303,7 +303,7 @@ div.main {
     border-radius: 65px;
     box-shadow: 0 0 1px 1px rgba(white, 0.4),
       0 25px 15px -10px rgba(0, 0, 0, 0.5);
-    animation: SlideIn 0.4s, holoCard 10s ease infinite;
+    animation: SlideIn 0.4s;
 
     @include mq(md) {
       width: 300px;
