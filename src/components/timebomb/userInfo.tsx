@@ -141,11 +141,15 @@ export default function UserInfo(userInfoProps: UserInfoProps) {
             setInfoFlg(false);
           }}
         >
-          <div className={styles["card-roll"]}>
-            <img
-              src={getRollImgUrl(userInfoProps.user.userRoleNo)}
-              alt="役職"
-            />
+          <div>
+            <div
+              className={styles["card-roll"]}
+              style={{
+                backgroundImage: `url(${getRollImgUrl(
+                  userInfoProps.user.userRoleNo
+                )})`,
+              }}
+            ></div>
           </div>
           {/* <div className={styles["card-icon"]}>
             <img
