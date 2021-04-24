@@ -89,6 +89,7 @@ export default function Room() {
   // メッセージ取得
   const receve = (msg) => {
     // エラーケース
+    console.log(msg.obj);
     if (msg.status) {
       switch (msg.status) {
         case 200:
@@ -188,17 +189,20 @@ export default function Room() {
   };
 
   // アイコン変更
-  const changeIcon = useCallback((iconUrl: string) => {
-    const url = "/app/changeIcon";
-    const usrInfo: RoomUserInfo = {
-      action: iconUrl,
-      roomId: roomId as string,
-      userName: playerName,
-      cardIndex: 0,
-      winTeam: 0,
-    };
-    coneect(url, usrInfo);
-  }, []);
+  const changeIcon = useCallback(
+    (iconUrl: string) => {
+      const url = "/app/changeIcon";
+      const usrInfo: RoomUserInfo = {
+        action: iconUrl,
+        roomId: roomId as string,
+        userName: playerName,
+        cardIndex: 0,
+        winTeam: 0,
+      };
+      coneect(url, usrInfo);
+    },
+    [timeBombUserList]
+  );
 
   const limittimeDone = useCallback(
     (pturn: number) => {
