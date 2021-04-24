@@ -300,15 +300,17 @@ div.main {
     z-index: 3;
     width: 350px;
     overflow: hidden;
-    border-radius: 5px;
-    animation: SlideIn 0.4s;
+    border-radius: 65px;
+    box-shadow: 0 0 1px 1px rgba(white, 0.4),
+      0 25px 15px -10px rgba(0, 0, 0, 0.5);
+    animation: SlideIn 0.4s, holoCard 10s ease infinite;
 
     @include mq(md) {
       width: 300px;
+      border-radius: 53px;
     }
     div.card-roll {
       width: 100%;
-      box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
 
       img {
         width: 100%;
@@ -349,6 +351,18 @@ div.main {
       100% {
         opacity: 1;
         transform: scale(1) translate(0, 0);
+      }
+    }
+    @keyframes holoCard {
+      0%,
+      100% {
+        transform: none;
+      }
+      25% {
+        transform: rotateZ(-3deg) rotateX(-7deg) rotateY(6deg);
+      }
+      66% {
+        transform: rotateZ(3deg) rotateX(7deg) rotateY(-6deg);
       }
     }
   }

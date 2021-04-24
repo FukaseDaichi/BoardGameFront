@@ -33,8 +33,7 @@ export default function Room() {
   const [startFlg, setStartFlg] = useState(false);
 
   // メッセージ用データセット
-  const [messageFlg, setMessageFlg] = useState(false);
-  const [message, setMessage] = useState("ようこそ！");
+  const [messageList, setMessageList] = useState([]);
 
   // ラウンドメッセージ用データセット
   const [round, setRound] = useState(0);
@@ -58,27 +57,19 @@ export default function Room() {
       }, 4000);
     }
 
-    if (setMessageFlg) {
-      window.setTimeout(() => {
-        setMessageFlg(false);
-        setMessage("");
-      }, 4000);
-    }
-
     if (roundMessageFlg) {
       window.setTimeout(() => {
         document.querySelector("body").classList.remove("modal_active");
         setRoundMessageFlg(false);
       }, 5000);
     }
-  }, [startFlg, messageFlg, roundMessageFlg]);
+  }, [startFlg, roundMessageFlg]);
 
   const coneect = (url: string, msg: RoomUserInfo) => {
     try {
       clientObj.sendMessage(url, JSON.stringify(msg));
     } catch (e) {
-      setMessageFlg(true);
-      setMessage("通信エラー。再度試してください");
+      setMessageList(messageList.concat("通信エラー。再度試してください"));
     }
   };
   // ルーム入室
@@ -101,8 +92,7 @@ export default function Room() {
     if (msg.status) {
       switch (msg.status) {
         case 200:
-          setMessageFlg(true);
-          setMessage(msg.message);
+          setMessageList(messageList.concat(msg.message));
           setData(msg.obj);
           return;
         case 201:
@@ -110,8 +100,7 @@ export default function Room() {
           setTimeBombUserList(msg.obj);
           return;
         case 404:
-          setMessageFlg(true);
-          setMessage(msg.message);
+          setMessageList(messageList.concat(msg.message));
           return;
 
         case 900:
@@ -120,8 +109,7 @@ export default function Room() {
           return;
 
         default:
-          setMessageFlg(true);
-          setMessage(msg.message);
+          setMessageList(messageList.concat(msg.message));
           return;
       }
     }
@@ -133,8 +121,7 @@ export default function Room() {
 
     // 解除メッセージ判定
     if (releaseNo < msg.releaseNo) {
-      setMessageFlg(true);
-      setMessage("解除に成功");
+      setMessageList(messageList.concat("解除に成功"));
     }
 
     // データ設定
@@ -309,7 +296,12 @@ export default function Room() {
         </Modal>
       )}
 
-      {messageFlg && <Chatmessage value={message} type="info" />}
+      {messageList.map((value, index) => {
+        if (index === messageList.length - 1) {
+          return <Chatmessage value={value} type="info" key={index} />;
+        }
+      })}
+
       <SockJsClient
         url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
         topics={["/topic/" + roomId + "/timebomb"]}
