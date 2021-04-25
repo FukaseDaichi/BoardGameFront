@@ -8,9 +8,7 @@ import Chatmessage from "../../components/message/chatmessage";
 import { useEffect, useState, useCallback } from "react";
 import ChatComponent from "../../components/chatcomponent";
 import UserInfo from "../../components/hideout/userInfo";
-import HoloCard from "../../components/card/holoCard";
-
-let clientObj = null;
+import styles from "../../styles/components/hideout/room.module.scss";
 
 // 接続切れ
 const disconnect = () => {
@@ -21,6 +19,8 @@ export default function HideoutRoom() {
   // roomId取得
   const router = useRouter();
   const { roomId } = router.query;
+
+  const [clientObj, setClientObj] = useState(null);
   const [messageList, setMessageList] = useState([]);
   const [playerName, setPlayerName] = useState(null);
   const [chatList, setChatList] = useState([]);
@@ -165,7 +165,7 @@ export default function HideoutRoom() {
         />
         <title>Hideout</title>
       </Head>
-      <HoloCard />
+
       {messageList.map((value, index) => {
         if (index === messageList.length - 1) {
           return <Chatmessage value={value} type="info" key={index} />;
@@ -176,7 +176,7 @@ export default function HideoutRoom() {
         url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
         topics={["/topic/" + roomId]}
         ref={(client) => {
-          clientObj = client;
+          setClientObj(client);
         }}
         onMessage={(msg) => {
           getMessage(msg);
@@ -227,11 +227,20 @@ export default function HideoutRoom() {
           突入
         </button>
       </div>
-      {userList.map((user, index: number) => {
-        return <UserInfo key={index} user={user} />;
-      })}
+      <div className={styles.userfirld}>
+        {userList.map((user, index: number) => {
+          return (
+            <UserInfo
+              key={index}
+              user={user}
+              ownFlg={user.userName === playerName}
+              userColor={SystemConst.PLAYER_COLOR_LIST[user.userNo]}
+            />
+          );
+        })}
+      </div>
 
-      <ChatComponent chatList={chatList} chat={chat} />
+      {false && <ChatComponent chatList={chatList} chat={chat} />}
     </Layout>
   );
 }

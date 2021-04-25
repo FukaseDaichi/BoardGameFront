@@ -1,0 +1,11 @@
+@import "../../variables";
+
+div.userfirld {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
