@@ -9,245 +9,319 @@ import { useEffect, useState, useCallback } from "react";
 import ChatComponent from "../../components/chatcomponent";
 import BuildCard from "../../components/hideout/buildcard";
 import UserInfo from "../../components/hideout/userInfo";
+import RushTurn from "../../components/hideout/rushturn";
 import styles from "../../styles/components/hideout/room.module.scss";
 
 // 接続切れ
 const disconnect = () => {
-	console.log("接続が切れました");
+  console.log("接続が切れました");
 };
 
 export default function HideoutRoom() {
-	// roomId取得
-	const router = useRouter();
-	const { roomId } = router.query;
+  // roomId取得
+  const router = useRouter();
+  const { roomId } = router.query;
 
-	const [clientObj, setClientObj] = useState(null);
-	const [messageList, setMessageList] = useState([]);
-	const [playerName, setPlayerName] = useState(null);
-	const [chatList, setChatList] = useState([]);
+  const [clientObj, setClientObj] = useState(null);
+  const [messageList, setMessageList] = useState([]);
+  const [playerName, setPlayerName] = useState(null);
+  const [chatList, setChatList] = useState([]);
 
-	// gamedata
-	const [userList, setUserLst] = useState([]);
-	const [memberFirldList, setMemberFirldList] = useState([]);
-	const [rushFlg, setRushFlg] = useState(false);
-	const [firldBuilding, setFirldBuilding] = useState({});
+  // gamedata
+  const [userList, setUserLst] = useState([]);
+  const [memberFirldList, setMemberFirldList] = useState([]);
+  const [rushFlg, setRushFlg] = useState(false);
+  const [firldBuilding, setFirldBuilding] = useState(null);
+  const [waitUserIndexList, setWaitUserIndexList] = useState([]);
 
-	// ルーム入室
-	const roomIn = (userName: string) => {
-		const url = "/app/game-roomin";
-		const soketInfo: SocketInfo = {
-			status: 100,
-			roomId: roomId as string,
-			userName: userName,
-			message: null,
-			obj: null,
-		};
-		setPlayerName(userName);
-		conect(url, soketInfo);
-	};
+  // view
+  const [rushAreaFlg, setRushAreaFlg] = useState(false);
 
-	// チャット
-	const chat = useCallback(
-		(message: string) => {
-			if (playerName) {
-				const url = "/app/game-chat";
-				const soketInfo: SocketInfo = {
-					status: 101,
-					roomId: roomId as string,
-					userName: playerName,
-					message: message,
-					obj: null,
-				};
-				conect(url, soketInfo);
-				setMessageList(messageList.concat(message));
-			}
-		},
-		[playerName, messageList]
-	);
+  // ルーム入室
+  const roomIn = (userName: string) => {
+    const url = "/app/game-roomin";
+    const soketInfo: SocketInfo = {
+      status: 100,
+      roomId: roomId as string,
+      userName: userName,
+      message: null,
+      obj: null,
+    };
+    setPlayerName(userName);
+    conect(url, soketInfo);
+  };
 
-	// ゲーム開始
-	const init = () => {
-		const url = "/app/hideout-init";
-		const soketInfo: SocketInfo = {
-			status: 300,
-			roomId: roomId as string,
-			userName: playerName,
-			message: null,
-			obj: null,
-		};
-		conect(url, soketInfo);
-	};
+  // チャット
+  const chat = useCallback(
+    (message: string) => {
+      if (playerName) {
+        const url = "/app/game-chat";
+        const soketInfo: SocketInfo = {
+          status: 101,
+          roomId: roomId as string,
+          userName: playerName,
+          message: message,
+          obj: null,
+        };
+        conect(url, soketInfo);
+        setMessageList(messageList.concat(message));
+      }
+    },
+    [playerName, messageList]
+  );
 
-	const wait = (index: number) => {
-		const url = "/app/hideout-wait";
-		const soketInfo: SocketInfo = {
-			status: 400,
-			roomId: roomId as string,
-			userName: playerName,
-			message: null,
-			obj: index,
-		};
-		conect(url, soketInfo);
-	};
+  // ゲーム開始
+  const init = () => {
+    const url = "/app/hideout-init";
+    const soketInfo: SocketInfo = {
+      status: 300,
+      roomId: roomId as string,
+      userName: playerName,
+      message: null,
+      obj: null,
+    };
+    conect(url, soketInfo);
+  };
 
-	const rush = (index: number) => {
-		const url = "/app/hideout-rush";
-		const soketInfo: SocketInfo = {
-			status: 500,
-			roomId: roomId as string,
-			userName: playerName,
-			message: null,
-			obj: index,
-		};
-		conect(url, soketInfo);
-	};
+  const wait = (index: number) => {
+    const url = "/app/hideout-wait";
+    const soketInfo: SocketInfo = {
+      status: 400,
+      roomId: roomId as string,
+      userName: playerName,
+      message: null,
+      obj: index,
+    };
+    conect(url, soketInfo);
+  };
 
-	const conect = (url: string, soketInfo: SocketInfo) => {
-		try {
-			clientObj.sendMessage(url, JSON.stringify(soketInfo));
-		} catch (e) {
-			setMessageList(messageList.concat("通信エラー。再度試してください"));
-		}
-	};
+  const rush = (index: number) => {
+    const url = "/app/hideout-rush";
+    const soketInfo: SocketInfo = {
+      status: 500,
+      roomId: roomId as string,
+      userName: playerName,
+      message: null,
+      obj: index,
+    };
+    conect(url, soketInfo);
+  };
 
-	const getMessage = (socketInfo: SocketInfo) => {
-		switch (socketInfo.status) {
-			case 100: // ルーム入室
-				dataSet(socketInfo.obj);
-				break;
-			case 101: // チャット
-				setChatList(socketInfo.obj);
-				const messageFirld = document.getElementById("chat-firld");
-				messageFirld.scrollTop = messageFirld.scrollHeight;
-				break;
+  // アイコン変更
+  const changeIcon = useCallback(
+    (iconUrl: string) => {
+      const url = "/app/game-changeIcon";
+      const soketInfo: SocketInfo = {
+        status: 600,
+        roomId: roomId as string,
+        userName: playerName,
+        message: null,
+        obj: iconUrl,
+      };
+      console.log(soketInfo);
+      conect(url, soketInfo);
+    },
+    [clientObj, playerName]
+  );
 
-			case 200:
-				// ルーム入室(同一名ユーザ入室)
-				console.log(socketInfo);
-				dataSet(socketInfo.obj);
-				break;
+  const conect = (url: string, soketInfo: SocketInfo) => {
+    try {
+      clientObj.sendMessage(url, JSON.stringify(soketInfo));
+    } catch (e) {
+      setMessageList(messageList.concat("通信エラー。再度試してください"));
+    }
+  };
 
-			case 300: // ゲーム開始
-				console.log(socketInfo);
-				dataSet(socketInfo.obj);
-			default:
-				console.log(socketInfo);
-		}
-	};
+  const getMessage = (socketInfo: SocketInfo) => {
+    console.log(socketInfo);
 
-	const dataSet = (obj) => {
-		setUserLst(obj.userList);
-		setRushFlg(obj.rushFlg);
-		setFirldBuilding(obj.firldBuilding);
-		setMemberFirldList(obj.memberFirldList);
-	};
+    switch (socketInfo.status) {
+      case 100: // ルーム入室
+        dataSet(socketInfo.obj);
+        break;
+      case 101: // チャット
+        setChatList(socketInfo.obj);
+        const messageFirld = document.getElementById("chat-firld");
+        messageFirld.scrollTop = messageFirld.scrollHeight;
+        break;
 
-	return (
-		<Layout home={false}>
-			<style jsx global>{`
-				body {
-					background-image: url(/images/background.jpg);
-					background-attachment: fixed;
-					background-size: 370px;
-					background-position: bottom left;
-					background-repeat: no-repeat;
-					overflow-x: hidden;
-				}
-			`}</style>
-			<Head>
-				<meta
-					property="og:image"
-					content={SystemConst.Server.SITE_URL + "/images/background.jpg"}
-				/>
-				<meta property="og:title" content="ハイドアウトオンライン" />
-				<meta
-					property="og:description"
-					content="オンライン上でみんなでハイドアウト！"
-				/>
-				<title>Hideout</title>
-			</Head>
+      case 200:
+        // ルーム入室(同一名ユーザ入室)
+        dataSet(socketInfo.obj);
+        break;
 
-			{messageList.map((value, index) => {
-				if (index === messageList.length - 1) {
-					return <Chatmessage value={value} type="info" key={index} />;
-				}
-			})}
+      case 300: // ゲーム開始
+        // 誰かが行動したらラッシュタイムを終了
+        setRushAreaFlg(false);
 
-			<SockJsClient
-				url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
-				topics={["/topic/" + roomId]}
-				ref={(client) => {
-					setClientObj(client);
-				}}
-				onMessage={(msg) => {
-					getMessage(msg);
-				}}
-				onDisconnect={disconnect}
-			/>
+        dataSet(socketInfo.obj);
+        break;
 
-			<p>プレイヤーネーム：{playerName}</p>
-			<div>
-				<input type="text" id="username" />
-				<button
-					onClick={() => {
-						const usernameDom: HTMLInputElement = document.getElementById(
-							"username"
-						) as HTMLInputElement;
-						roomIn(usernameDom.value);
-					}}
-				>
-					入室
-				</button>
-			</div>
-			<div>
-				<button onClick={init}>開始</button>
-			</div>
-			<div>
-				<input type="number" id="taiki" />
-				<button
-					onClick={() => {
-						const taikiDom: HTMLInputElement = document.getElementById(
-							"taiki"
-						) as HTMLInputElement;
-						wait(Number(taikiDom.value));
-					}}
-				>
-					待機
-				</button>
-			</div>
-			<div>
-				<input type="number" id="rush" />
-				<button
-					onClick={() => {
-						const rushDom: HTMLInputElement = document.getElementById(
-							"rush"
-						) as HTMLInputElement;
-						rush(Number(rushDom.value));
-					}}
-				>
-					突入
-				</button>
-			</div>
-			{/* フィールド情報 */}
-			<div className={styles.firldBuild}>
-				<BuildCard />
-			</div>
-			{/* ユーザ情報 */}
-			<div className={styles.userfirld}>
-				{userList.map((user, index: number) => {
-					return (
-						<UserInfo
-							key={index}
-							user={user}
-							ownFlg={user.userName === playerName}
-							userColor={SystemConst.PLAYER_COLOR_LIST[user.userNo]}
-						/>
-					);
-				})}
-			</div>
+      case 400: // ゲーム待機
+        // 誰かが行動したらラッシュタイムを終了
+        setRushAreaFlg(false);
 
-			{/* チャットのやり取り（機能OFF） */}
-			{false && <ChatComponent chatList={chatList} chat={chat} />}
-		</Layout>
-	);
+        dataSet(socketInfo.obj);
+        break;
+
+      case 500: // 突入
+        dataSet(socketInfo.obj);
+        break;
+
+      case 600: // アイコン変更
+        setUserLst(socketInfo.obj);
+        break;
+
+      default:
+        console.log(socketInfo);
+    }
+  };
+
+  const dataSet = (obj) => {
+    setUserLst(obj.userList);
+    setRushFlg(obj.rushFlg);
+    setFirldBuilding(obj.firldBuilding);
+    setMemberFirldList(obj.memberFirldList);
+    setWaitUserIndexList(obj.waitUserIndexList);
+  };
+
+  // フラグの監視
+  useEffect(() => {
+    // ラッシュフラグがtrueのときに連動
+    if (rushFlg) {
+      setRushAreaFlg(true);
+    }
+  }, [rushFlg]);
+
+  return (
+    <Layout home={false}>
+      <style jsx global>{`
+        body {
+          background-image: url(/images/hideout/hideoutbackground.png);
+          background-attachment: fixed;
+          background-size: 370px;
+          background-position: bottom left;
+          background-repeat: no-repeat;
+          overflow-x: hidden;
+          background-color: #ecebeb;
+        }
+      `}</style>
+      <Head>
+        <meta
+          property="og:image"
+          content={SystemConst.Server.SITE_URL + "/images/background.jpg"}
+        />
+        <meta property="og:title" content="ハイドアウトオンライン" />
+        <meta
+          property="og:description"
+          content="オンライン上でみんなでハイドアウト！"
+        />
+        <title>Hideout</title>
+      </Head>
+
+      {messageList.map((value, index) => {
+        if (index === messageList.length - 1) {
+          return <Chatmessage value={value} type="info" key={index} />;
+        }
+      })}
+
+      <SockJsClient
+        url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
+        topics={["/topic/" + roomId]}
+        ref={(client) => {
+          setClientObj(client);
+        }}
+        onMessage={(msg) => {
+          getMessage(msg);
+        }}
+        onDisconnect={disconnect}
+      />
+
+      <p>プレイヤーネーム：{playerName}</p>
+
+      <div>
+        <input type="text" id="username" />
+        <button
+          onClick={() => {
+            const usernameDom: HTMLInputElement = document.getElementById(
+              "username"
+            ) as HTMLInputElement;
+            roomIn(usernameDom.value);
+          }}
+        >
+          入室
+        </button>
+      </div>
+      <div>
+        <button onClick={init}>開始</button>
+      </div>
+      <div>
+        <input type="number" id="taiki" />
+        <button
+          onClick={() => {
+            const taikiDom: HTMLInputElement = document.getElementById(
+              "taiki"
+            ) as HTMLInputElement;
+            wait(Number(taikiDom.value));
+          }}
+        >
+          待機
+        </button>
+      </div>
+      <div>
+        <input type="number" id="rush" />
+        <button
+          onClick={() => {
+            const rushDom: HTMLInputElement = document.getElementById(
+              "rush"
+            ) as HTMLInputElement;
+            rush(Number(rushDom.value));
+          }}
+        >
+          突入
+        </button>
+      </div>
+      {/* フィールド情報 */}
+      {firldBuilding && (
+        <div className={styles.firldBuild}>
+          <BuildCard
+            buildingCard={firldBuilding}
+            userList={userList}
+            wait={wait}
+            waitUserIndexList={waitUserIndexList}
+            ownFlg={false}
+          />
+        </div>
+      )}
+      {/* ユーザ情報 */}
+      <div className={styles.userfirld}>
+        {userList.map((user, index: number) => {
+          return (
+            <UserInfo
+              key={index}
+              user={user}
+              ownFlg={user.userName === playerName}
+              userColor={SystemConst.PLAYER_COLOR_LIST[index]}
+              changeIcon={changeIcon}
+              userList={userList}
+              wait={wait}
+            />
+          );
+        })}
+      </div>
+      {rushAreaFlg && (
+        <RushTurn
+          userList={userList}
+          playerName={playerName}
+          rush={rush}
+          memberFirldList={memberFirldList}
+          endFnc={() => {
+            setRushAreaFlg(false);
+          }}
+        />
+      )}
+      {/* チャットのやり取り（機能OFF） */}
+      {false && <ChatComponent chatList={chatList} chat={chat} />}
+    </Layout>
+  );
 }

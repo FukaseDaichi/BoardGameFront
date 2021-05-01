@@ -13,7 +13,8 @@ div.main {
 
   @include mq(md) {
     padding: 1em 0.4em;
-    width: calc(50% - 4em);
+    margin: 1em 1em 1.5em 0.5em;
+    width: calc(50% - 2em);
   }
   div.icon {
     position: relative;
@@ -173,10 +174,16 @@ div.main {
     overflow: hidden;
     border-radius: 5px;
     animation: SlideIn 0.4s;
-
     @include mq(md) {
       width: 300px;
     }
+
+    &.even {
+      @include mq(md) {
+        left: -165px;
+      }
+    }
+
     div.card-roll {
       width: 100%;
       box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
@@ -202,7 +209,6 @@ div.main {
     position: relative;
     img {
       top: -30px;
-      left: 250px;
       position: absolute;
       width: 50px;
       z-index: 1;
