@@ -1,4 +1,4 @@
-import styles from "../../styles/components/hideout/hideoutheadinfo.module.scss";
+import styles from "../../styles/components/hideout/headinfo.module.scss";
 
 type HeadInfoProps = {
   userList: Array<any>;
