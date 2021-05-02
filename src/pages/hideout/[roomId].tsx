@@ -7,10 +7,15 @@ import { SocketInfo } from "../../type";
 import Chatmessage from "../../components/message/chatmessage";
 import { useEffect, useState, useCallback } from "react";
 import ChatComponent from "../../components/chatcomponent";
+import BuildCard from "../../components/hideout/buildcard";
 import UserInfo from "../../components/hideout/userInfo";
-import HoloCard from "../../components/card/holoCard";
-
-let clientObj = null;
+import RushTurn from "../../components/hideout/rushturn";
+import styles from "../../styles/components/hideout/room.module.scss";
+import HideoutModal from "../../components/modal/hideoutmodal";
+import HideoutHeadInfo from "../../components/hideout/hideoutheadinfo";
+import GameInfo from "../../components/hideout/gameinfo";
+import Router from "next/router";
+import Start from "../../components/timebomb/start";
 
 // 接続切れ
 const disconnect = () => {
@@ -21,6 +26,8 @@ export default function HideoutRoom() {
   // roomId取得
   const router = useRouter();
   const { roomId } = router.query;
+
+  const [clientObj, setClientObj] = useState(null);
   const [messageList, setMessageList] = useState([]);
   const [playerName, setPlayerName] = useState(null);
   const [chatList, setChatList] = useState([]);
@@ -29,7 +36,18 @@ export default function HideoutRoom() {
   const [userList, setUserLst] = useState([]);
   const [memberFirldList, setMemberFirldList] = useState([]);
   const [rushFlg, setRushFlg] = useState(false);
-  const [firldBuilding, setFirldBuilding] = useState({});
+  const [firldBuilding, setFirldBuilding] = useState(null);
+  const [waitUserIndexList, setWaitUserIndexList] = useState([]);
+  const [memberCardList, setMemberCardList] = useState([]);
+  const [buildingCardList, setBuildingCardList] = useState([]);
+  const [winnerTeam, setWinnerTeam] = useState(0);
+  const [turn, setTurn] = useState(0);
+
+  // view
+  const [startFlg, setStartFlg] = useState(false);
+  const [rushAreaFlg, setRushAreaFlg] = useState(false);
+  const [swatWinFlg, setSwatWinFlg] = useState(false);
+  const [terroristWinFlg, setTerroristWinFlg] = useState(false);
 
   // ルーム入室
   const roomIn = (userName: string) => {
@@ -101,6 +119,22 @@ export default function HideoutRoom() {
     conect(url, soketInfo);
   };
 
+  // アイコン変更
+  const changeIcon = useCallback(
+    (iconUrl: string) => {
+      const url = "/app/game-changeIcon";
+      const soketInfo: SocketInfo = {
+        status: 600,
+        roomId: roomId as string,
+        userName: playerName,
+        message: null,
+        obj: iconUrl,
+      };
+      conect(url, soketInfo);
+    },
+    [clientObj, playerName]
+  );
+
   const conect = (url: string, soketInfo: SocketInfo) => {
     try {
       clientObj.sendMessage(url, JSON.stringify(soketInfo));
@@ -110,6 +144,8 @@ export default function HideoutRoom() {
   };
 
   const getMessage = (socketInfo: SocketInfo) => {
+    console.log(socketInfo);
+
     switch (socketInfo.status) {
       case 100: // ルーム入室
         dataSet(socketInfo.obj);
@@ -122,13 +158,36 @@ export default function HideoutRoom() {
 
       case 200:
         // ルーム入室(同一名ユーザ入室)
-        console.log(socketInfo);
         dataSet(socketInfo.obj);
         break;
 
       case 300: // ゲーム開始
-        console.log(socketInfo);
+        setRushAreaFlg(false);
+        // 勝敗リセット
+        setTerroristWinFlg(false);
+        setSwatWinFlg(false);
+
+        // ゲームスタート
+        setStartFlg(true);
+
         dataSet(socketInfo.obj);
+        break;
+
+      case 400: // ゲーム待機
+        // 誰かが行動したらラッシュタイムを終了
+        setRushAreaFlg(false);
+
+        dataSet(socketInfo.obj);
+        break;
+
+      case 500: // 突入
+        dataSet(socketInfo.obj);
+        break;
+
+      case 600: // アイコン変更
+        setUserLst(socketInfo.obj);
+        break;
+
       default:
         console.log(socketInfo);
     }
@@ -139,24 +198,80 @@ export default function HideoutRoom() {
     setRushFlg(obj.rushFlg);
     setFirldBuilding(obj.firldBuilding);
     setMemberFirldList(obj.memberFirldList);
+    setWaitUserIndexList(obj.waitUserIndexList);
+    setWinnerTeam(obj.winnerTeam);
+    setMemberCardList(obj.memberCardList);
+    setBuildingCardList(obj.buildingCardList);
+    setTurn(obj.turn);
   };
+
+  // ラッシュフラグの監視
+  useEffect(() => {
+    // ラッシュフラグがtrueのときに連動
+    if (rushFlg) {
+      scrollTo(0, 0);
+      setRushAreaFlg(true);
+    }
+  }, [rushFlg]);
+
+  // スタートフラグの監視
+  useEffect(() => {
+    if (startFlg) {
+      scrollTo(0, 0);
+      window.setTimeout(() => {
+        setStartFlg(false);
+      }, 4000);
+    }
+  }, [startFlg]);
+
+  // 勝敗監視
+  useEffect(() => {
+    // ラッシュフラグがtrueのときに連動
+    switch (winnerTeam) {
+      case 1:
+        setSwatWinFlg(true);
+        break;
+      case 2:
+        setTerroristWinFlg(true);
+        break;
+    }
+  }, [winnerTeam]);
+
+  // 入室時
+  useEffect(() => {
+    if (
+      userList.filter((element) => {
+        return element.userName === playerName;
+      }).length > 0
+    ) {
+      const btnDom = document.querySelector("." + styles.roominbtn);
+      if (btnDom.classList.contains(styles.in)) {
+        return;
+      }
+      btnDom.classList.add(styles.in);
+    }
+  }, [userList.length, playerName]);
 
   return (
     <Layout home={false}>
       <style jsx global>{`
         body {
-          background-image: url(/images/background.jpg);
+          background-image: url(/images/hideout/hideoutbackground.png);
           background-attachment: fixed;
           background-size: 370px;
           background-position: bottom left;
           background-repeat: no-repeat;
           overflow-x: hidden;
+          background-color: #ecebeb;
         }
       `}</style>
       <Head>
         <meta
           property="og:image"
-          content={SystemConst.Server.SITE_URL + "/images/background.jpg"}
+          content={
+            SystemConst.Server.SITE_URL +
+            "/images/hideout/hideoutbackground.png"
+          }
         />
         <meta property="og:title" content="ハイドアウトオンライン" />
         <meta
@@ -165,28 +280,39 @@ export default function HideoutRoom() {
         />
         <title>Hideout</title>
       </Head>
-      <HoloCard />
+      {/* 開始合図 */}
+      {startFlg && <Start />}
+
+      {turn > 0 && (
+        <HideoutHeadInfo userList={userList} memberCardList={memberCardList} />
+      )}
+      {turn > 0 && (
+        <GameInfo
+          buildingCardList={buildingCardList}
+          memberCardList={memberCardList}
+        />
+      )}
       {messageList.map((value, index) => {
         if (index === messageList.length - 1) {
           return <Chatmessage value={value} type="info" key={index} />;
         }
       })}
-
       <SockJsClient
         url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
         topics={["/topic/" + roomId]}
         ref={(client) => {
-          clientObj = client;
+          setClientObj(client);
         }}
         onMessage={(msg) => {
           getMessage(msg);
         }}
         onDisconnect={disconnect}
       />
-
-      <p>プレイヤーネーム：{playerName}</p>
-      <div>
-        <input type="text" id="username" />
+      <div className={styles.roominbtn}>
+        <p>
+          <label htmlFor="username">Name</label>
+        </p>
+        <input type="text" id="username" maxLength={20} />
         <button
           onClick={() => {
             const usernameDom: HTMLInputElement = document.getElementById(
@@ -195,43 +321,89 @@ export default function HideoutRoom() {
             roomIn(usernameDom.value);
           }}
         >
-          入室
+          Room IN
         </button>
       </div>
-      <div>
-        <button onClick={init}>開始</button>
+      {/* フィールド情報 */}
+      {firldBuilding && (
+        <div className={styles.firldBuild}>
+          <BuildCard
+            buildingCard={firldBuilding}
+            userList={userList}
+            wait={wait}
+            waitUserIndexList={waitUserIndexList}
+            ownFlg={false}
+          />
+        </div>
+      )}
+      {/* ユーザ情報 */}
+      <div className={styles.userfirld}>
+        {userList.map((user, index: number) => {
+          return (
+            <UserInfo
+              key={index}
+              user={user}
+              ownFlg={user.userName === playerName}
+              userColor={SystemConst.PLAYER_COLOR_LIST[index]}
+              changeIcon={changeIcon}
+              userList={userList}
+              wait={wait}
+              winnerTeam={winnerTeam}
+            />
+          );
+        })}
       </div>
-      <div>
-        <input type="number" id="taiki" />
-        <button
-          onClick={() => {
-            const taikiDom: HTMLInputElement = document.getElementById(
-              "taiki"
-            ) as HTMLInputElement;
-            wait(Number(taikiDom.value));
+      {rushAreaFlg && (
+        <RushTurn
+          userList={userList}
+          playerName={playerName}
+          rush={rush}
+          memberFirldList={memberFirldList}
+          endFnc={() => {
+            setRushAreaFlg(false);
+          }}
+        />
+      )}
+      {!rushAreaFlg && terroristWinFlg && (
+        <HideoutModal
+          type={"seven"}
+          endFnc={() => {
+            setTimeout(() => {
+              setTerroristWinFlg(false);
+            }, 3000);
           }}
         >
-          待機
-        </button>
-      </div>
-      <div>
-        <input type="number" id="rush" />
-        <button
-          onClick={() => {
-            const rushDom: HTMLInputElement = document.getElementById(
-              "rush"
-            ) as HTMLInputElement;
-            rush(Number(rushDom.value));
+          <div className={styles.result}>
+            <img src="/images/hideout/terroristwin.png" alt="結果" />
+          </div>
+        </HideoutModal>
+      )}
+      {!rushAreaFlg && swatWinFlg && (
+        <HideoutModal
+          type={"five"}
+          endFnc={() => {
+            setTimeout(() => {
+              setSwatWinFlg(false);
+            }, 3000);
           }}
         >
-          突入
+          <div className={styles.result}>
+            <img src="/images/hideout/swatwin.png" alt="結果" />
+          </div>
+        </HideoutModal>
+      )}
+      <div className={styles.btnarea}>
+        <button
+          onClick={() => {
+            Router.push("/gametest");
+          }}
+        >
+          HOME
         </button>
+        <button onClick={init}>{turn > 0 ? "GAME RESET" : "GAME START"}</button>
       </div>
-      {userList.map((user, index: number) => {
-        return <UserInfo key={index} user={user} />;
-      })}
-
-      <ChatComponent chatList={chatList} chat={chat} />
+      {/* チャットのやり取り（機能OFF） */}
+      {false && <ChatComponent chatList={chatList} chat={chat} />}
     </Layout>
   );
 }

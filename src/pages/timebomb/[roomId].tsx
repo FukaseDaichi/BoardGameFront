@@ -14,9 +14,6 @@ import CountdownClock from "../../components/countdownclock";
 import Router from "next/router";
 import Head from "next/head";
 
-let clientObj = null;
-let playerName = null;
-
 // 接続切れ
 const disconnect = () => {
   console.log("接続が切れました");
@@ -28,6 +25,8 @@ export default function Room() {
   const { roomId } = router.query;
 
   // react hooks state
+  const [clientObj, setClientObj] = useState(null);
+  const [playerName, setPlayerName] = useState("");
   const [timeBombUserList, setTimeBombUserList] = useState([]);
   const [leadCardsList, setLeadCardsList] = useState([]);
   const [startFlg, setStartFlg] = useState(false);
@@ -75,8 +74,7 @@ export default function Room() {
   // ルーム入室
   const roomIn = (msg: RoomUserInfo) => {
     const url = "/app/roomin";
-    playerName = msg.userName;
-
+    setPlayerName(msg.userName);
     coneect(url, msg);
   };
 
@@ -89,7 +87,6 @@ export default function Room() {
   // メッセージ取得
   const receve = (msg) => {
     // エラーケース
-    console.log(msg.obj);
     if (msg.status) {
       switch (msg.status) {
         case 200:
@@ -201,7 +198,7 @@ export default function Room() {
       };
       coneect(url, usrInfo);
     },
-    [timeBombUserList]
+    [clientObj, playerName]
   );
 
   const limittimeDone = useCallback(
@@ -310,7 +307,7 @@ export default function Room() {
         url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
         topics={["/topic/" + roomId + "/timebomb"]}
         ref={(client) => {
-          clientObj = client;
+          setClientObj(client);
         }}
         onMessage={(msg) => {
           // デバッグ用
@@ -320,7 +317,7 @@ export default function Room() {
         onDisconnect={disconnect}
       />
 
-      {turn < 1 && (
+      {turn < 1 && clientObj && (
         <div className={styles.roominbtn}>
           <p>
             <label htmlFor="username">Name</label>
@@ -423,7 +420,7 @@ export default function Room() {
           );
         })}
       </div>
-      {playerName != null && (turn === 0 || endFlg) && (
+      {playerName !== "" && (turn === 0 || endFlg) && (
         <div className={styles.limittimeinputarea}>
           <div onClick={() => changeLimitTme(0)}>
             <input
