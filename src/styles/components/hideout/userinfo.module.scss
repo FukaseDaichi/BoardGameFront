@@ -224,6 +224,26 @@ div.main {
     }
   }
 
+  div.roll {
+    position: relative;
+    img {
+      top: 20px;
+      left: 10px;
+      position: absolute;
+      width: 120px;
+      z-index: 4;
+      animation: fwari ease-in-out 1.5s infinite alternate;
+    }
+    @keyframes fwari {
+      0% {
+        transform: translate(0%, 0%);
+      }
+      100% {
+        transform: translate(0%, -15px);
+      }
+    }
+  }
+
   div.build {
     img {
       width: 100%;

@@ -191,9 +191,11 @@ div.rush {
         justify-content: center;
         flex-wrap: wrap;
 
-        @include mq(md) {
-          height: 500px;
-          overflow-y: scroll;
+        &.oversize {
+          @include mq(md) {
+            height: 500px;
+            overflow-y: scroll;
+          }
         }
 
         > div {
@@ -219,6 +221,12 @@ div.rush {
     flex-wrap: wrap;
     > div {
       position: relative;
+
+      > div.card {
+        position: relative;
+        z-index: 1;
+      }
+
       div.imgdiv {
         position: absolute;
         width: 70px;
@@ -226,10 +234,11 @@ div.rush {
         left: 45px;
         border-radius: 50%;
         box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
-        z-index: 1;
+        z-index: 2;
         border: solid 2px;
         overflow: hidden;
-        animation: zoomIn 2s;
+        animation: view 2s, zoomIn 2s;
+
         img {
           width: 100%;
         }

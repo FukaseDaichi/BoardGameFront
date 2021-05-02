@@ -63,6 +63,10 @@ export default function RushTrun(props: RushTurnProps) {
   const rushFinalFlg: boolean =
     props.memberFirldList && props.memberFirldList.length > 3;
 
+  if (rushFinalFlg) {
+    scrollTo(0, 0);
+  }
+
   let result = props.memberFirldList.reduce((sum, element) => {
     return sum + element.cardType;
   }, 0);
@@ -109,7 +113,13 @@ export default function RushTrun(props: RushTurnProps) {
               </h1>
             ))}
           {!rushFinalFlg && (
-            <div className={styles.handcard}>
+            <div
+              className={`${styles.handcard} ${
+                haveFlg && props.userList[userIndex].memberCardList.length > 2
+                  ? styles.oversize
+                  : ""
+              }`}
+            >
               {haveFlg &&
                 !rushFinalFlg &&
                 props.userList[userIndex].memberCardList.map((value, index) => {
@@ -136,13 +146,17 @@ export default function RushTrun(props: RushTurnProps) {
               {props.memberFirldList.map((member, index) => {
                 return (
                   <div key={index}>
-                    <HoloCard
-                      width={150}
-                      height={210}
-                      imgUrl={getMemberImgUrl(member.cardType)}
-                      borderRadius={20}
-                      rareFlg={member.cardType === 2 || member.cardType === -1}
-                    />
+                    <div className={styles.card}>
+                      <HoloCard
+                        width={150}
+                        height={210}
+                        imgUrl={getMemberImgUrl(member.cardType)}
+                        borderRadius={20}
+                        rareFlg={
+                          member.cardType === 2 || member.cardType === -1
+                        }
+                      />
+                    </div>
                     <div
                       className={styles.imgdiv}
                       style={{

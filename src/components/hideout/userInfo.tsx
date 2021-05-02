@@ -3,7 +3,6 @@ import { useState } from "react";
 import HoloCard from "../../components/card/holoCard";
 import HideoutIcon from "./hideouticon";
 import BuildCard from "../../components/hideout/buildcard";
-import { userInfo } from "node:os";
 
 // ハイドアウト用
 
@@ -28,6 +27,20 @@ const getRollImgUrl = (rollType: number) => {
   return url;
 };
 
+const getRollMarkImgUrl = (rollType: number) => {
+  let url = null;
+
+  switch (rollType) {
+    case 1:
+      url = "/images/hideout/swatmark.png";
+      break;
+    case 2:
+      url = "/images/hideout/terroristmark.png";
+      break;
+  }
+  return url;
+};
+
 type UserInfoProps = {
   user: any;
   ownFlg: boolean;
@@ -35,6 +48,7 @@ type UserInfoProps = {
   changeIcon: (string) => void;
   userList: Array<any>;
   wait: (number) => void;
+  winnerTeam: number;
 };
 
 export default function UserInfo(props: UserInfoProps) {
@@ -44,8 +58,16 @@ export default function UserInfo(props: UserInfoProps) {
     borderColor: props.userColor,
     color: props.userColor,
   };
+  const divTurnStyles = {
+    borderColor: props.userColor,
+    color: props.userColor,
+    backgroundColor: "rgb(229,245,228)",
+  };
   return (
-    <div className={`${styles.main}`} style={divStyles}>
+    <div
+      className={`${styles.main}`}
+      style={props.user.turnFlg ? divTurnStyles : divStyles}
+    >
       <div className={styles.icon}>
         {props.ownFlg ? (
           <HideoutIcon
@@ -98,7 +120,15 @@ export default function UserInfo(props: UserInfoProps) {
       </div>
       {props.user.turnFlg && (
         <div className={styles.turn}>
-          <img src={"/images/hasami.png"} alt="手番" />
+          <img src={"/images/hideout/handgun.png"} alt="手番" />
+        </div>
+      )}
+      {props.winnerTeam > 0 && (
+        <div className={styles.roll}>
+          <img
+            src={getRollMarkImgUrl(props.user.userRoleNo)}
+            alt="役職マーク"
+          />
         </div>
       )}
       {infoFlg && (
