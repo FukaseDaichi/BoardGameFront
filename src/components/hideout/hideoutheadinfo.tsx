@@ -98,7 +98,7 @@ export default function HideoutHeadInfo(props: HeadInfoProps) {
                     alt="エキスパートテロリスト"
                   />
                 </div>
-                <span>{exteroSize}</span>/{exteroSize}
+                <span>{extero}</span>/{exteroSize}
               </div>
             </div>
             <h2>total {tero + extero + swat + exswat} left</h2>
