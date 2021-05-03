@@ -44,6 +44,7 @@ export default function HideoutRoom() {
   const [turn, setTurn] = useState(0);
 
   // view
+  const [viewMemberCardList, setViewMemberCardList] = useState([]);
   const [startFlg, setStartFlg] = useState(false);
   const [rushAreaFlg, setRushAreaFlg] = useState(false);
   const [swatWinFlg, setSwatWinFlg] = useState(false);
@@ -144,7 +145,7 @@ export default function HideoutRoom() {
   };
 
   const getMessage = (socketInfo: SocketInfo) => {
-    console.log(socketInfo);
+    //console.log(socketInfo);
 
     switch (socketInfo.status) {
       case 100: // ルーム入室
@@ -256,6 +257,11 @@ export default function HideoutRoom() {
     }
   }, [userList.length, playerName]);
 
+  // ヘッダ用情報更新
+  useEffect(() => {
+    setViewMemberCardList(memberCardList);
+  }, [turn, rushFlg]);
+
   return (
     <Layout home={false}>
       <style jsx global>{`
@@ -288,7 +294,10 @@ export default function HideoutRoom() {
       {startFlg && <Start />}
 
       {turn > 0 && (
-        <HideoutHeadInfo userList={userList} memberCardList={memberCardList} />
+        <HideoutHeadInfo
+          userList={userList}
+          memberCardList={viewMemberCardList}
+        />
       )}
       {turn > 0 && (
         <GameInfo
