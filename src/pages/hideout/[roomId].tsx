@@ -239,16 +239,20 @@ export default function HideoutRoom() {
 
   // 入室時
   useEffect(() => {
-    if (
-      userList.filter((element) => {
-        return element.userName === playerName;
-      }).length > 0
-    ) {
+    const userArray = userList.filter((element) => {
+      return element.userName === playerName;
+    });
+    if (userArray.length > 0) {
       const btnDom = document.querySelector("." + styles.roominbtn);
       if (btnDom.classList.contains(styles.in)) {
         return;
       }
       btnDom.classList.add(styles.in);
+
+      // アイコン初期設定
+      if (userArray[0].userIconUrl === null) {
+        changeIcon("/images/icon/icon" + userArray[0].userNo + ".jpg");
+      }
     }
   }, [userList.length, playerName]);
 
@@ -349,6 +353,7 @@ export default function HideoutRoom() {
               userList={userList}
               wait={wait}
               winnerTeam={winnerTeam}
+              turn={turn}
             />
           );
         })}

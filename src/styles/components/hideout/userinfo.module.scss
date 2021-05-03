@@ -16,6 +16,19 @@ div.main {
     margin: 1em 1em 1.5em 0.5em;
     width: calc(50% - 2em);
   }
+
+  span.you {
+    position: absolute;
+    font-family: "Patrick Hand SC", cursive;
+    top: 5px;
+    font-size: 1.5rem;
+    font-weight: 600;
+
+    @include mq(md) {
+      font-size: 1.2rem;
+    }
+  }
+
   div.icon {
     position: relative;
     width: 100%;

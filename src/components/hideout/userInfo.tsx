@@ -49,6 +49,7 @@ type UserInfoProps = {
   userList: Array<any>;
   wait: (number) => void;
   winnerTeam: number;
+  turn: number;
 };
 
 export default function UserInfo(props: UserInfoProps) {
@@ -68,6 +69,7 @@ export default function UserInfo(props: UserInfoProps) {
       className={`${styles.main}`}
       style={props.user.turnFlg ? divTurnStyles : divStyles}
     >
+      {props.ownFlg && <span className={styles.you}>YOU!</span>}
       <div className={styles.icon}>
         {props.ownFlg ? (
           <HideoutIcon
@@ -90,7 +92,7 @@ export default function UserInfo(props: UserInfoProps) {
             <label>{props.user.userName}</label>
           </div>
 
-          {props.ownFlg && (
+          {props.ownFlg && props.turn > 0 && (
             <div className={styles.btnarea}>
               <div
                 className={styles.btn}
