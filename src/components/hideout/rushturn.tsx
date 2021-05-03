@@ -79,7 +79,7 @@ export default function RushTrun(props: RushTurnProps) {
   const end = () => {
     if (rushFinalFlg) {
       document.getElementById("rush-time-area").classList.add(styles.out);
-      setTimeout(() => props.endFnc(), 3000);
+      setTimeout(() => props.endFnc(), 2000);
       unView();
     }
   };
