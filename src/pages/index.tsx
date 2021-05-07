@@ -57,6 +57,11 @@ export default function CreateRoom() {
 
 	return (
 		<Layout home={true}>
+			<style jsx global>{`
+				body {
+					overflow-x: hidden;
+				}
+			`}</style>
 			<Head>
 				<meta
 					property="og:image"
