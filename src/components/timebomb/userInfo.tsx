@@ -64,6 +64,7 @@ type UserInfoProps = {
   endFlg: boolean;
   playfnc: (cardIndex: number) => void;
   changeIcon: (url: string) => void;
+  secretFlg: boolean;
 };
 
 export default function UserInfo(userInfoProps: UserInfoProps) {
@@ -188,20 +189,60 @@ export default function UserInfo(userInfoProps: UserInfoProps) {
               id={id}
               className={value.openFlg ? styles.opend : ""}
             >
-              {userInfoProps.ownFlg ? (
+              {userInfoProps.ownFlg && !userInfoProps.secretFlg ? (
                 <img
                   src={getImgUrl(value.cardType)}
                   alt="あなたの裏カード"
                   className={styles.gray}
                 />
               ) : (
-                <img src="/images/back.png" alt="裏カード" />
+                <img
+                  src="/images/back.png"
+                  alt="裏カード"
+                  className={`${
+                    userInfoProps.ownFlg &&
+                    userInfoProps.secretFlg &&
+                    styles.gray
+                  }`}
+                />
               )}
               <img src={getImgUrl(value.cardType)} alt="表カード" />
             </div>
           );
         })}
       </div>
+      {userInfoProps.cardlist.length > 0 &&
+        userInfoProps.ownFlg &&
+        userInfoProps.secretFlg && (
+          <div className={styles.secretMode}>
+            <div>
+              <div>
+                <img src={getImgUrl(1)} alt="解除" />
+              </div>
+              <span>
+                ×{" "}
+                {
+                  userInfoProps.cardlist.filter((element) => {
+                    return element.cardType === 1;
+                  }).length
+                }
+              </span>
+            </div>
+            <div>
+              <div>
+                <img src={getImgUrl(2)} alt="爆弾" />
+              </div>
+              <span>
+                ×{" "}
+                {
+                  userInfoProps.cardlist.filter((element) => {
+                    return element.cardType === 2;
+                  }).length
+                }
+              </span>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
