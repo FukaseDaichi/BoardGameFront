@@ -42,6 +42,7 @@ export default function Room() {
   const [turn, setTurn] = useState(0);
   const [releaseNo, setReleaseNo] = useState(0);
   const [limitTime, setLimitTime] = useState(0);
+  const [secretFlg, setSecretFlg] = useState(false);
 
   // 勝敗表示用
   const [endFlg, setEndFlg] = useState(false);
@@ -78,6 +79,21 @@ export default function Room() {
     coneect(url, msg);
   };
 
+  // 初回入室時
+  useEffect(() => {
+    const userArray = timeBombUserList.filter((element) => {
+      return element.userName === playerName;
+    });
+
+    if (userArray.length > 0) {
+      const btnDom = document.querySelector("." + styles.roominbtn);
+      if (btnDom.classList.contains(styles.in)) {
+        return;
+      }
+      btnDom.classList.add(styles.in);
+    }
+  }, [playerName, timeBombUserList.length]);
+
   // ゲームスタート
   const start = (msg: RoomUserInfo) => {
     const url = "/app/start";
@@ -101,6 +117,10 @@ export default function Room() {
           setMessageList(messageList.concat(msg.message));
           return;
 
+        case 800:
+          setSecretFlg(msg.obj);
+          return;
+
         case 900:
           // 制限時間変更
           setLimitTime(msg.obj);
@@ -110,11 +130,6 @@ export default function Room() {
           setMessageList(messageList.concat(msg.message));
           return;
       }
-    }
-
-    // 初回入室時
-    if (timeBombUserList.length === 0 && playerName != null) {
-      document.querySelector("." + styles.roominbtn).classList.add(styles.in);
     }
 
     // 解除メッセージ判定
@@ -159,6 +174,7 @@ export default function Room() {
     setReleaseNo(room.releaseNo);
     setEndFlg(false);
     setLimitTime(room.limitTime);
+    setSecretFlg(room.secretFlg);
 
     if (room.leadCardsList) {
       setLeadCardsList(room.leadCardsList);
@@ -236,6 +252,20 @@ export default function Room() {
       userName: playerName,
       message: null,
       obj: time,
+    };
+
+    clientObj.sendMessage(url, JSON.stringify(info));
+  };
+
+  // シークレットモード変更
+  const changeSecretFlg = () => {
+    const url = "/app/timebomb-changesecret";
+    const info: SocketInfo = {
+      status: 800,
+      roomId: roomId as string,
+      userName: playerName,
+      message: null,
+      obj: null,
     };
 
     clientObj.sendMessage(url, JSON.stringify(info));
@@ -416,6 +446,7 @@ export default function Room() {
               round={round}
               changeIcon={changeIcon}
               endFlg={endFlg}
+              secretFlg={secretFlg}
             ></UserInfo>
           );
         })}
@@ -484,6 +515,28 @@ export default function Room() {
             </label>
             <div className={styles.teban}>
               <img src={"/images/hasami.png"} alt="手番" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {playerName !== "" && (turn === 0 || endFlg) && (
+        <div className={styles.checkboxarea}>
+          <div className={styles.checkbox}>
+            <input
+              id="seacret"
+              type="checkbox"
+              checked={secretFlg}
+              onChange={changeSecretFlg}
+            />
+            <label htmlFor="seacret">SECRET MODE</label>
+            <div className={styles.tooltiparea}>
+              <span
+                className={styles.tooltip}
+                data-tooltip="自分のカードの場所がわからなくなるモード"
+              >
+                ?
+              </span>
             </div>
           </div>
         </div>

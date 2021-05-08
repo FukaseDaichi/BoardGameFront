@@ -23,7 +23,7 @@ export default function GameInfo(props: GameInfoProps) {
     return !element.consumeFlg;
   }).length;
 
-  const rushtimes = Math.max(lastmenberNum / 4 - 1, 0);
+  const rushtimes = Math.floor(Math.max(lastmenberNum / 4 - 1, 0));
 
   return (
     <div className={styles.gameinfo}>

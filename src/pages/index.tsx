@@ -1,6 +1,5 @@
 import Layout from "../components/layout";
 import House from "../components/house";
-import PulsingButton from "../components/button/pulsingbutton";
 import ImagePulsingBtn from "../components/button/imagepulsingbtn";
 import { useState } from "react";
 import { SystemConst } from "../const/next.config";

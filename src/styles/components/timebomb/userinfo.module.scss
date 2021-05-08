@@ -250,8 +250,8 @@ div.main {
       margin: 0 auto;
 
       @include mq(md) {
-        width: 70px;
-        height: 100px;
+        width: 60px;
+        height: 85px;
       }
 
       img {
@@ -260,6 +260,11 @@ div.main {
         position: absolute;
         top: 0;
         left: 0;
+
+        @include mq(md) {
+          border-radius: 10px;
+        }
+
         &:first-child {
           opacity: 1;
           transform: rotateY(0deg);
@@ -475,6 +480,43 @@ div.main {
       100% {
         opacity: 1;
         transform: scale(1) translate(0, 0);
+      }
+    }
+  }
+
+  div.secretMode {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 20px 0 20px;
+
+      > div {
+        position: relative;
+        width: 50px;
+        height: 70px;
+        margin: 0 auto;
+
+        @include mq(md) {
+          width: 35px;
+          height: 50px;
+        }
+
+        img {
+          border-radius: 3px;
+          width: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+      }
+
+      span {
+        margin-left: 10px;
+        font-size: 3rem;
       }
     }
   }
