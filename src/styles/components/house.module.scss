@@ -1,3 +1,5 @@
+@import "../variables";
+
 $house: #edeef0;
 $walls: #828592;
 $border: #292d39;
@@ -20,6 +22,10 @@ div.house {
     width: 300px;
     height: 300px;
 
+    @include mq(md) {
+      width: 220px;
+    }
+
     .ground {
       width: 140%;
       height: 10px;
@@ -27,6 +33,11 @@ div.house {
       background-color: $border;
       left: -50px;
       top: 100%;
+
+      @include mq(md) {
+        left: 0px;
+        width: 120%;
+      }
     }
     .ceiling {
       height: 4px;
@@ -37,6 +48,9 @@ div.house {
       transform-origin: left;
       left: 220px;
       transition: all 400ms;
+      @include mq(md) {
+        left: 185px;
+      }
     }
     .ceiling:nth-child(1) {
       transform: rotate(-125deg) translate(-5px);
