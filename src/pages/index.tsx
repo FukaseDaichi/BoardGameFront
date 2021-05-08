@@ -1,6 +1,7 @@
 import Layout from "../components/layout";
 import House from "../components/house";
 import PulsingButton from "../components/button/pulsingbutton";
+import ImagePulsingBtn from "../components/button/imagepulsingbtn";
 import { useState } from "react";
 import { SystemConst } from "../const/next.config";
 import styles from "../styles/home.module.scss";
@@ -8,100 +9,127 @@ import Router from "next/router";
 import Head from "next/head";
 
 const copyText = () => {
-	const roomUrlDom = document.querySelector("#room-url");
-	document.getSelection().selectAllChildren(roomUrlDom);
-	// 選択範囲のコピー
-	document.execCommand("copy");
-	// テキスト選択の解除
-	document.getSelection().empty();
+  const roomUrlDom = document.querySelector("#room-url");
+  document.getSelection().selectAllChildren(roomUrlDom);
+  // 選択範囲のコピー
+  document.execCommand("copy");
+  // テキスト選択の解除
+  document.getSelection().empty();
 
-	const btnDom = document.getElementById("copy-btn");
-	btnDom.classList.add(styles.copyed);
-	btnDom.innerText = "COPYED!";
+  const btnDom = document.getElementById("copy-btn");
+  btnDom.classList.add(styles.copyed);
+  btnDom.innerText = "COPYED!";
 };
 
 export default function CreateRoom() {
-	const [createFlg, setCreateFlg] = useState(false);
-	const [roomId, setRoomId] = useState("");
+  const [createFlg, setCreateFlg] = useState(false);
+  const [gameName, setGameName] = useState("");
+  const [roomId, setRoomId] = useState("");
 
-	// ルーム作成
-	const createRoombtn = async () => {
-		if (createFlg) {
-			return;
-		}
-		const url: string =
-			SystemConst.Server.AP_HOST + SystemConst.Server.CREATE_ROOM;
-		await fetch(url)
-			.then((res) => {
-				if (res.ok) {
-					return res.json();
-				} else {
-					throw new Error();
-				}
-			})
-			.then((resJson) => {
-				setRoomId(resJson.roomId);
-				const roomUrlDom = document.querySelector("#room-url") as HTMLElement;
-				roomUrlDom.innerText = location.href + "timebomb/" + resJson.roomId;
-				setCreateFlg(true);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	};
+  // ルーム作成
+  const createRoombtn = async (game: string) => {
+    setGameName(game);
 
-	// ルーム入室
-	const roomIn = () => {
-		Router.push("/timebomb/" + roomId);
-	};
+    if (createFlg) {
+      return;
+    }
 
-	return (
-		<Layout home={true}>
-			<style jsx global>{`
-				body {
-					overflow-x: hidden;
-				}
-			`}</style>
-			<Head>
-				<meta
-					property="og:image"
-					content={SystemConst.Server.SITE_URL + "/images/ogp.jpg"}
-				/>
-				<meta property="og:title" content="ボードゲームの部屋" />
-				<meta
-					property="og:description"
-					content="オンライン上でボードゲームができます"
-				/>
-				<title>ボードゲームの部屋</title>
-			</Head>
-			<House />
-			<div className={`${styles.home} ${!createFlg && styles.non}`}>
-				<div id="room-url"></div>
-				<section>
-					<button
-						type="button"
-						className={`${styles.lined} ${styles.thick}}`}
-						onClick={copyText}
-						id="copy-btn"
-					>
-						URL COPY
-					</button>
-					<button
-						type="button"
-						className={`${styles.lined} ${styles.thick}`}
-						onClick={roomIn}
-					>
-						ROOMIN!
-					</button>
-				</section>
-			</div>
-			<div className="">
-				<PulsingButton
-					value="CREATE!"
-					onClickFnc={createRoombtn}
-					viewFlg={createFlg}
-				/>
-			</div>
-		</Layout>
-	);
+    let url = SystemConst.Server.AP_HOST + SystemConst.Server.CREATE_ROOM;
+    if (game !== "timebomb") {
+      url = url + "/" + game;
+    }
+
+    await fetch(url)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw new Error();
+        }
+      })
+      .then((resJson) => {
+        setRoomId(resJson.roomId);
+        const roomUrlDom = document.querySelector("#room-url") as HTMLElement;
+        roomUrlDom.innerText = location.href + game + "/" + resJson.roomId;
+        setCreateFlg(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // ルーム入室
+  const roomIn = () => {
+    Router.push("/" + gameName + "/" + roomId);
+  };
+
+  return (
+    <Layout home={true}>
+      <style jsx global>{`
+        body {
+          overflow-x: hidden;
+        }
+      `}</style>
+      <Head>
+        <meta
+          property="og:image"
+          content={SystemConst.Server.SITE_URL + "/images/ogp.jpg"}
+        />
+        <meta property="og:title" content="正体隠匿ボードゲームの部屋" />
+        <meta
+          property="og:description"
+          content="タイムボム・ハイドアウトがオンラインでできます！"
+        />
+        <title>ボードゲームの部屋</title>
+      </Head>
+      <House />
+      <div className={`${styles.home} ${!createFlg && styles.non}`}>
+        <div id="room-url"></div>
+        <section>
+          <button
+            type="button"
+            className={`${styles.lined} ${styles.thick}}`}
+            onClick={copyText}
+            id="copy-btn"
+          >
+            URL COPY
+          </button>
+          <button
+            type="button"
+            className={`${styles.lined} ${styles.thick}`}
+            onClick={roomIn}
+          >
+            ROOMIN!
+          </button>
+        </section>
+      </div>
+      <div
+        className={`${styles.spinner} ${
+          gameName === "" || createFlg ? "invisible" : "visible"
+        }`}
+      >
+        <div className="m-auto">
+          <div className="spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+      <div className={styles.createbtnarea}>
+        <ImagePulsingBtn
+          value="TimeBomb!"
+          onClickFnc={() => createRoombtn("timebomb")}
+          viewFlg={gameName !== ""}
+          imageUrl={"/images/background.jpg"}
+          imageWidth={100}
+        />
+        <ImagePulsingBtn
+          value="Hideout!"
+          onClickFnc={() => createRoombtn("hideout")}
+          viewFlg={gameName !== ""}
+          imageUrl={"/images/hideout/hideoutbackground.png"}
+          imageWidth={100}
+        />
+      </div>
+    </Layout>
+  );
 }

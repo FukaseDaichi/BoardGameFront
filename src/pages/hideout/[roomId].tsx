@@ -52,6 +52,9 @@ export default function HideoutRoom() {
 
   // ルーム入室
   const roomIn = (userName: string) => {
+    if (userName === "") {
+      return;
+    }
     const url = "/app/game-roomin";
     const soketInfo: SocketInfo = {
       status: 100,
@@ -409,7 +412,7 @@ export default function HideoutRoom() {
       <div className={styles.btnarea}>
         <button
           onClick={() => {
-            Router.push("/gametest");
+            Router.push("/");
           }}
         >
           HOME
