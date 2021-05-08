@@ -101,3 +101,18 @@ div.home {
     }
   }
 }
+
+.createbtnarea {
+  display: flex;
+  justify-content: center;
+}
+
+.spinner {
+  position: relative;
+  top: -100px;
+  width: 100%;
+  > div {
+    width: 20px;
+    color: #323642;
+  }
+}
