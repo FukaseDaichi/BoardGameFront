@@ -141,12 +141,57 @@ div.btnarea {
     outline: none;
     border-radius: 30px;
     box-shadow: 0px 0px 21px -6px rgba(0, 0, 0, 0.6);
-    &:hover,
-    &:active,
-    &:focus {
+    &:active {
       transform: scale(0.9);
       background-color: rgb(255, 255, 255);
       color: rgb(31, 30, 30);
+    }
+  }
+}
+
+div.rollselect {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  > div {
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > div.counter {
+      margin-left: 50px;
+      display: flex;
+      > div.counterbtn {
+        cursor: pointer;
+        font-size: 2rem;
+        font-family: "Patrick Hand SC", cursive;
+        color: #2f2f2f;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        background-color: white;
+        border-radius: 50%;
+        text-align: center;
+        background: #ecebeb;
+        box-shadow: 8px 8px 18px #d2d1d1, -8px -8px 18px #ffffff;
+
+        &:active {
+          background: #ecebeb;
+          box-shadow: inset 8px 8px 18px #d2d1d1, inset -8px -8px 18px #ffffff;
+        }
+      }
+
+      > div.number {
+        font-size: 1.5rem;
+        color: #2f2f2f;
+        font-family: "Patrick Hand SC", cursive;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+      }
     }
   }
 }

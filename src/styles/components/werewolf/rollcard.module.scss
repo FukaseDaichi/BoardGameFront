@@ -19,10 +19,12 @@
 
     div.rollname {
       font-size: 2rem;
-      color: white;
+      color: #c6c5c5;
       text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
         -1px -1px 0 #000;
       text-align: center;
+      letter-spacing: -0.2rem;
+      white-space: nowrap;
     }
   }
 }

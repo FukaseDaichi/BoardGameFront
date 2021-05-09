@@ -13,10 +13,26 @@ import Router from "next/router";
 import Start from "../../components/timebomb/start";
 import RollCard from "../../components/werewolf/rollcard";
 import ModalRollCard from "../../components/werewolf/modalrollcard";
+import { WerewolfRoll } from "../../type/werewolf";
 
 // 接続切れ
 const disconnect = () => {
   console.log("接続が切れました");
+};
+
+const cunter = (rollNo: number, plusFlg: boolean) => {
+  const cunterDom = document.getElementById("cunter_" + rollNo);
+
+  if (cunterDom) {
+    let value = Number(cunterDom.textContent);
+
+    if (plusFlg) {
+      value++;
+    } else {
+      value--;
+    }
+    cunterDom.innerHTML = String(value);
+  }
 };
 
 export default function WerewolfRoom() {
@@ -37,7 +53,7 @@ export default function WerewolfRoom() {
 
   // view
   const [startFlg, setStartFlg] = useState(false);
-  const [rollcardFlg, setRollcardFlg] = useState(true);
+  const [modalRoll, setModalRoll] = useState(null);
 
   // ルーム入室
   const roomIn = (userName: string) => {
@@ -198,9 +214,7 @@ export default function WerewolfRoom() {
   }, [startFlg]);
 
   // 勝敗監視
-  useEffect(() => {
-    console.log("勝敗決定");
-  }, [winteamList]);
+  useEffect(() => {}, [winteamList.length]);
 
   // 入室時
   useEffect(() => {
@@ -304,11 +318,50 @@ export default function WerewolfRoom() {
         })}
       </div>
 
-      {staticRollList.length > 0 && (
-        <RollCard roll={staticRollList[0]} size={100} />
-      )}
-      {rollcardFlg && staticRollList.length > 0 && (
-        <ModalRollCard roll={staticRollList[0]} />
+      <div className={styles.rollselect}>
+        {staticRollList.map((element: WerewolfRoll, index: number) => {
+          return (
+            <div key={index} style={{ order: element.teamNo }}>
+              <RollCard
+                roll={element}
+                size={100}
+                modalView={() => setModalRoll(element)}
+              />
+              <div className={styles.counter}>
+                <div
+                  className={styles.counterbtn}
+                  onClick={() => {
+                    cunter(element.rollNo, false);
+                  }}
+                >
+                  -
+                </div>
+                <div className={styles.number} id={"cunter_" + element.rollNo}>
+                  0
+                </div>
+                <div
+                  className={styles.counterbtn}
+                  onClick={() => {
+                    cunter(element.rollNo, true);
+                  }}
+                >
+                  +
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {modalRoll && (
+        <ModalRollCard
+          roll={modalRoll}
+          hidden={() => {
+            setTimeout(() => {
+              setModalRoll(null);
+            }, 450);
+          }}
+        />
       )}
       <div className={styles.btnarea}>
         <button

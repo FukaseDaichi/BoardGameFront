@@ -5,6 +5,7 @@ import { SystemConst } from "../../const/next.config";
 type RollCardProps = {
   roll: WerewolfRoll;
   size: number;
+  modalView: () => void;
 };
 
 export default function RollCard(props: RollCardProps) {
@@ -15,7 +16,11 @@ export default function RollCard(props: RollCardProps) {
   };
 
   return (
-    <div className={styles.rollcard} style={rollStyle}>
+    <div
+      className={styles.rollcard}
+      style={rollStyle}
+      onClick={props.modalView}
+    >
       <div
         className={styles.imgdiv}
         style={{
