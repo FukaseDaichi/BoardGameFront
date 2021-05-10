@@ -1,30 +1,30 @@
 .rollcard {
-  font-family: "APJapanesefont", sans-seri;
-  position: relative;
-  overflow: hidden;
-  border-radius: 10px;
-  box-shadow: 16px 11px 22px -3px rgba(0, 0, 0, 0.6);
-  cursor: pointer;
-  transition: all 0.1s;
+	font-family: "APJapanesefont", sans-seri;
+	position: relative;
+	overflow: hidden;
+	border-radius: 10px;
+	box-shadow: 16px 11px 22px -3px rgba(0, 0, 0, 0.6);
+	cursor: pointer;
+	transition: all 0.1s;
 
-  &:hover {
-    box-shadow: 22px 24px 22px -3px rgba(0, 0, 0, 0.6);
-    transform: scale(1.1, 1.1);
-  }
+	&:hover {
+		box-shadow: 22px 24px 22px -3px rgba(0, 0, 0, 0.6);
+		transform: scale(1.1, 1.1);
+	}
 
-  div.imgdiv {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
+	div.imgdiv {
+		width: 100%;
+		height: 100%;
+		background-size: cover;
 
-    div.rollname {
-      font-size: 2rem;
-      color: #c6c5c5;
-      text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
-        -1px -1px 0 #000;
-      text-align: center;
-      letter-spacing: -0.2rem;
-      white-space: nowrap;
-    }
-  }
+		div.rollname {
+			font-size: 1.7rem;
+			color: #c6c5c5;
+			text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
+				-1px -1px 0 #000;
+			text-align: center;
+			letter-spacing: -0.2rem;
+			white-space: nowrap;
+		}
+	}
 }

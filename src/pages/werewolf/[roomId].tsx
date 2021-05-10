@@ -13,368 +13,428 @@ import Router from "next/router";
 import Start from "../../components/timebomb/start";
 import RollCard from "../../components/werewolf/rollcard";
 import ModalRollCard from "../../components/werewolf/modalrollcard";
+import RollInfo from "../../components/werewolf/rollinfo";
 import { WerewolfRoll } from "../../type/werewolf";
 
 // 接続切れ
 const disconnect = () => {
-  console.log("接続が切れました");
+	console.log("接続が切れました");
 };
 
+// 役職設定用のカウンター
 const cunter = (rollNo: number, plusFlg: boolean) => {
-  const cunterDom = document.getElementById("cunter_" + rollNo);
-
-  if (cunterDom) {
-    let value = Number(cunterDom.textContent);
-
-    if (plusFlg) {
-      value++;
-    } else {
-      value--;
-    }
-    cunterDom.innerHTML = String(value);
-  }
+	const cunterDom = document.getElementById("cunter_" + rollNo);
+	if (cunterDom) {
+		let value = Number(cunterDom.textContent);
+		if (plusFlg) {
+			if (value < 15) {
+				value++;
+			}
+		} else {
+			if (value > 0) {
+				value--;
+			}
+		}
+		cunterDom.innerHTML = String(value);
+	}
 };
 
 export default function WerewolfRoom() {
-  // roomId取得
-  const router = useRouter();
-  const { roomId } = router.query;
+	// roomId取得
+	const router = useRouter();
+	const { roomId } = router.query;
 
-  const [clientObj, setClientObj] = useState(null);
-  const [messageList, setMessageList] = useState([]);
-  const [playerName, setPlayerName] = useState(null);
-  const [chatList, setChatList] = useState([]);
+	const [clientObj, setClientObj] = useState(null);
+	const [messageList, setMessageList] = useState([]);
+	const [playerName, setPlayerName] = useState(null);
+	const [chatList, setChatList] = useState([]);
 
-  // gamedata
-  const [userList, setUserLst] = useState([]);
-  const [turn, setTurn] = useState(0);
-  const [winteamList, setWinteamList] = useState([]);
-  const [staticRollList, setStaticRollList] = useState([]);
+	// gamedata
+	const [userList, setUserLst] = useState([]);
+	const [turn, setTurn] = useState(0);
+	const [winteamList, setWinteamList] = useState([]);
+	const [staticRollList, setStaticRollList] = useState([]);
+	const [rollList, setRollList] = useState([]);
 
-  // view
-  const [startFlg, setStartFlg] = useState(false);
-  const [modalRoll, setModalRoll] = useState(null);
+	// view
+	const [startFlg, setStartFlg] = useState(false);
+	const [modalRoll, setModalRoll] = useState(null);
 
-  // ルーム入室
-  const roomIn = (userName: string) => {
-    if (userName === "") {
-      return;
-    }
-    const url = "/app/game-roomin";
-    const soketInfo: SocketInfo = {
-      status: 100,
-      roomId: roomId as string,
-      userName: userName,
-      message: null,
-      obj: null,
-    };
-    setPlayerName(userName);
-    conect(url, soketInfo);
-  };
+	// ルーム入室
+	const roomIn = (userName: string) => {
+		if (userName === "") {
+			return;
+		}
+		const url = "/app/game-roomin";
+		const soketInfo: SocketInfo = {
+			status: 100,
+			roomId: roomId as string,
+			userName: userName,
+			message: null,
+			obj: null,
+		};
+		setPlayerName(userName);
+		conect(url, soketInfo);
+	};
 
-  // チャット
-  const chat = useCallback(
-    (message: string) => {
-      if (playerName) {
-        const url = "/app/game-chat";
-        const soketInfo: SocketInfo = {
-          status: 101,
-          roomId: roomId as string,
-          userName: playerName,
-          message: message,
-          obj: null,
-        };
-        conect(url, soketInfo);
-        setMessageList(messageList.concat(message));
-      }
-    },
-    [playerName, messageList]
-  );
+	// チャット
+	const chat = useCallback(
+		(message: string) => {
+			if (playerName) {
+				const url = "/app/game-chat";
+				const soketInfo: SocketInfo = {
+					status: 101,
+					roomId: roomId as string,
+					userName: playerName,
+					message: message,
+					obj: null,
+				};
+				conect(url, soketInfo);
+				setMessageList(messageList.concat(message));
+			}
+		},
+		[playerName, messageList]
+	);
 
-  // ゲーム開始
-  const init = () => {
-    const url = "/app/hideout-init";
-    const soketInfo: SocketInfo = {
-      status: 300,
-      roomId: roomId as string,
-      userName: playerName,
-      message: null,
-      obj: null,
-    };
-    conect(url, soketInfo);
-  };
+	// 役職設定
+	const setRoll = () => {
+		const url = "/app/werewolf-setrollregulation";
 
-  const wait = (index: number) => {
-    const url = "/app/hideout-wait";
-    const soketInfo: SocketInfo = {
-      status: 400,
-      roomId: roomId as string,
-      userName: playerName,
-      message: null,
-      obj: index,
-    };
-    conect(url, soketInfo);
-  };
+		let intList: Array<number> = [];
+		staticRollList.forEach((element: WerewolfRoll) => {
+			const cunterDom = document.getElementById("cunter_" + element.rollNo);
+			if (cunterDom) {
+				const rollsize = Number(cunterDom.textContent);
+				for (let i = 0; i < rollsize; i++) {
+					intList.push(element.rollNo);
+				}
+			}
+		});
 
-  const rush = (index: number) => {
-    const url = "/app/hideout-rush";
-    const soketInfo: SocketInfo = {
-      status: 500,
-      roomId: roomId as string,
-      userName: playerName,
-      message: null,
-      obj: index,
-    };
-    conect(url, soketInfo);
-  };
+		const soketInfo: SocketInfo = {
+			status: 150,
+			roomId: roomId as string,
+			userName: playerName,
+			message: null,
+			obj: intList,
+		};
+		conect(url, soketInfo);
+	};
 
-  // アイコン変更
-  const changeIcon = useCallback(
-    (iconUrl: string) => {
-      const url = "/app/game-changeIcon";
-      const soketInfo: SocketInfo = {
-        status: 600,
-        roomId: roomId as string,
-        userName: playerName,
-        message: null,
-        obj: iconUrl,
-      };
-      conect(url, soketInfo);
-    },
-    [clientObj, playerName]
-  );
+	// ゲーム開始
+	const init = () => {
+		const url = "/app/hideout-init";
+		const soketInfo: SocketInfo = {
+			status: 300,
+			roomId: roomId as string,
+			userName: playerName,
+			message: null,
+			obj: null,
+		};
+		conect(url, soketInfo);
+	};
 
-  const conect = (url: string, soketInfo: SocketInfo) => {
-    try {
-      clientObj.sendMessage(url, JSON.stringify(soketInfo));
-    } catch (e) {
-      setMessageList(messageList.concat("通信エラー。再度試してください"));
-    }
-  };
+	const wait = (index: number) => {
+		const url = "/app/hideout-wait";
+		const soketInfo: SocketInfo = {
+			status: 400,
+			roomId: roomId as string,
+			userName: playerName,
+			message: null,
+			obj: index,
+		};
+		conect(url, soketInfo);
+	};
 
-  const getMessage = (socketInfo: SocketInfo) => {
-    console.log(socketInfo);
+	const rush = (index: number) => {
+		const url = "/app/hideout-rush";
+		const soketInfo: SocketInfo = {
+			status: 500,
+			roomId: roomId as string,
+			userName: playerName,
+			message: null,
+			obj: index,
+		};
+		conect(url, soketInfo);
+	};
 
-    switch (socketInfo.status) {
-      case 100: // ルーム入室
-        dataSet(socketInfo.obj);
-        break;
-      case 101: // チャット
-        setChatList(socketInfo.obj);
-        const messageFirld = document.getElementById("chat-firld");
-        messageFirld.scrollTop = messageFirld.scrollHeight;
-        break;
+	// アイコン変更
+	const changeIcon = useCallback(
+		(iconUrl: string) => {
+			const url = "/app/game-changeIcon";
+			const soketInfo: SocketInfo = {
+				status: 600,
+				roomId: roomId as string,
+				userName: playerName,
+				message: null,
+				obj: iconUrl,
+			};
+			conect(url, soketInfo);
+		},
+		[clientObj, playerName]
+	);
 
-      case 200:
-        // ルーム入室(同一名ユーザ入室)
-        dataSet(socketInfo.obj);
-        break;
+	const conect = (url: string, soketInfo: SocketInfo) => {
+		try {
+			clientObj.sendMessage(url, JSON.stringify(soketInfo));
+		} catch (e) {
+			setMessageList(messageList.concat("通信エラー。再度試してください"));
+		}
+	};
 
-      case 300: // ゲーム開始
-        // ゲームスタート
-        setStartFlg(true);
+	const getMessage = (socketInfo: SocketInfo) => {
+		console.log(socketInfo);
 
-        dataSet(socketInfo.obj);
-        break;
+		switch (socketInfo.status) {
+			case 100: // ルーム入室
+				dataSet(socketInfo.obj);
+				break;
+			case 101: // チャット
+				setChatList(socketInfo.obj);
+				const messageFirld = document.getElementById("chat-firld");
+				messageFirld.scrollTop = messageFirld.scrollHeight;
+				break;
 
-      case 400: // ゲーム待機
-        // 誰かが行動したらラッシュタイムを終了
+			case 150: // 役職設定
+				dataSet(socketInfo.obj);
+				break;
 
-        dataSet(socketInfo.obj);
-        break;
+			case 200:
+				// ルーム入室(同一名ユーザ入室)
+				dataSet(socketInfo.obj);
+				break;
 
-      case 500: // 突入
-        dataSet(socketInfo.obj);
-        break;
+			case 300: // ゲーム開始
+				// ゲームスタート
+				setStartFlg(true);
 
-      case 600: // アイコン変更
-        setUserLst(socketInfo.obj);
-        break;
+				dataSet(socketInfo.obj);
+				break;
 
-      default:
-        console.log(socketInfo);
-    }
-  };
+			case 400: // ゲーム待機
+				// 誰かが行動したらラッシュタイムを終了
 
-  const dataSet = (obj) => {
-    setUserLst(obj.userList);
-    setWinteamList(obj.winteamList);
-    setTurn(obj.turn);
-    setStaticRollList(obj.staticRollList);
-  };
+				dataSet(socketInfo.obj);
+				break;
 
-  // スタートフラグの監視
-  useEffect(() => {
-    if (startFlg) {
-      scrollTo(0, 0);
-      window.setTimeout(() => {
-        setStartFlg(false);
-      }, 4000);
-    }
-  }, [startFlg]);
+			case 500: // 突入
+				dataSet(socketInfo.obj);
+				break;
 
-  // 勝敗監視
-  useEffect(() => {}, [winteamList.length]);
+			case 600: // アイコン変更
+				setUserLst(socketInfo.obj);
+				break;
 
-  // 入室時
-  useEffect(() => {
-    const userArray = userList.filter((element) => {
-      return element.userName === playerName;
-    });
-    if (userArray.length > 0) {
-      const btnDom = document.querySelector("." + styles.roominbtn);
-      if (btnDom.classList.contains(styles.in)) {
-        return;
-      }
-      btnDom.classList.add(styles.in);
+			case 998: // エラーメッセージ表示(個人)
+				if (socketInfo.userName === playerName) {
+					setMessageList(messageList.concat(socketInfo.message));
+				}
+				break;
+			case 999: // エラーメッセージ表示(全員)
+				setMessageList(messageList.concat(socketInfo.message));
+				break;
 
-      // アイコン初期設定
-      if (userArray[0].userIconUrl === null) {
-        changeIcon("/images/icon/icon" + userArray[0].userNo + ".jpg");
-      }
-    }
-  }, [userList.length, playerName]);
+			default:
+				console.log(socketInfo);
+		}
+	};
 
-  return (
-    <Layout home={false}>
-      <style jsx global>{`
-        body {
-          background-image: url(/images/hideout/hideoutbackground.png);
-          background-attachment: fixed;
-          background-size: 370px;
-          background-position: bottom left;
-          background-repeat: no-repeat;
-          overflow-x: hidden;
-          background-color: #ecebeb;
-        }
-      `}</style>
-      <Head>
-        <meta
-          property="og:image"
-          content={
-            SystemConst.Server.SITE_URL +
-            "/images/hideout/hideoutbackground.png"
-          }
-        />
-        <meta property="og:title" content="セカンドワンナイト人狼" />
-        <meta
-          property="og:description"
-          content="セカンドワンナイト人狼！　役職を選べる1日で終わる人狼ゲーム！ 初心者にもおすすめ！"
-        />
-        <title>セカンドワンナイト人狼</title>
-      </Head>
-      {/* 開始合図 */}
-      {startFlg && <Start />}
+	const dataSet = (obj) => {
+		setUserLst(obj.userList);
+		setWinteamList(obj.winteamList);
+		setTurn(obj.turn);
+		setStaticRollList(obj.staticRollList);
+		setRollList(obj.rollList);
+	};
 
-      {messageList.map((value, index) => {
-        if (index === messageList.length - 1) {
-          return <Chatmessage value={value} type="info" key={index} />;
-        }
-      })}
-      <SockJsClient
-        url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
-        topics={["/topic/" + roomId]}
-        ref={(client) => {
-          setClientObj(client);
-        }}
-        onMessage={(msg) => {
-          getMessage(msg);
-        }}
-        onDisconnect={disconnect}
-      />
-      <div className={styles.roominbtn}>
-        <p>
-          <label htmlFor="username">Name</label>
-        </p>
-        <input type="text" id="username" maxLength={20} />
-        <button
-          onClick={() => {
-            const usernameDom: HTMLInputElement = document.getElementById(
-              "username"
-            ) as HTMLInputElement;
-            roomIn(usernameDom.value);
-          }}
-        >
-          Room IN
-        </button>
-      </div>
+	// スタートフラグの監視
+	useEffect(() => {
+		if (startFlg) {
+			scrollTo(0, 0);
+			window.setTimeout(() => {
+				setStartFlg(false);
+			}, 4000);
+		}
+	}, [startFlg]);
 
-      {/* ユーザ情報 */}
-      <div className={styles.userfirld}>
-        {userList.map((user, index: number) => {
-          return (
-            <UserInfo
-              key={index}
-              user={user}
-              ownFlg={user.userName === playerName}
-              userColor={SystemConst.PLAYER_COLOR_LIST[index]}
-              changeIcon={changeIcon}
-              userList={userList}
-              wait={wait}
-              winnerTeam={0}
-              turn={turn}
-            />
-          );
-        })}
-      </div>
+	// 勝敗監視
+	useEffect(() => {}, [winteamList.length]);
 
-      <div className={styles.rollselect}>
-        {staticRollList.map((element: WerewolfRoll, index: number) => {
-          return (
-            <div key={index} style={{ order: element.teamNo }}>
-              <RollCard
-                roll={element}
-                size={100}
-                modalView={() => setModalRoll(element)}
-              />
-              <div className={styles.counter}>
-                <div
-                  className={styles.counterbtn}
-                  onClick={() => {
-                    cunter(element.rollNo, false);
-                  }}
-                >
-                  -
-                </div>
-                <div className={styles.number} id={"cunter_" + element.rollNo}>
-                  0
-                </div>
-                <div
-                  className={styles.counterbtn}
-                  onClick={() => {
-                    cunter(element.rollNo, true);
-                  }}
-                >
-                  +
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+	// 入室時
+	useEffect(() => {
+		const userArray = userList.filter((element) => {
+			return element.userName === playerName;
+		});
+		if (userArray.length > 0) {
+			const btnDom = document.querySelector("." + styles.roominbtn);
+			if (btnDom.classList.contains(styles.in)) {
+				return;
+			}
+			btnDom.classList.add(styles.in);
 
-      {modalRoll && (
-        <ModalRollCard
-          roll={modalRoll}
-          hidden={() => {
-            setTimeout(() => {
-              setModalRoll(null);
-            }, 450);
-          }}
-        />
-      )}
-      <div className={styles.btnarea}>
-        <button
-          onClick={() => {
-            Router.push("/");
-          }}
-        >
-          HOME
-        </button>
-        <button onClick={init}>{turn > 0 ? "GAME RESET" : "GAME START"}</button>
-      </div>
-      {/* チャットのやり取り（機能OFF） */}
-      {false && <ChatComponent chatList={chatList} chat={chat} />}
-    </Layout>
-  );
+			// アイコン初期設定
+			if (userArray[0].userIconUrl === null) {
+				changeIcon("/images/icon/icon" + userArray[0].userNo + ".jpg");
+			}
+		}
+	}, [userList.length, playerName]);
+
+	return (
+		<Layout home={false}>
+			<style jsx global>{`
+				body {
+					background-image: url(/images/hideout/hideoutbackground.png);
+					background-attachment: fixed;
+					background-size: 370px;
+					background-position: bottom left;
+					background-repeat: no-repeat;
+					overflow-x: hidden;
+					background-color: #ecebeb;
+				}
+			`}</style>
+			<Head>
+				<meta
+					property="og:image"
+					content={
+						SystemConst.Server.SITE_URL +
+						"/images/hideout/hideoutbackground.png"
+					}
+				/>
+				<meta property="og:title" content="セカンドワンナイト人狼" />
+				<meta
+					property="og:description"
+					content="セカンドワンナイト人狼！　役職を選べる1日で終わる人狼ゲーム！ 初心者にもおすすめ！"
+				/>
+				<title>セカンドワンナイト人狼</title>
+			</Head>
+			{/* 開始合図 */}
+			{startFlg && <Start />}
+
+			{/* 役職情報 */}
+			{<RollInfo rollList={rollList} setModalRoll={setModalRoll} />}
+
+			{messageList.map((value, index) => {
+				if (index === messageList.length - 1) {
+					return <Chatmessage value={value} type="info" key={index} />;
+				}
+			})}
+			<SockJsClient
+				url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
+				topics={["/topic/" + roomId]}
+				ref={(client) => {
+					setClientObj(client);
+				}}
+				onMessage={(msg) => {
+					getMessage(msg);
+				}}
+				onDisconnect={disconnect}
+			/>
+			<div className={styles.roominbtn}>
+				<p>
+					<label htmlFor="username">Name</label>
+				</p>
+				<input type="text" id="username" maxLength={20} />
+				<button
+					onClick={() => {
+						const usernameDom: HTMLInputElement = document.getElementById(
+							"username"
+						) as HTMLInputElement;
+						roomIn(usernameDom.value);
+					}}
+				>
+					Room IN
+				</button>
+			</div>
+
+			{/* ユーザ情報 */}
+			<div className={styles.userfirld}>
+				{userList.map((user, index: number) => {
+					return (
+						<UserInfo
+							key={index}
+							user={user}
+							ownFlg={user.userName === playerName}
+							userColor={SystemConst.PLAYER_COLOR_LIST[index]}
+							changeIcon={changeIcon}
+							userList={userList}
+							wait={wait}
+							winnerTeam={0}
+							turn={turn}
+						/>
+					);
+				})}
+			</div>
+
+			<div className={styles.rollselect}>
+				{staticRollList.map((element: WerewolfRoll, index: number) => {
+					return (
+						<div key={index} style={{ order: element.teamNo }}>
+							<RollCard
+								roll={element}
+								size={80}
+								modalView={() => setModalRoll(element)}
+							/>
+							<div className={styles.counter}>
+								<div
+									className={styles.counterbtn}
+									onClick={() => {
+										cunter(element.rollNo, false);
+									}}
+								>
+									-
+								</div>
+								<div className={styles.number} id={"cunter_" + element.rollNo}>
+									0
+								</div>
+								<div
+									className={styles.counterbtn}
+									onClick={() => {
+										cunter(element.rollNo, true);
+									}}
+								>
+									+
+								</div>
+							</div>
+						</div>
+					);
+				})}
+			</div>
+
+			{/* デバッグ用 */}
+			<input type="text" id="usernametest" maxLength={20} />
+			<button
+				onClick={() => {
+					const usernameDom: HTMLInputElement = document.getElementById(
+						"usernametest"
+					) as HTMLInputElement;
+					roomIn(usernameDom.value);
+				}}
+			>
+				Room IN
+			</button>
+			<button onClick={setRoll}>役職設定</button>
+			{modalRoll && (
+				<ModalRollCard
+					roll={modalRoll}
+					hidden={() => {
+						setTimeout(() => {
+							setModalRoll(null);
+						}, 450);
+					}}
+				/>
+			)}
+			<div className={styles.btnarea}>
+				<button
+					onClick={() => {
+						Router.push("/");
+					}}
+				>
+					HOME
+				</button>
+				<button onClick={init}>{turn > 0 ? "GAME RESET" : "GAME START"}</button>
+			</div>
+			{/* チャットのやり取り（機能OFF） */}
+			{false && <ChatComponent chatList={chatList} chat={chat} />}
+		</Layout>
+	);
 }
