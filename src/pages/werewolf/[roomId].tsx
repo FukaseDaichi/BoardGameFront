@@ -7,13 +7,14 @@ import { SocketInfo } from "../../type";
 import Chatmessage from "../../components/message/chatmessage";
 import { useEffect, useState, useCallback } from "react";
 import ChatComponent from "../../components/chatcomponent";
-import UserInfo from "../../components/hideout/userInfo";
+import UserInfo from "../../components/werewolf/userInfo";
 import styles from "../../styles/components/werewolf/room.module.scss";
 import Router from "next/router";
 import Start from "../../components/timebomb/start";
 import RollCard from "../../components/werewolf/rollcard";
 import ModalRollCard from "../../components/werewolf/modalrollcard";
 import RollInfo from "../../components/werewolf/rollinfo";
+import RollSelectTurn from "../../components/werewolf/rollselectturn";
 import { WerewolfRoll } from "../../type/werewolf";
 
 // 接続切れ
@@ -55,6 +56,7 @@ export default function WerewolfRoom() {
 	const [winteamList, setWinteamList] = useState([]);
 	const [staticRollList, setStaticRollList] = useState([]);
 	const [rollList, setRollList] = useState([]);
+	const [playerData, setPlayerData] = useState(null);
 
 	// view
 	const [startFlg, setStartFlg] = useState(false);
@@ -76,6 +78,22 @@ export default function WerewolfRoom() {
 		setPlayerName(userName);
 		conect(url, soketInfo);
 	};
+
+	// アイコン変更
+	const changeIcon = useCallback(
+		(iconUrl: string) => {
+			const url = "/app/game-changeIcon";
+			const soketInfo: SocketInfo = {
+				status: 650,
+				roomId: roomId as string,
+				userName: playerName,
+				message: null,
+				obj: iconUrl,
+			};
+			conect(url, soketInfo);
+		},
+		[clientObj, playerName]
+	);
 
 	// チャット
 	const chat = useCallback(
@@ -123,7 +141,7 @@ export default function WerewolfRoom() {
 
 	// ゲーム開始
 	const init = () => {
-		const url = "/app/hideout-init";
+		const url = "/app/werewolf-init";
 		const soketInfo: SocketInfo = {
 			status: 300,
 			roomId: roomId as string,
@@ -134,44 +152,73 @@ export default function WerewolfRoom() {
 		conect(url, soketInfo);
 	};
 
-	const wait = (index: number) => {
-		const url = "/app/hideout-wait";
-		const soketInfo: SocketInfo = {
-			status: 400,
-			roomId: roomId as string,
-			userName: playerName,
-			message: null,
-			obj: index,
-		};
-		conect(url, soketInfo);
-	};
+	// 役職選択
+	const selectRoll = useCallback(
+		(rollIndex: number) => {
+			const url = "/app/werewolf-selectroll";
+			const soketInfo: SocketInfo = {
+				status: 400,
+				roomId: roomId as string,
+				userName: playerName,
+				message: null,
+				obj: rollIndex,
+			};
+			conect(url, soketInfo);
+		},
+		[playerName]
+	);
 
-	const rush = (index: number) => {
-		const url = "/app/hideout-rush";
-		const soketInfo: SocketInfo = {
-			status: 500,
-			roomId: roomId as string,
-			userName: playerName,
-			message: null,
-			obj: index,
-		};
-		conect(url, soketInfo);
-	};
+	// 議論中アクション
+	const discussionAction = useCallback(
+		(targetUsername: string) => {
+			const url = "/app/werewolf-discussionaction";
 
-	// アイコン変更
-	const changeIcon = useCallback(
-		(iconUrl: string) => {
-			const url = "/app/game-changeIcon";
+			let stringList: Array<string> = [];
+			stringList.push(playerName);
+			stringList.push(targetUsername);
+
+			const soketInfo: SocketInfo = {
+				status: 500,
+				roomId: roomId as string,
+				userName: playerName,
+				message: null,
+				obj: stringList,
+			};
+			conect(url, soketInfo);
+		},
+		[playerName]
+	);
+
+	// ターン変更
+	const changeTurn = useCallback(
+		(turn: number) => {
+			const url = "/app/werewolf-changeturn";
 			const soketInfo: SocketInfo = {
 				status: 600,
 				roomId: roomId as string,
 				userName: playerName,
 				message: null,
-				obj: iconUrl,
+				obj: turn,
 			};
 			conect(url, soketInfo);
 		},
-		[clientObj, playerName]
+		[playerName]
+	);
+
+	// 投票
+	const voting = useCallback(
+		(username: string) => {
+			const url = "/app/werewolf-voting";
+			const soketInfo: SocketInfo = {
+				status: 700,
+				roomId: roomId as string,
+				userName: playerName,
+				message: null,
+				obj: username,
+			};
+			conect(url, soketInfo);
+		},
+		[playerName]
 	);
 
 	const conect = (url: string, soketInfo: SocketInfo) => {
@@ -211,18 +258,28 @@ export default function WerewolfRoom() {
 				dataSet(socketInfo.obj);
 				break;
 
-			case 400: // ゲーム待機
-				// 誰かが行動したらラッシュタイムを終了
-
+			case 400: // 役職選択
 				dataSet(socketInfo.obj);
 				break;
 
-			case 500: // 突入
+			case 404: // 例外
+				setMessageList(messageList.concat(socketInfo.message));
+				break;
+
+			case 500: // 議論アクション
 				dataSet(socketInfo.obj);
 				break;
 
-			case 600: // アイコン変更
+			case 600: // ターン変更
+				dataSet(socketInfo.obj);
+				break;
+
+			case 650: // アイコン変更
 				setUserLst(socketInfo.obj);
+				break;
+
+			case 700: // 投票
+				dataSet(socketInfo.obj);
 				break;
 
 			case 998: // エラーメッセージ表示(個人)
@@ -274,10 +331,21 @@ export default function WerewolfRoom() {
 
 			// アイコン初期設定
 			if (userArray[0].userIconUrl === null) {
+				console.log(userArray[0]);
 				changeIcon("/images/icon/icon" + userArray[0].userNo + ".jpg");
 			}
 		}
 	}, [userList.length, playerName]);
+
+	// プレイヤーデータ設定
+	useEffect(() => {
+		const filterNameArray = userList.filter((element) => {
+			return element.userName === playerName;
+		});
+		if (filterNameArray.length > 0) {
+			setPlayerData(filterNameArray[0]);
+		}
+	}, [userList, playerName]);
 
 	return (
 		<Layout home={false}>
@@ -310,9 +378,19 @@ export default function WerewolfRoom() {
 			{/* 開始合図 */}
 			{startFlg && <Start />}
 
-			{/* 役職情報 */}
-			{<RollInfo rollList={rollList} setModalRoll={setModalRoll} />}
-
+			{/* デバッグ用 */}
+			<input type="text" id="usernametest" maxLength={20} />
+			<button
+				onClick={() => {
+					const usernameDom: HTMLInputElement = document.getElementById(
+						"usernametest"
+					) as HTMLInputElement;
+					roomIn(usernameDom.value);
+				}}
+			>
+				Room IN
+			</button>
+			<button onClick={setRoll}>役職設定</button>
 			{messageList.map((value, index) => {
 				if (index === messageList.length - 1) {
 					return <Chatmessage value={value} type="info" key={index} />;
@@ -356,14 +434,22 @@ export default function WerewolfRoom() {
 							ownFlg={user.userName === playerName}
 							userColor={SystemConst.PLAYER_COLOR_LIST[index]}
 							changeIcon={changeIcon}
-							userList={userList}
-							wait={wait}
-							winnerTeam={0}
 							turn={turn}
+							voting={voting}
+							discuttionAction={discussionAction}
 						/>
 					);
 				})}
 			</div>
+
+			{/* 役職情報 */}
+			{rollList.length > 0 && (
+				<RollInfo
+					rollList={rollList}
+					setModalRoll={setModalRoll}
+					userSize={userList.length}
+				/>
+			)}
 
 			<div className={styles.rollselect}>
 				{staticRollList.map((element: WerewolfRoll, index: number) => {
@@ -371,7 +457,8 @@ export default function WerewolfRoom() {
 						<div key={index} style={{ order: element.teamNo }}>
 							<RollCard
 								roll={element}
-								size={80}
+								size={60}
+								fontSize={1.2}
 								modalView={() => setModalRoll(element)}
 							/>
 							<div className={styles.counter}>
@@ -400,19 +487,6 @@ export default function WerewolfRoom() {
 				})}
 			</div>
 
-			{/* デバッグ用 */}
-			<input type="text" id="usernametest" maxLength={20} />
-			<button
-				onClick={() => {
-					const usernameDom: HTMLInputElement = document.getElementById(
-						"usernametest"
-					) as HTMLInputElement;
-					roomIn(usernameDom.value);
-				}}
-			>
-				Room IN
-			</button>
-			<button onClick={setRoll}>役職設定</button>
 			{modalRoll && (
 				<ModalRollCard
 					roll={modalRoll}
@@ -435,6 +509,25 @@ export default function WerewolfRoom() {
 			</div>
 			{/* チャットのやり取り（機能OFF） */}
 			{false && <ChatComponent chatList={chatList} chat={chat} />}
+
+			{!startFlg && turn > 0 && turn < 3 && playerData && (
+				<RollSelectTurn
+					turn={turn}
+					handRollList={playerData.handRollList}
+					setModalRoll={setModalRoll}
+					selectRoll={selectRoll}
+					roll={playerData.roll}
+				/>
+			)}
+
+			<input
+				type="number"
+				id="turn"
+				onChange={() => {
+					const test = document.getElementById("turn") as HTMLInputElement;
+					setTurn(Number(test.value));
+				}}
+			/>
 		</Layout>
 	);
 }

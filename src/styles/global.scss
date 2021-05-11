@@ -1,21 +1,29 @@
 @import url(https://fonts.googleapis.com/css?family=Patrick+Hand+SC);
 html,
 body {
-  overflow-x: visible;
+	overflow-x: visible;
 }
 .modal_active {
-  min-height: 100vh;
-  height: 100%;
-  background-image: url(http://theartmad.com/wp-content/uploads/Dark-Grey-Texture-Wallpaper-5.jpg);
-  background-size: cover;
-  background-position: top center;
-  overflow: hidden;
+	min-height: 100vh;
+	height: 100%;
+	background-image: url(http://theartmad.com/wp-content/uploads/Dark-Grey-Texture-Wallpaper-5.jpg);
+	background-size: cover;
+	background-position: top center;
+	overflow: hidden;
 }
 
 .modal_active_overflow_view {
-  min-height: 100vh;
-  height: 100%;
-  background-image: url(http://theartmad.com/wp-content/uploads/Dark-Grey-Texture-Wallpaper-5.jpg);
-  background-size: cover;
-  background-position: top center;
+	min-height: 100vh;
+	height: 100%;
+	background-image: url(http://theartmad.com/wp-content/uploads/Dark-Grey-Texture-Wallpaper-5.jpg);
+	background-size: cover;
+	background-position: top center;
+}
+
+.modal_active_second {
+	min-height: 100vh;
+	height: 100%;
+	background-image: url(http://theartmad.com/wp-content/uploads/Dark-Grey-Texture-Wallpaper-5.jpg);
+	background-size: cover;
+	background-position: top center;
 }

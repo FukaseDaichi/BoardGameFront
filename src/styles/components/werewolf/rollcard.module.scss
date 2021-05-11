@@ -13,16 +13,22 @@
 	}
 
 	div.imgdiv {
+		position: relative;
 		width: 100%;
 		height: 100%;
 		background-size: cover;
+		text-align: center;
 
-		div.rollname {
-			font-size: 1.7rem;
-			color: #c6c5c5;
+		span.rollname {
+			position: absolute;
+			display: block;
+			bottom: -3px;
+			width: 100%;
+			text-align: center;
+			margin: 0 auto;
+			color: white;
 			text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
 				-1px -1px 0 #000;
-			text-align: center;
 			letter-spacing: -0.2rem;
 			white-space: nowrap;
 		}

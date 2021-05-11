@@ -1,0 +1,107 @@
+@import "../../variables";
+
+@keyframes unfoldIn {
+	0% {
+		transform: scaleY(0.005) scaleX(0);
+	}
+	50% {
+		transform: scaleY(0.005) scaleX(1);
+	}
+	100% {
+		transform: scaleY(1) scaleX(1);
+	}
+}
+
+@keyframes zoomIn {
+	0% {
+		transform: scale(0);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+@keyframes zoomOut {
+	0% {
+		transform: scale(1);
+	}
+	100% {
+		transform: scale(0);
+	}
+}
+
+@keyframes unfoldOut {
+	0% {
+		transform: scaleY(1) scaleX(1);
+	}
+	50% {
+		transform: scaleY(0.005) scaleX(1);
+	}
+	100% {
+		transform: scaleY(0.005) scaleX(0);
+	}
+}
+
+div.rollselect {
+	position: fixed;
+	display: table;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	z-index: 10;
+
+	transform: scaleY(0.01) scaleX(0);
+	animation: unfoldIn 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+
+	&.out {
+		transform: scale(1);
+		animation: unfoldOut 1s 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+		.modal_background {
+			.modal {
+				animation: zoomOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+			}
+		}
+	}
+
+	div.rollselect_background {
+		display: table-cell;
+		background: rgba(0, 0, 0, 0.8);
+		vertical-align: middle;
+
+		.area {
+			text-align: center;
+			width: 100%;
+			position: relative;
+			transform: scale(0);
+			animation: zoomIn 0.5s 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+			> span {
+				font-family: "APJapanesefont", sans-seri;
+				font-size: 2rem;
+				color: white;
+			}
+			div.handrollarea {
+				display: flex;
+				justify-content: center;
+				height: 300px;
+				> div {
+					margin: 0 10px 0 10px;
+					width: 140px;
+				}
+			}
+
+			div.slectedroll {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-flow: column;
+				> div {
+					text-align: center;
+					font-family: "APJapanesefont", sans-seri;
+					font-size: 3rem;
+					color: white;
+				}
+			}
+		}
+	}
+}

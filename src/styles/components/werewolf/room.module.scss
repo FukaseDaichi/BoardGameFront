@@ -131,6 +131,7 @@ div.btnarea {
 	text-align: right;
 
 	button {
+		user-select: none;
 		margin: 0 3px;
 		background-color: rgb(198, 197, 197);
 		color: rgb(255, 255, 255);
@@ -156,7 +157,7 @@ div.rollselect {
 	flex-wrap: wrap;
 
 	> div {
-		margin: 10px;
+		margin: 5px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -164,6 +165,7 @@ div.rollselect {
 			margin-left: 50px;
 			display: flex;
 			> div.counterbtn {
+				user-select: none;
 				cursor: pointer;
 				font-size: 2rem;
 				font-family: "Patrick Hand SC", cursive;
