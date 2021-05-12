@@ -1,11 +1,11 @@
 import styles from "../../styles/components/werewolf/rollinfo.module.scss";
 import RollCard from "./rollcard";
-import { WerewolfRoll } from "../../type/werewolf";
+import { WerewolfRoll, WerewolfUser } from "../../type/werewolf";
 
 type RollInfoProps = {
 	rollList: Array<WerewolfRoll>;
 	setModalRoll: (WerewolfRoll) => void;
-	userSize: number;
+	userList: Array<WerewolfUser>;
 };
 
 export default function RollInfo(props: RollInfoProps) {
@@ -44,9 +44,10 @@ export default function RollInfo(props: RollInfoProps) {
 					}
 				})}
 			</div>
-			{props.userSize + 1 < props.rollList.length && (
+			{props.userList.length + 1 < props.rollList.length && (
 				<div className={styles.rollmissing}>
-					役欠け <span>{props.rollList.length - props.userSize - 1}</span>
+					役欠け{" "}
+					<span>{props.rollList.length - props.userList.length - 1}</span>
 				</div>
 			)}
 		</>

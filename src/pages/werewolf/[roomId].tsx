@@ -61,6 +61,7 @@ export default function WerewolfRoom() {
 	// view
 	const [startFlg, setStartFlg] = useState(false);
 	const [modalRoll, setModalRoll] = useState(null);
+	const [rollSelectTurnFlg, setRollSelectTurnFlg] = useState(false);
 
 	// ルーム入室
 	const roomIn = (userName: string) => {
@@ -347,6 +348,18 @@ export default function WerewolfRoom() {
 		}
 	}, [userList, playerName]);
 
+	useEffect(() => {
+		if (turn === 1) {
+			setRollSelectTurnFlg(true);
+		} else if (rollSelectTurnFlg && turn === 2) {
+			setTimeout(() => {
+				setRollSelectTurnFlg(false);
+			}, 4000);
+		} else {
+			setRollSelectTurnFlg(false);
+		}
+	}, [turn, rollSelectTurnFlg]);
+
 	return (
 		<Layout home={false}>
 			<style jsx global>{`
@@ -447,7 +460,7 @@ export default function WerewolfRoom() {
 				<RollInfo
 					rollList={rollList}
 					setModalRoll={setModalRoll}
-					userSize={userList.length}
+					userList={userList}
 				/>
 			)}
 
@@ -510,13 +523,15 @@ export default function WerewolfRoom() {
 			{/* チャットのやり取り（機能OFF） */}
 			{false && <ChatComponent chatList={chatList} chat={chat} />}
 
-			{!startFlg && turn > 0 && turn < 3 && playerData && (
+			{!startFlg && rollSelectTurnFlg && playerData && (
 				<RollSelectTurn
 					turn={turn}
-					handRollList={playerData.handRollList}
+					user={playerData}
 					setModalRoll={setModalRoll}
 					selectRoll={selectRoll}
 					roll={playerData.roll}
+					userList={userList}
+					rollList={rollList}
 				/>
 			)}
 
