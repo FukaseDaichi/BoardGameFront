@@ -348,6 +348,7 @@ export default function WerewolfRoom() {
 		}
 	}, [userList, playerName]);
 
+  // 役職選択表示制御
 	useEffect(() => {
 		if (turn === 1) {
 			setRollSelectTurnFlg(true);
