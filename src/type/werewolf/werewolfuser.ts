@@ -10,5 +10,5 @@ export type WerewolfUser = {
 	handRollList: Array<WerewolfRoll>;
 	score: number;
 	lastMessage: string;
-	votingUser: WerewolfUser;
+	votingUserName: string;
 };

@@ -15,7 +15,10 @@ import RollCard from "../../components/werewolf/rollcard";
 import ModalRollCard from "../../components/werewolf/modalrollcard";
 import RollInfo from "../../components/werewolf/rollinfo";
 import RollSelectTurn from "../../components/werewolf/rollselectturn";
-import { WerewolfRoll } from "../../type/werewolf";
+import CutIn from "../../components/werewolf/cutin";
+import Result from "../../components/werewolf/result";
+import { WerewolfRoll, WerewolfUser } from "../../type/werewolf";
+import Modal from "../../components/modal";
 
 // 接続切れ
 const disconnect = () => {
@@ -57,11 +60,16 @@ export default function WerewolfRoom() {
 	const [staticRollList, setStaticRollList] = useState([]);
 	const [rollList, setRollList] = useState([]);
 	const [playerData, setPlayerData] = useState(null);
+	const [npcuser, setNpcuser] = useState(null);
 
 	// view
 	const [startFlg, setStartFlg] = useState(false);
 	const [modalRoll, setModalRoll] = useState(null);
 	const [rollSelectTurnFlg, setRollSelectTurnFlg] = useState(false);
+	const [playerActionName, setPlayerActionName] = useState(null);
+	const [votingStartFlg, setVotingStartFlg] = useState(false);
+	const [cutInNo, setCutInNo] = useState(0);
+	const [resultFlg, setResultFlg] = useState(false);
 
 	// ルーム入室
 	const roomIn = (userName: string) => {
@@ -206,16 +214,45 @@ export default function WerewolfRoom() {
 		[playerName]
 	);
 
+	const userAction = useCallback(
+		(targetUsername: string) => {
+			if (turn === 2) {
+				// 議論中の場合
+				discussionAction(targetUsername);
+			} else if (turn === 3) {
+				// 投票中の場合
+				voting(targetUsername);
+			} else {
+				return;
+			}
+		},
+		[turn]
+	);
+
+	const limittimeDone = useCallback(() => {
+		if (turn === 2) {
+			const url = "/app/game-dooverLimit";
+			const soketInfo: SocketInfo = {
+				status: 600,
+				roomId: roomId as string,
+				userName: null,
+				message: null,
+				obj: turn,
+			};
+			conect(url, soketInfo);
+		}
+	}, [turn]);
+
 	// 投票
 	const voting = useCallback(
-		(username: string) => {
+		(targetUsername: string) => {
 			const url = "/app/werewolf-voting";
 			const soketInfo: SocketInfo = {
 				status: 700,
 				roomId: roomId as string,
 				userName: playerName,
 				message: null,
-				obj: username,
+				obj: targetUsername,
 			};
 			conect(url, soketInfo);
 		},
@@ -255,7 +292,6 @@ export default function WerewolfRoom() {
 			case 300: // ゲーム開始
 				// ゲームスタート
 				setStartFlg(true);
-
 				dataSet(socketInfo.obj);
 				break;
 
@@ -269,6 +305,27 @@ export default function WerewolfRoom() {
 
 			case 500: // 議論アクション
 				dataSet(socketInfo.obj);
+
+				const userIndex: number = Number(socketInfo.message);
+				const actionUser: WerewolfUser = socketInfo.obj.userList[userIndex];
+
+				// アクション
+				if (actionUser) {
+					switch (actionUser.roll.rollNo) {
+						// 独裁者
+						case 6:
+							setCutInNo(6);
+							break;
+
+						// 占い師
+						case 8:
+							// 同一ユーザなら表示
+							if (actionUser.userName === playerName) {
+								setCutInNo(8);
+							}
+							break;
+					}
+				}
 				break;
 
 			case 600: // ターン変更
@@ -297,12 +354,14 @@ export default function WerewolfRoom() {
 		}
 	};
 
+	// データセット
 	const dataSet = (obj) => {
 		setUserLst(obj.userList);
 		setWinteamList(obj.winteamList);
 		setTurn(obj.turn);
 		setStaticRollList(obj.staticRollList);
 		setRollList(obj.rollList);
+		setNpcuser(obj.npcuser);
 	};
 
 	// スタートフラグの監視
@@ -314,6 +373,15 @@ export default function WerewolfRoom() {
 			}, 4000);
 		}
 	}, [startFlg]);
+
+	// 投票フラグの監視
+	useEffect(() => {
+		if (votingStartFlg) {
+			window.setTimeout(() => {
+				setVotingStartFlg(false);
+			}, 4000);
+		}
+	}, [votingStartFlg]);
 
 	// 勝敗監視
 	useEffect(() => {}, [winteamList.length]);
@@ -348,7 +416,29 @@ export default function WerewolfRoom() {
 		}
 	}, [userList, playerName]);
 
-  // 役職選択表示制御
+	// プレイヤーアクション名
+	useEffect(() => {
+		let actionName = null;
+		if (playerData && playerData.roll) {
+			if (
+				turn === 2 &&
+				playerData.roll.actionName &&
+				playerData.roll.discussionActionCount < 1
+			) {
+				actionName = playerData.roll.actionName;
+			} else if (turn === 3) {
+				if (
+					playerData.roll.votingAbleFlg &&
+					playerData.votingUserName === null
+				) {
+					actionName = "投票";
+				}
+			}
+		}
+		setPlayerActionName(actionName);
+	}, [playerData, turn]);
+
+	// 役職選択表示制御
 	useEffect(() => {
 		if (turn === 1) {
 			setRollSelectTurnFlg(true);
@@ -360,6 +450,33 @@ export default function WerewolfRoom() {
 			setRollSelectTurnFlg(false);
 		}
 	}, [turn, rollSelectTurnFlg]);
+
+	// 投票メッセージ
+	useEffect(() => {
+		if (turn === 3) {
+			setVotingStartFlg(true);
+		} else {
+			setVotingStartFlg(false);
+		}
+	}, [turn]);
+
+	// カットイン
+	useEffect(() => {
+		if (cutInNo > 0) {
+			setTimeout(() => {
+				setCutInNo(0);
+			}, 4000);
+		}
+	}, [cutInNo]);
+
+	// 結果画面表示
+	useEffect(() => {
+		if (turn === 4) {
+			setResultFlg(true);
+		} else {
+			setResultFlg(false);
+		}
+	}, [turn]);
 
 	return (
 		<Layout home={false}>
@@ -391,6 +508,16 @@ export default function WerewolfRoom() {
 			</Head>
 			{/* 開始合図 */}
 			{startFlg && <Start />}
+
+			{/* 投票時間 */}
+			{votingStartFlg && (
+				<Modal type="one">
+					<div className={styles.roundMessage}>投票時間</div>
+				</Modal>
+			)}
+
+			{/* カットイン */}
+			{cutInNo > 0 && <CutIn rollNo={cutInNo} />}
 
 			{/* デバッグ用 */}
 			<input type="text" id="usernametest" maxLength={20} />
@@ -443,17 +570,32 @@ export default function WerewolfRoom() {
 				{userList.map((user, index: number) => {
 					return (
 						<UserInfo
+							playerName={playerName}
 							key={index}
 							user={user}
 							ownFlg={user.userName === playerName}
 							userColor={SystemConst.PLAYER_COLOR_LIST[index]}
 							changeIcon={changeIcon}
 							turn={turn}
-							voting={voting}
-							discuttionAction={discussionAction}
+							userAction={userAction}
+							setModalRoll={setModalRoll}
+							playerActionName={playerActionName}
 						/>
 					);
 				})}
+				{npcuser && (
+					<UserInfo
+						playerName={playerName}
+						user={npcuser}
+						ownFlg={false}
+						userColor={SystemConst.PLAYER_COLOR_LIST[npcuser.userNo + 1]}
+						changeIcon={changeIcon}
+						turn={turn}
+						userAction={userAction}
+						setModalRoll={setModalRoll}
+						playerActionName={playerActionName}
+					/>
+				)}
 			</div>
 
 			{/* 役職情報 */}
@@ -544,6 +686,15 @@ export default function WerewolfRoom() {
 					setTurn(Number(test.value));
 				}}
 			/>
+
+			<button onClick={limittimeDone}>議論終了</button>
+			{resultFlg && (
+				<Result
+					userList={userList}
+					winteamList={winteamList}
+					npcuser={npcuser}
+				/>
+			)}
 		</Layout>
 	);
 }

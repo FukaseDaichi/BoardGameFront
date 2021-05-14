@@ -1,6 +1,9 @@
 import styles from "../../styles/components/werewolf/userinfo.module.scss";
 import { useState } from "react";
 import HideoutIcon from "../hideout/hideouticon";
+import { WerewolfUser, WerewolfRoll } from "../../type/werewolf";
+import RollCard from "./rollcard";
+import CircleBtn from "../button/circlebtn";
 
 // 人狼用
 
@@ -8,7 +11,7 @@ const getIconImgUrl = (userNo: number, userIconUrl: string) => {
 	if (userIconUrl) {
 		return userIconUrl;
 	}
-	return "/images/icon/icon" + String(userNo) + ".jpg";
+	return "/images/icon/icon0.jpg";
 };
 
 const getRollImgUrl = (rollType: number) => {
@@ -26,13 +29,15 @@ const getRollImgUrl = (rollType: number) => {
 };
 
 type UserInfoProps = {
-	user: any;
+	playerName: string;
+	user: WerewolfUser;
 	ownFlg: boolean;
 	userColor: string;
 	changeIcon: (string) => void;
-	voting: (string) => void;
-	discuttionAction: (string) => void;
+	setModalRoll: (WerewolfRoll) => void;
+	userAction: (string) => void;
 	turn: number;
+	playerActionName: string;
 };
 
 export default function UserInfo(props: UserInfoProps) {
@@ -49,11 +54,8 @@ export default function UserInfo(props: UserInfoProps) {
 	};
 
 	return (
-		<div
-			className={`${styles.main}`}
-			style={props.user.turnFlg ? divTurnStyles : divStyles}
-		>
-			{props.ownFlg && <span className={styles.you}>YOU!</span>}
+		<div className={`${styles.main}`} style={divStyles}>
+			{props.ownFlg && <span className={styles.you}>YOU</span>}
 			<div className={styles.icon}>
 				{props.ownFlg ? (
 					<HideoutIcon
@@ -77,6 +79,45 @@ export default function UserInfo(props: UserInfoProps) {
 					</div>
 				</div>
 			</div>
+
+			{props.playerActionName && !props.ownFlg && (
+				<div className={styles.btn}>
+					<CircleBtn
+						onClickFnc={() => props.userAction(props.user.userName)}
+						value={props.playerActionName}
+						size={50}
+					/>
+				</div>
+			)}
+			{props.user.roll && (
+				<div
+					className={`${styles.rollcard} ${
+						props.user.roll.punishmentFlg && styles.punishment
+					}`}
+				>
+					{props.ownFlg ||
+					props.user.roll.openTargetUsernameList.includes(props.playerName) ||
+					props.user.roll.openFlg ? (
+						<RollCard
+							size={100}
+							roll={props.user.roll}
+							fontSize={2}
+							modalView={() => {
+								props.setModalRoll(props.user.roll);
+							}}
+						/>
+					) : (
+						<div className={styles.back}>
+							<img src="/images/werewolf/back.png" alt="シークレット" />
+						</div>
+					)}
+					{props.user.roll.punishmentFlg && (
+						<div className={`${styles.back} ${styles.punishmentimgdiv}`}>
+							<img src="/images/werewolf/punishment.png" alt="処刑" />
+						</div>
+					)}
+				</div>
+			)}
 		</div>
 	);
 }
