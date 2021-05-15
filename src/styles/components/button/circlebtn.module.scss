@@ -1,10 +1,11 @@
 button.btn {
-	font-family: "APJapanesefont", sans-seri;
-	border-radius: 50%;
-	background-color: white;
-	outline: none;
+  font-family: "APJapanesefont", sans-seri;
+  border-radius: 50%;
+  background-color: white;
+  outline: none;
+  text-align: center;
 
-	&:active {
-		transform: scale(0.9);
-	}
+  &:active {
+    transform: scale(0.9);
+  }
 }
