@@ -1,0 +1,15 @@
+{
+  "3": [
+    { "title": "Lv1:はじめの一歩", "rollNoList": [1, 2, 2, 2] },
+    { "title": "Lv2:雨宿り", "rollNoList": [1, 2, 2, 4] },
+    { "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 3, 5] },
+    { "title": "Lv3:独裁政治", "rollNoList": [1, 3, 2, 6] }
+  ],
+  "4": [
+    { "title": "Lv1:はじめの一歩", "rollNoList": [1, 2, 2, 2, 2] },
+    { "title": "Lv2:雨宿り", "rollNoList": [1, 2, 2, 2, 4] },
+    { "title": "Lv3:危険な占い", "rollNoList": [1, 3, 2, 2, 8] },
+    { "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 2, 3, 5] },
+    { "title": "Lv3:独裁政治", "rollNoList": [1, 3, 2, 2, 6] }
+  ]
+}
