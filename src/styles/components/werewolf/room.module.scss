@@ -1,12 +1,66 @@
 @import "../../variables";
 @import "../../font";
 
+@keyframes focus-in-expand {
+	0% {
+		letter-spacing: -0.5em;
+		filter: blur(12px);
+		opacity: 0;
+	}
+	100% {
+		filter: blur(0);
+		opacity: 1;
+	}
+}
+
+.winmessage {
+	width: 90%;
+	text-align: center;
+	font-size: 5rem;
+	top: 50px;
+	left: 50%;
+	transform: translateX(-50%);
+	position: absolute;
+	color: rgb(17, 17, 17);
+	font-family: "APJapanesefont", sans-seri;
+	z-index: 1;
+
+	> div.message {
+		animation: focus-in-expand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+		white-space: nowrap;
+		@include mq(md) {
+			font-size: 2.7rem;
+		}
+	}
+	div.resultbtn {
+		font-size: 1rem;
+	}
+}
+
+div.messagearea {
+	font-family: "APJapanesefont", sans-seri;
+	position: absolute;
+	width: 90%;
+	text-align: center;
+	font-size: 5rem;
+	top: 50px;
+	left: 50%;
+	transform: translateX(-50%);
+	color: rgb(17, 17, 17);
+	@include mq(md) {
+		font-size: 2.7rem;
+	}
+
+	> button {
+		font-size: 1rem;
+	}
+}
+
 .roundMessage {
 	color: white;
 	font-family: "APJapanesefont", sans-seri;
 	font-size: 3rem;
 }
-
 .roominbtn {
 	height: 180px;
 	animation: first-view 1s forwards;
@@ -157,10 +211,29 @@ div.btnarea {
 }
 
 div.rollselect {
+	margin-top: 5px;
 	display: flex;
 	flex-flow: column;
 	justify-content: center;
 	flex-wrap: wrap;
+	font-family: "APJapanesefont", sans-seri;
+	border-radius: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22);
+	overflow: hidden;
+
+	> div.title {
+		margin: 0;
+		font-size: 1.2em;
+		background: #696b6c;
+		padding: 4px;
+		text-align: center;
+		color: #fff;
+		font-weight: bold;
+		letter-spacing: 0.05em;
+		> button {
+			font-size: 1rem;
+		}
+	}
 
 	> div {
 		margin: 5px;

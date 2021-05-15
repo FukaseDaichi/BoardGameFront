@@ -159,6 +159,7 @@ div.main {
 		> div.punishmentimgdiv {
 			opacity: 0;
 			animation: view $animetiondelay forwards;
+			border: none !important;
 		}
 
 		&.punishment {

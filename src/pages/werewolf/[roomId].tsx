@@ -19,10 +19,28 @@ import CutIn from "../../components/werewolf/cutin";
 import Result from "../../components/werewolf/result";
 import { WerewolfRoll, WerewolfUser } from "../../type/werewolf";
 import Modal from "../../components/modal";
+import CircleBtn from "../../components/button/circlebtn";
+import Loadingdod from "../../components/text/loadingdod";
 
 // 接続切れ
 const disconnect = () => {
 	console.log("接続が切れました");
+};
+
+// 情報設定
+const setRollCustum = (rollNoList: Array<number>) => {
+	const maxRollNo = Math.max(...rollNoList);
+
+	for (let i = 1; i <= maxRollNo; i++) {
+		const cunterDom = document.getElementById("cunter_" + i);
+		if (cunterDom) {
+			cunterDom.textContent = String(
+				rollNoList.filter((element) => {
+					return element === i;
+				}).length
+			);
+		}
+	}
 };
 
 // 役職設定用のカウンター
@@ -70,6 +88,7 @@ export default function WerewolfRoom() {
 	const [votingStartFlg, setVotingStartFlg] = useState(false);
 	const [cutInNo, setCutInNo] = useState(0);
 	const [resultFlg, setResultFlg] = useState(false);
+	const [winMessage, setWinmessage] = useState(null);
 
 	// ルーム入室
 	const roomIn = (userName: string) => {
@@ -268,7 +287,7 @@ export default function WerewolfRoom() {
 	};
 
 	const getMessage = (socketInfo: SocketInfo) => {
-		console.log(socketInfo);
+		//console.log(socketInfo);
 
 		switch (socketInfo.status) {
 			case 100: // ルーム入室
@@ -282,6 +301,7 @@ export default function WerewolfRoom() {
 
 			case 150: // 役職設定
 				dataSet(socketInfo.obj);
+				setRollCustum(socketInfo.obj.rollNoList);
 				break;
 
 			case 200:
@@ -384,7 +404,30 @@ export default function WerewolfRoom() {
 	}, [votingStartFlg]);
 
 	// 勝敗監視
-	useEffect(() => {}, [winteamList.length]);
+	useEffect(() => {
+		if (winteamList.length === 0) {
+			setWinmessage(null);
+		} else {
+			const winnner: number = winteamList[0];
+			let message = null;
+			switch (winnner) {
+				case 1:
+					message = "人狼陣営";
+					break;
+				case 2:
+					message = "村人陣営";
+					break;
+				case 3:
+					message = "てるてる";
+					break;
+			}
+
+			setTimeout(() => {
+				scrollTo(0, 0);
+				setWinmessage(message);
+			}, 3000);
+		}
+	}, [winteamList.length]);
 
 	// 入室時
 	useEffect(() => {
@@ -469,15 +512,6 @@ export default function WerewolfRoom() {
 		}
 	}, [cutInNo]);
 
-	// 結果画面表示
-	useEffect(() => {
-		if (turn === 4) {
-			setResultFlg(true);
-		} else {
-			setResultFlg(false);
-		}
-	}, [turn]);
-
 	return (
 		<Layout home={false}>
 			<style jsx global>{`
@@ -519,24 +553,51 @@ export default function WerewolfRoom() {
 			{/* カットイン */}
 			{cutInNo > 0 && <CutIn rollNo={cutInNo} />}
 
-			{/* デバッグ用 */}
-			<input type="text" id="usernametest" maxLength={20} />
-			<button
-				onClick={() => {
-					const usernameDom: HTMLInputElement = document.getElementById(
-						"usernametest"
-					) as HTMLInputElement;
-					roomIn(usernameDom.value);
-				}}
-			>
-				Room IN
-			</button>
-			<button onClick={setRoll}>役職設定</button>
-			{messageList.map((value, index) => {
-				if (index === messageList.length - 1) {
-					return <Chatmessage value={value} type="info" key={index} />;
-				}
-			})}
+			{/* 勝利文字 */}
+			{winMessage != null && turn === 4 && (
+				<div className={styles.winmessage}>
+					<div className={styles.message}>
+						<span>{winMessage}</span>の勝利
+					</div>
+					<div className={styles.resultbtn}>
+						<CircleBtn
+							value="詳細"
+							size={50}
+							onClickFnc={() => setResultFlg(true)}
+						/>
+					</div>
+				</div>
+			)}
+
+			{/* 結果 */}
+			{resultFlg && (
+				<Result
+					endFnc={() => setResultFlg(false)}
+					userList={userList}
+					winteamList={winteamList}
+					npcuser={npcuser}
+				/>
+			)}
+
+			{/* メッセージエリア */}
+			{turn == 1 && (
+				<div className={styles.messagearea}>
+					選択中 <Loadingdod color={"rgb(17, 17, 17)"} />
+				</div>
+			)}
+			{turn == 2 && (
+				<div className={styles.messagearea}>
+					議論中 <Loadingdod color={"rgb(17, 17, 17)"} />
+					<CircleBtn value="終了" size={50} onClickFnc={limittimeDone} />
+				</div>
+			)}
+
+			{turn == 3 && (
+				<div className={styles.messagearea}>
+					投票中 <Loadingdod color={"rgb(17, 17, 17)"} />
+				</div>
+			)}
+
 			<SockJsClient
 				url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
 				topics={["/topic/" + roomId]}
@@ -606,43 +667,50 @@ export default function WerewolfRoom() {
 					userList={userList}
 				/>
 			)}
-
-			<div className={styles.rollselect}>
-				{staticRollList.map((element: WerewolfRoll, index: number) => {
-					return (
-						<div key={index} style={{ order: element.teamNo }}>
-							<RollCard
-								roll={element}
-								size={60}
-								fontSize={1.2}
-								modalView={() => setModalRoll(element)}
-							/>
-							<div className={styles.counter}>
-								<div
-									className={styles.counterbtn}
-									onClick={() => {
-										cunter(element.rollNo, false);
-									}}
-								>
-									-
-								</div>
-								<div className={styles.number} id={"cunter_" + element.rollNo}>
-									0
-								</div>
-								<div
-									className={styles.counterbtn}
-									onClick={() => {
-										cunter(element.rollNo, true);
-									}}
-								>
-									+
+			{playerData && turn != 2 && turn != 3 && (
+				<div className={styles.rollselect}>
+					<div className={styles.title}>
+						役職カスタマイズ{"　　　　"}
+						<CircleBtn value="設定" size={48} onClickFnc={setRoll} />
+					</div>
+					{staticRollList.map((element: WerewolfRoll, index: number) => {
+						return (
+							<div key={index} style={{ order: element.teamNo }}>
+								<RollCard
+									roll={element}
+									size={60}
+									fontSize={1.2}
+									modalView={() => setModalRoll(element)}
+								/>
+								<div className={styles.counter}>
+									<div
+										className={styles.counterbtn}
+										onClick={() => {
+											cunter(element.rollNo, false);
+										}}
+									>
+										-
+									</div>
+									<div
+										className={styles.number}
+										id={"cunter_" + element.rollNo}
+									>
+										0
+									</div>
+									<div
+										className={styles.counterbtn}
+										onClick={() => {
+											cunter(element.rollNo, true);
+										}}
+									>
+										+
+									</div>
 								</div>
 							</div>
-						</div>
-					);
-				})}
-			</div>
-
+						);
+					})}
+				</div>
+			)}
 			{modalRoll && (
 				<ModalRollCard
 					roll={modalRoll}
@@ -656,12 +724,14 @@ export default function WerewolfRoom() {
 			<div className={styles.btnarea}>
 				<button
 					onClick={() => {
-						Router.push("/");
+						Router.push("/gametest");
 					}}
 				>
 					HOME
 				</button>
-				<button onClick={init}>{turn > 0 ? "GAME RESET" : "GAME START"}</button>
+				<button onClick={init}>
+					{turn > 0 && turn < 4 ? "GAME RESET" : "GAME START"}
+				</button>
 			</div>
 			{/* チャットのやり取り（機能OFF） */}
 			{false && <ChatComponent chatList={chatList} chat={chat} />}
@@ -678,23 +748,24 @@ export default function WerewolfRoom() {
 				/>
 			)}
 
-			<input
-				type="number"
-				id="turn"
-				onChange={() => {
-					const test = document.getElementById("turn") as HTMLInputElement;
-					setTurn(Number(test.value));
+			{/* デバッグ用 */}
+			{/* <input type="text" id="usernametest" maxLength={20} />
+			<button
+				onClick={() => {
+					const usernameDom: HTMLInputElement = document.getElementById(
+						"usernametest"
+					) as HTMLInputElement;
+					roomIn(usernameDom.value);
 				}}
-			/>
-
-			<button onClick={limittimeDone}>議論終了</button>
-			{resultFlg && (
-				<Result
-					userList={userList}
-					winteamList={winteamList}
-					npcuser={npcuser}
-				/>
-			)}
+			>
+				Room IN
+			</button>
+			<button onClick={setRoll}>役職設定</button>
+			{messageList.map((value, index) => {
+				if (index === messageList.length - 1) {
+					return <Chatmessage value={value} type="info" key={index} />;
+				}
+			})} */}
 		</Layout>
 	);
 }
