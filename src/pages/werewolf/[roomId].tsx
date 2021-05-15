@@ -80,7 +80,6 @@ export default function WerewolfRoom() {
   const [rollList, setRollList] = useState([]);
   const [playerData, setPlayerData] = useState(null);
   const [npcuser, setNpcuser] = useState(null);
-  const [rollNoList, setRollNoList] = useState([]);
 
   // view
   const [startFlg, setStartFlg] = useState(false);
@@ -306,7 +305,7 @@ export default function WerewolfRoom() {
   };
 
   const getMessage = (socketInfo: SocketInfo) => {
-    console.log(socketInfo);
+    //console.log(socketInfo);
 
     switch (socketInfo.status) {
       case 100: // ルーム入室
@@ -401,7 +400,6 @@ export default function WerewolfRoom() {
     setStaticRollList(obj.staticRollList);
     setRollList(obj.rollList);
     setNpcuser(obj.npcuser);
-    setRollNoList(obj.rollNoList);
   };
 
   // スタートフラグの監視
