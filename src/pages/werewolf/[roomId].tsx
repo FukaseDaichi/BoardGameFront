@@ -17,6 +17,7 @@ import RollInfo from "../../components/werewolf/rollinfo";
 import RollSelectTurn from "../../components/werewolf/rollselectturn";
 import CutIn from "../../components/werewolf/cutin";
 import WerewolfSet from "../../components/werewolf/werewolfset";
+import Rule from "../../components/werewolf/rule";
 import Result from "../../components/werewolf/result";
 import { WerewolfRoll, WerewolfUser } from "../../type/werewolf";
 import Modal from "../../components/modal";
@@ -89,6 +90,7 @@ export default function WerewolfRoom() {
   const [votingStartFlg, setVotingStartFlg] = useState(false);
   const [cutInNo, setCutInNo] = useState(0);
   const [resultFlg, setResultFlg] = useState(false);
+  const [ruleFlg, setRuleFlg] = useState(false);
   const [winMessage, setWinmessage] = useState(null);
 
   // ルーム入室
@@ -330,6 +332,7 @@ export default function WerewolfRoom() {
       case 300: // ゲーム開始
         // ゲームスタート
         setStartFlg(true);
+        setRuleFlg(false);
         dataSet(socketInfo.obj);
         break;
 
@@ -788,6 +791,10 @@ export default function WerewolfRoom() {
 			</button>
 			<button onClick={setRoll}>役職設定</button>
 			 */}
+      <div className={styles.rulebtn}>
+        <button onClick={() => setRuleFlg(true)}>遊び方</button>
+        {ruleFlg && <Rule endFnc={() => setRuleFlg(false)} />}
+      </div>
     </Layout>
   );
 }
