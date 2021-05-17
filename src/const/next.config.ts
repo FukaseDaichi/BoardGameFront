@@ -48,6 +48,9 @@ export namespace SystemConst {
 		"#68CFC3",
 		"#6CBAD8",
 		"#B492CC",
+		"#55A9D4",
+		"#55A9D4",
+		"#55A9D4",
 	];
 
 	export const TEAM_COLOR_LIST: string[] = [

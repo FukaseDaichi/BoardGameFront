@@ -311,7 +311,7 @@ export default function WerewolfRoom() {
 
 	const getMessage = (socketInfo: SocketInfo) => {
 		// デバッグ用
-		// console.log(socketInfo);
+		console.log(socketInfo);
 
 		switch (socketInfo.status) {
 			case 100: // ルーム入室
@@ -368,6 +368,14 @@ export default function WerewolfRoom() {
 							// 同一ユーザなら表示
 							if (actionUser.userName === playerName) {
 								setCutInNo(8);
+							}
+							break;
+
+						// 付き人
+						case 9:
+							// 同一ユーザなら表示
+							if (actionUser.userName === playerName) {
+								setCutInNo(9);
 							}
 							break;
 					}
