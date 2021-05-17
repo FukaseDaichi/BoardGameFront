@@ -792,7 +792,7 @@ export default function WerewolfRoom() {
 								<span>なし</span>
 							</label>
 							<div className={styles.teban}>
-								<img src={"/images/hasami.png"} alt="手番" />
+								<img src={"/images/sunadokei_black.png"} alt="手番" />
 							</div>
 						</div>
 						<div onClick={() => changeLimitTime(180)}>
@@ -808,7 +808,7 @@ export default function WerewolfRoom() {
 								<span>3</span>分
 							</label>
 							<div className={styles.teban}>
-								<img src={"/images/hasami.png"} alt="手番" />
+								<img src={"/images/sunadokei_black.png"} alt="手番" />
 							</div>
 						</div>
 						<div onClick={() => changeLimitTime(300)}>
@@ -824,7 +824,7 @@ export default function WerewolfRoom() {
 								<span>5</span>分
 							</label>
 							<div className={styles.teban}>
-								<img src={"/images/hasami.png"} alt="手番" />
+								<img src={"/images/sunadokei_black.png"} alt="手番" />
 							</div>
 						</div>
 						<div onClick={() => changeLimitTime(420)}>
@@ -840,7 +840,7 @@ export default function WerewolfRoom() {
 								<span>7</span>分
 							</label>
 							<div className={styles.teban}>
-								<img src={"/images/hasami.png"} alt="手番" />
+								<img src={"/images/sunadokei_black.png"} alt="手番" />
 							</div>
 						</div>
 					</div>
@@ -860,7 +860,7 @@ export default function WerewolfRoom() {
 			<div className={styles.btnarea}>
 				<button
 					onClick={() => {
-						Router.push("/gametest");
+						Router.push("/");
 					}}
 				>
 					HOME
