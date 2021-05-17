@@ -55,6 +55,7 @@ div.result {
 			background-color: black;
 
 			> table {
+				margin-top: 1rem;
 				@include mq(md) {
 					font-size: 0.6rem;
 				}
