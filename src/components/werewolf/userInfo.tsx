@@ -4,6 +4,7 @@ import HideoutIcon from "../hideout/hideouticon";
 import { WerewolfUser, WerewolfRoll } from "../../type/werewolf";
 import RollCard from "./rollcard";
 import CircleBtn from "../button/circlebtn";
+import WinText from "../text/wintext";
 
 // 人狼用
 
@@ -12,20 +13,6 @@ const getIconImgUrl = (userNo: number, userIconUrl: string) => {
 		return userIconUrl;
 	}
 	return "/images/icon/icon0.jpg";
-};
-
-const getRollImgUrl = (rollType: number) => {
-	let url = null;
-
-	switch (rollType) {
-		case 1:
-			url = "/images/hideout/swat.png";
-			break;
-		case 2:
-			url = "/images/hideout/terrorist.png";
-			break;
-	}
-	return url;
 };
 
 type UserInfoProps = {
@@ -38,6 +25,7 @@ type UserInfoProps = {
 	userAction: (string) => void;
 	turn: number;
 	playerActionName: string;
+	winteamList: Array<number>;
 };
 
 export default function UserInfo(props: UserInfoProps) {
@@ -47,16 +35,16 @@ export default function UserInfo(props: UserInfoProps) {
 		borderColor: props.userColor,
 		color: props.userColor,
 	};
-	const divTurnStyles = {
-		borderColor: props.userColor,
-		color: props.userColor,
-		backgroundColor: "rgb(229,245,228)",
-	};
 
 	return (
 		<div className={`${styles.main}`} style={divStyles}>
 			{props.ownFlg && <span className={styles.you}>YOU</span>}
 			<div className={styles.icon}>
+				{props.user.roll && props.winteamList.includes(props.user.roll.teamNo) && (
+					<div className={styles.win}>
+						<WinText />
+					</div>
+				)}
 				{props.ownFlg ? (
 					<HideoutIcon
 						changeIcon={props.changeIcon}
