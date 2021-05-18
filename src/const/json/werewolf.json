@@ -1,31 +1,31 @@
 {
-  "3": [
-    { "title": "Lv1:はじめの一歩", "rollNoList": [1, 2, 2, 2] },
-    { "title": "Lv2:雨宿り", "rollNoList": [1, 2, 2, 4] },
-    { "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 3, 5] },
-    { "title": "Lv3:独裁政治", "rollNoList": [1, 2, 5, 6] }
-  ],
-  "4": [
-    { "title": "Lv1:はじめの一歩", "rollNoList": [1, 2, 2, 2, 2] },
-    { "title": "Lv2:雨宿り", "rollNoList": [1, 2, 2, 2, 4] },
-    { "title": "Lv3:危険な占い", "rollNoList": [1, 3, 2, 2, 8] },
-    { "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 2, 3, 5] },
-    { "title": "Lv3:独裁政治", "rollNoList": [1, 2, 2, 5, 6] }
-  ],
-  "5": [
-    { "title": "Lv2:不穏な村", "rollNoList": [1, 2, 2, 2, 2, 7] },
-    { "title": "Lv3:雨宿り", "rollNoList": [1, 2, 2, 2, 4, 7] },
-    { "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 2, 3, 7, 4] },
-    { "title": "Lv4:占い政治", "rollNoList": [1, 7, 6, 8, 2, 2] },
-    { "title": "Lv5:占い狂い", "rollNoList": [1, 7, 8, 8, 8, 8] },
-    { "title": "Lv6:独裁者の覚悟", "rollNoList": [1, 7, 7, 8, 6, 6] }
-  ],
-  "6": [
-    { "title": "Lv2:不穏な村", "rollNoList": [1, 2, 2, 2, 2, 2, 7] },
-    { "title": "Lv3:雨宿り", "rollNoList": [1, 2, 2, 2, 2, 4, 7] },
-    { "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 2, 2, 3, 7, 4] },
-    { "title": "Lv4:占い政治", "rollNoList": [1, 7, 6, 8, 2, 2, 2] },
-    { "title": "Lv5:占い狂い", "rollNoList": [1, 7, 8, 8, 8, 8] },
-    { "title": "Lv6:独裁者の覚悟", "rollNoList": [1, 7, 7, 8, 8, 6, 6] }
-  ]
+	"3": [
+		{ "title": "Lv1:はじめの一歩", "rollNoList": [1, 2, 2, 2] },
+		{ "title": "Lv2:雨宿り", "rollNoList": [1, 2, 2, 4] },
+		{ "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 3, 5] },
+		{ "title": "Lv3:独裁政治", "rollNoList": [1, 2, 5, 6] }
+	],
+	"4": [
+		{ "title": "Lv1:はじめの一歩", "rollNoList": [1, 2, 2, 2, 2] },
+		{ "title": "Lv2:雨宿り", "rollNoList": [1, 2, 2, 2, 4] },
+		{ "title": "Lv3:危険な占い", "rollNoList": [1, 3, 2, 2, 8] },
+		{ "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 2, 3, 5] },
+		{ "title": "Lv3:独裁政治", "rollNoList": [1, 2, 2, 5, 6] }
+	],
+	"5": [
+		{ "title": "Lv2:不穏な村", "rollNoList": [1, 2, 2, 2, 2, 7] },
+		{ "title": "Lv3:雨宿り", "rollNoList": [1, 2, 2, 2, 4, 7] },
+		{ "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 2, 3, 7, 4] },
+		{ "title": "Lv4:占い政治", "rollNoList": [1, 7, 6, 8, 2, 2] },
+		{ "title": "Lv5:占い狂い", "rollNoList": [1, 7, 8, 8, 8, 8] },
+		{ "title": "Lv6:独裁者の覚悟", "rollNoList": [1, 7, 7, 8, 6, 6] }
+	],
+	"6": [
+		{ "title": "Lv2:不穏な村", "rollNoList": [1, 2, 2, 2, 2, 2, 7] },
+		{ "title": "Lv3:雨宿り", "rollNoList": [1, 2, 2, 2, 2, 4, 7] },
+		{ "title": "Lv3:村長の訪問", "rollNoList": [1, 2, 2, 2, 3, 7, 4] },
+		{ "title": "Lv4:占い政治", "rollNoList": [1, 7, 6, 8, 2, 2, 2] },
+		{ "title": "Lv5:占い狂い", "rollNoList": [1, 7, 4, 8, 8, 8, 8] },
+		{ "title": "Lv6:独裁者の覚悟", "rollNoList": [1, 7, 7, 8, 8, 6, 6] }
+	]
 }

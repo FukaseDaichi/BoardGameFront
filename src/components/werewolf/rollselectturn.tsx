@@ -22,7 +22,7 @@ const unView = () => {
 	document.getElementById("rollselectturn-area").classList.add(styles.out);
 };
 
-type RushTurnProps = {
+type RollSelectTurnProps = {
 	turn: number;
 	rollList: Array<WerewolfRoll>;
 	user: WerewolfUser;
@@ -30,9 +30,10 @@ type RushTurnProps = {
 	selectRoll: (number) => void;
 	roll: WerewolfRoll;
 	userList: Array<WerewolfUser>;
+	setModalOwnFlg: (boolean) => void;
 };
 
-export default function RollSelectTurn(props: RushTurnProps) {
+export default function RollSelectTurn(props: RollSelectTurnProps) {
 	const [turn, setTurn] = useState(0);
 
 	if (turn !== props.turn) {
@@ -100,6 +101,9 @@ export default function RollSelectTurn(props: RushTurnProps) {
 												size={140}
 												fontSize={2.0}
 												modalView={() => props.setModalRoll(element)}
+												turn={props.turn}
+												ownFlg={false}
+												setModalOwnFlg={props.setModalOwnFlg}
 											/>
 											<AnimationBtn
 												value="選択"
@@ -127,6 +131,9 @@ export default function RollSelectTurn(props: RushTurnProps) {
 								size={140}
 								fontSize={2.0}
 								modalView={() => props.setModalRoll(props.roll)}
+								turn={props.turn}
+								ownFlg={false}
+								setModalOwnFlg={props.setModalOwnFlg}
 							/>
 						</div>
 					)}
@@ -149,6 +156,8 @@ export default function RollSelectTurn(props: RushTurnProps) {
 							rollList={props.rollList}
 							setModalRoll={props.setModalRoll}
 							userList={props.userList}
+							turn={props.turn}
+							setModalOwnFlg={props.setModalOwnFlg}
 						/>
 					</div>
 				</div>
