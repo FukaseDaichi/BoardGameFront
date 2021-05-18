@@ -15,4 +15,5 @@ export type WerewolfRoll = {
 	votingAbleFlg: boolean;
 	punishmentFlg: boolean;
 	actionName: string;
+	fakeRollList: Array<WerewolfRoll>;
 };

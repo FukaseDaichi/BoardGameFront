@@ -6,6 +6,8 @@ type RollInfoProps = {
 	rollList: Array<WerewolfRoll>;
 	setModalRoll: (WerewolfRoll) => void;
 	userList: Array<WerewolfUser>;
+	turn: number;
+	setModalOwnFlg: (boolean) => void;
 };
 
 export default function RollInfo(props: RollInfoProps) {
@@ -28,6 +30,9 @@ export default function RollInfo(props: RollInfoProps) {
 									size={60}
 									fontSize={1.2}
 									modalView={() => props.setModalRoll(value)}
+									turn={props.turn}
+									ownFlg={false}
+									setModalOwnFlg={props.setModalOwnFlg}
 								/>
 								<div className={styles.rollSize}>
 									<span>×</span>
