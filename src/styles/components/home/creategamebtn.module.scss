@@ -66,10 +66,13 @@ div.game {
   cursor: pointer;
   box-shadow: 10px 10px 16px -6px rgba(0, 0, 0, 0.6);
   transition: all 0.1s;
+  &:hover {
+    transform: scale(1.05);
+  }
 
   > div.img {
     img {
-      width: 380px;
+      width: 350px;
       height: 300px;
       object-fit: cover;
     }
