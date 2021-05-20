@@ -1,136 +1,87 @@
-import Layout from "../components/layout";
-import House from "../components/house";
-import ImagePulsingBtn from "../components/button/imagepulsingbtn";
-import { useState } from "react";
-import { SystemConst } from "../const/next.config";
-import styles from "../styles/home.module.scss";
-import Router from "next/router";
 import Head from "next/head";
+import { SystemConst } from "../const/next.config";
+import styles from "../styles/homepage.module.scss";
+import CreateGameBtn from "../components/home/creategamebtn";
 
-const copyText = () => {
-	const roomUrlDom = document.querySelector("#room-url");
-	document.getSelection().selectAllChildren(roomUrlDom);
-	// 選択範囲のコピー
-	document.execCommand("copy");
-	// テキスト選択の解除
-	document.getSelection().empty();
-
-	const btnDom = document.getElementById("copy-btn");
-	btnDom.classList.add(styles.copyed);
-	btnDom.innerText = "COPYED!";
-};
-
-export default function CreateRoom() {
-	const [createFlg, setCreateFlg] = useState(false);
-	const [gameName, setGameName] = useState("");
-	const [roomId, setRoomId] = useState("");
-
-	// ルーム作成
-	const createRoombtn = async (game: string) => {
-		setGameName(game);
-
-		if (createFlg) {
-			return;
-		}
-
-		let url = SystemConst.Server.AP_HOST + SystemConst.Server.CREATE_ROOM;
-		if (game !== "timebomb") {
-			url = url + "/" + game;
-		}
-
-		await fetch(url)
-			.then((res) => {
-				if (res.ok) {
-					return res.json();
-				} else {
-					throw new Error();
-				}
-			})
-			.then((resJson) => {
-				setRoomId(resJson.roomId);
-				const roomUrlDom = document.querySelector("#room-url") as HTMLElement;
-				roomUrlDom.innerText = location.href + game + "/" + resJson.roomId;
-				setCreateFlg(true);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	};
-
-	// ルーム入室
-	const roomIn = () => {
-		Router.push("/" + gameName + "/" + roomId);
-	};
-
-	return (
-		<Layout home={true}>
-			<Head>
-				<meta
-					property="og:image"
-					content={SystemConst.Server.SITE_URL + "/images/ogp.jpg"}
-				/>
-				<meta property="og:title" content="正体隠匿ボードゲームの部屋" />
-				<meta
-					property="og:description"
-					content="ワンナイト人狼・タイムボム・ハイドアウトがオンラインでできます！"
-				/>
-				<title>ボードゲームの部屋</title>
-			</Head>
-			<House />
-			<div className={`${styles.home} ${!createFlg && styles.non}`}>
-				<div id="room-url"></div>
-				<section>
-					<button
-						type="button"
-						className={`${styles.lined} ${styles.thick}}`}
-						onClick={copyText}
-						id="copy-btn"
-					>
-						URL COPY
-					</button>
-					<button
-						type="button"
-						className={`${styles.lined} ${styles.thick}`}
-						onClick={roomIn}
-					>
-						ROOMIN!
-					</button>
-				</section>
-			</div>
-			<div
-				className={`${styles.spinner} ${
-					gameName === "" || createFlg ? "invisible" : "visible"
-				}`}
-			>
-				<div className="m-auto">
-					<div className="spinner-border" role="status">
-						<span className="sr-only">Loading...</span>
-					</div>
-				</div>
-			</div>
-			<div className={styles.createbtnarea}>
-				<ImagePulsingBtn
-					value="OneNight"
-					onClickFnc={() => createRoombtn("werewolf")}
-					viewFlg={gameName !== ""}
-					imageUrl={"/images/werewolf/werewolfbackground.png"}
-					imageWidth={80}
-				/>
-				<ImagePulsingBtn
-					value="TimeBomb!"
-					onClickFnc={() => createRoombtn("timebomb")}
-					viewFlg={gameName !== ""}
-					imageUrl={"/images/background.jpg"}
-					imageWidth={80}
-				/>
-				<ImagePulsingBtn
-					value="Hideout!"
-					onClickFnc={() => createRoombtn("hideout")}
-					viewFlg={gameName !== ""}
-					imageUrl={"/images/hideout/hideoutbackground.png"}
-					imageWidth={80}
-				/>
-			</div>
-		</Layout>
-	);
+export default function Homepage() {
+  return (
+    <>
+      <style jsx global>{`
+        body {
+          background-color: #f9fbee;
+        }
+      `}</style>
+      <Head>
+        <meta name="description" content="セカンドワンナイト人狼" />
+        <link rel="icon" href="/favicon.png" />
+        <meta property="og:url" content={SystemConst.Server.SITE_URL} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="セカンドワンナイト人狼" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@2d7rqU5gFQ6VpGo" />
+        <meta
+          property="og:image"
+          content={
+            SystemConst.Server.SITE_URL +
+            "/images/werewolf/werewolfbackground.png"
+          }
+        />
+        <meta property="og:title" content="セカンドワンナイト人狼" />
+        <meta
+          property="og:description"
+          content="ブラウザ上で正体隠匿ゲームが遊べるページです。役職が選べて１日で終わる人狼ゲーム「セカンドワンナイト人狼」を公開しています。「タイムボム」「ハイドアウト」などのボードゲームがブラウザで遊べます。"
+        />
+        <title>セカンドワンナイト人狼</title>
+      </Head>
+      <main className={styles.home}>
+        <section className={styles.mainsection}>
+          <div className={styles["main-content"]}>
+            <h3>site</h3>
+            <h1>
+              セカンド
+              <br />
+              ワンナイト人狼
+            </h1>
+            <h2>
+              <a href="https://twitter.com/nocopyrightgirl">
+                ノーコピーライトガール
+              </a>
+              様の素晴らしい画像を拝借し、オリジナルのブラウザゲーム「セカンドワンナイト人狼」を公開しています。
+            </h2>
+          </div>
+          <div className={styles["main-img"]}>
+            <div>
+              <img src="/images/main.jpg" alt="メイン画像" />
+            </div>
+          </div>
+        </section>
+        <section className={styles.game}>
+          <div className={styles["sub-title"]}>
+            <h3>games</h3>
+            <h2>ゲーム一覧</h2>
+          </div>
+          <div className={styles.gamelist}>
+            <CreateGameBtn
+              title="セカンドワンナイト人狼"
+              discription="セカンドワンナイト人狼！　役職を選べて1日で終わる人狼ゲーム！ 初心者にもおすすめ！"
+              imgUrl="/images/werewolf/werewolfbackground.png"
+              gameId="werewolf"
+            />
+            <CreateGameBtn
+              title="タイムボム"
+              discription="ゲームデザイナー佐藤雄介様の手がけたあの名作「タイムボム」！（非公式）"
+              imgUrl="/images/background.jpg"
+              gameId="timebomb"
+            />
+            <CreateGameBtn
+              title="ハイドアウト"
+              discription="あの名作タイムボムの次回作！（非公式）"
+              imgUrl="/images/hideout/hideoutbackground.png"
+              gameId="hideout"
+            />
+          </div>
+        </section>
+      </main>
+    </>
+  );
 }
