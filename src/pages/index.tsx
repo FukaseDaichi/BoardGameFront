@@ -12,6 +12,10 @@ export default function Homepage() {
         }
       `}</style>
       <Head>
+        <meta
+          name="google-site-verification"
+          content="PL4mFXSOkoRJNiMOigMC2VmfdZ3X3nOMzuvZmMPmbmc"
+        />
         <meta name="description" content="セカンドワンナイト人狼" />
         <link rel="icon" href="/favicon.png" />
         <meta property="og:url" content={SystemConst.Server.SITE_URL} />
