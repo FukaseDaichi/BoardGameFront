@@ -341,6 +341,7 @@ export default function WerewolfRoom() {
         // ゲームスタート
         setStartFlg(true);
         setRuleFlg(false);
+        setResultFlg(false);
         dataSet(socketInfo.obj);
         break;
 
@@ -497,7 +498,6 @@ export default function WerewolfRoom() {
 
       // アイコン初期設定
       if (userArray[0].userIconUrl === null) {
-        console.log(userArray[0]);
         changeIcon("/images/icon/icon" + userArray[0].userNo + ".jpg");
       }
     }
@@ -704,41 +704,43 @@ export default function WerewolfRoom() {
         </button>
       </div>
       {/* ユーザ情報 */}
-      <div className={styles.userfirld}>
-        {userList.map((user, index: number) => {
-          return (
+      {playerData && (
+        <div className={styles.userfirld}>
+          {userList.map((user, index: number) => {
+            return (
+              <UserInfo
+                playerData={playerData}
+                key={index}
+                user={user}
+                ownFlg={user.userName === playerName}
+                userColor={SystemConst.PLAYER_COLOR_LIST[index]}
+                changeIcon={changeIcon}
+                turn={turn}
+                userAction={userAction}
+                setModalRoll={setModalRoll}
+                playerActionName={playerActionName}
+                winteamList={winteamList}
+                setModalOwnFlg={setModalOwnFlg}
+              />
+            );
+          })}
+          {npcuser && (
             <UserInfo
               playerData={playerData}
-              key={index}
-              user={user}
-              ownFlg={user.userName === playerName}
-              userColor={SystemConst.PLAYER_COLOR_LIST[index]}
+              user={npcuser}
+              ownFlg={false}
+              userColor={SystemConst.PLAYER_COLOR_LIST[npcuser.userNo + 1]}
               changeIcon={changeIcon}
               turn={turn}
               userAction={userAction}
               setModalRoll={setModalRoll}
-              playerActionName={playerActionName}
+              playerActionName={playerNPCActionName}
               winteamList={winteamList}
               setModalOwnFlg={setModalOwnFlg}
             />
-          );
-        })}
-        {npcuser && (
-          <UserInfo
-            playerData={playerData}
-            user={npcuser}
-            ownFlg={false}
-            userColor={SystemConst.PLAYER_COLOR_LIST[npcuser.userNo + 1]}
-            changeIcon={changeIcon}
-            turn={turn}
-            userAction={userAction}
-            setModalRoll={setModalRoll}
-            playerActionName={playerNPCActionName}
-            winteamList={winteamList}
-            setModalOwnFlg={setModalOwnFlg}
-          />
-        )}
-      </div>
+          )}
+        </div>
+      )}
       {/* 役職情報 */}
       {rollList.length > 0 && (
         <RollInfo
