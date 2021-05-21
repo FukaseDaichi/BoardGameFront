@@ -32,7 +32,7 @@ main.home {
 				margin-top: 20px;
 				padding-right: 20px;
 				font-weight: 200;
-				font-size: 1rem;
+				font-size: 0.9rem;
 				color: #111;
 				@include mq(md) {
 					font-size: 0.9rem;
@@ -59,6 +59,7 @@ main.home {
 		}
 		> div.main-img {
 			width: calc(100% - 260px);
+			user-select: none;
 			> div {
 				> img {
 					width: 100%;
@@ -106,7 +107,7 @@ main.home {
 			flex-wrap: wrap;
 
 			> div {
-				width: 350px;
+				width: 280px;
 				margin: 10px 10px 30px 10px;
 			}
 		}
