@@ -17,6 +17,10 @@ export default function Homepage() {
           content="PL4mFXSOkoRJNiMOigMC2VmfdZ3X3nOMzuvZmMPmbmc"
         />
         <meta name="description" content="セカンドワンナイト人狼" />
+        <meta
+          name="keywords"
+          content="人狼ゲーム,ブラウザゲーム,セカンドワンナイト人狼,オンライン,ボードゲーム,ブラウザ,アプリ,タイムボム,ハイドアウト"
+        ></meta>
         <link rel="icon" href="/favicon.png" />
         <meta property="og:url" content={SystemConst.Server.SITE_URL} />
         <meta property="og:type" content="website" />
