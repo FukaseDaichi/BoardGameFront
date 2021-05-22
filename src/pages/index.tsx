@@ -16,7 +16,10 @@ export default function Homepage() {
           name="google-site-verification"
           content="PL4mFXSOkoRJNiMOigMC2VmfdZ3X3nOMzuvZmMPmbmc"
         />
-        <meta name="description" content="セカンドワンナイト人狼" />
+        <meta
+          name="description"
+          content="ブラウザで遊べる人狼ゲーム「セカンドワンナイト人狼」を公開しています。"
+        />
         <meta
           name="keywords"
           content="人狼ゲーム,ブラウザゲーム,セカンドワンナイト人狼,オンライン,ボードゲーム,ブラウザ,アプリ,タイムボム,ハイドアウト"
