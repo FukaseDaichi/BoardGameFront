@@ -19,16 +19,12 @@ export default function Homepage() {
 	}, []);
 	return (
 		<>
-			<style jsx global>{`
-				body {
-					background-color: #f9fbee;
-				}
-			`}</style>
 			<Head>
 				<meta
 					name="google-site-verification"
 					content="PL4mFXSOkoRJNiMOigMC2VmfdZ3X3nOMzuvZmMPmbmc"
 				/>
+				<meta name="title" content="セカンドワンナイト人狼"></meta>
 				<meta
 					name="description"
 					content="ブラウザで遊べる人狼ゲーム「セカンドワンナイト人狼」を公開しています。"
@@ -37,10 +33,14 @@ export default function Homepage() {
 					name="keywords"
 					content="人狼ゲーム,ブラウザゲーム,セカンドワンナイト人狼,オンライン,ボードゲーム,ブラウザ,アプリ,タイムボム,ハイドアウト"
 				></meta>
+
 				<link rel="icon" href="/favicon.png" />
+
 				<meta property="og:url" content={SystemConst.Server.SITE_URL} />
 				<meta property="og:type" content="website" />
+				<meta property="og:title" content="セカンドワンナイト人狼" />
 				<meta property="og:site_name" content="セカンドワンナイト人狼" />
+
 				<meta name="twitter:card" content="summary_large_image" />
 				<meta name="twitter:site" content="@2d7rqU5gFQ6VpGo" />
 				<meta
@@ -50,13 +50,20 @@ export default function Homepage() {
 						"/images/werewolf/werewolfbackground.png"
 					}
 				/>
-				<meta property="og:title" content="セカンドワンナイト人狼" />
+
 				<meta
 					property="og:description"
 					content="ブラウザ上で正体隠匿ゲームが遊べるページです。役職が選べて１日で終わる人狼ゲーム「セカンドワンナイト人狼」を公開しています。「タイムボム」「ハイドアウト」などのボードゲームがブラウザで遊べます。"
 				/>
 				<title>セカンドワンナイト人狼</title>
 			</Head>
+			<style jsx global>
+				{`
+					body {
+						background-color: #f9fbee;
+					}
+				`}
+			</style>
 			<main className={styles.home}>
 				<section className={styles.mainsection}>
 					<div className={styles["main-content"]}>
