@@ -251,7 +251,7 @@ div.rollselect {
           height: 0;
         }
         100% {
-          height: $checkbox-height/2;
+          height: $checkbox-height * 0.5;
         }
       }
 
@@ -260,7 +260,7 @@ div.rollselect {
           height: 0;
         }
         100% {
-          height: $checkbox-height/2;
+          height: $checkbox-height * 0.5;
         }
       }
 
@@ -269,7 +269,7 @@ div.rollselect {
           height: 0;
         }
         100% {
-          height: $checkbox-height/2;
+          height: $checkbox-height * 0.5;
         }
       }
 
@@ -321,10 +321,10 @@ div.rollselect {
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        -moz-transition: border-color ease $duration/2;
-        -o-transition: border-color ease $duration/2;
-        -webkit-transition: border-color ease $duration/2;
-        transition: border-color ease $duration/2;
+        -moz-transition: border-color ease $duration * 0.5;
+        -o-transition: border-color ease $duration * 0.5;
+        -webkit-transition: border-color ease $duration * 0.5;
+        transition: border-color ease $duration * 0.5;
         cursor: pointer;
 
         display: none;
@@ -377,10 +377,10 @@ div.rollselect {
 
         &::after {
           height: $checkbox-height * 0.5;
-          -moz-animation: dothabottomcheck $duration/2 ease 0s forwards;
-          -o-animation: dothabottomcheck $duration/2 ease 0s forwards;
-          -webkit-animation: dothabottomcheck $duration/2 ease 0s forwards;
-          animation: dothabottomcheck $duration/2 ease 0s forwards;
+          -moz-animation: dothabottomcheck $duration * 0.5 ease 0s forwards;
+          -o-animation: dothabottomcheck $duration * 0.5 ease 0s forwards;
+          -webkit-animation: dothabottomcheck $duration * 0.5 ease 0s forwards;
+          animation: dothabottomcheck $duration * 0.5 ease 0s forwards;
         }
 
         &::before {
