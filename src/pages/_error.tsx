@@ -5,7 +5,7 @@ const Error = () => {
   return <div>エラーが発生しました</div>;
 };
 
-Error.getInitialProps = async ({ res }) => {
+Error.getInitialProps = async ({ req, res }) => {
   // サーバー側でリダイレクト
   if (typeof window === "undefined") {
     res.writeHead(302, { Location: "/" });

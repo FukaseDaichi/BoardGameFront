@@ -10,6 +10,9 @@ npx create-next-app boardgamefront --use-npm --example "https://github.com/Fukas
   npm install --save react-stomp
   npm i sass
   npm install interactjs
+  npm install react@17.0.2 react-dom@17.0.2
+  npm i next @ latest
+  npm i typescript@latest
 
 - 追跡
 
