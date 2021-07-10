@@ -691,7 +691,21 @@ export default function WerewolfRoom() {
         <p>
           <label htmlFor="username">Name</label>
         </p>
-        <input type="text" id="username" maxLength={20} />
+        <input
+          type="text"
+          id="username"
+          maxLength={20}
+          onKeyPress={(e) => {
+            // enterkey event
+            if (e.key == "Enter") {
+              e.preventDefault();
+              const usernameDom: HTMLInputElement = document.getElementById(
+                "username"
+              ) as HTMLInputElement;
+              roomIn(usernameDom.value);
+            }
+          }}
+        />
         <button
           onClick={() => {
             const usernameDom: HTMLInputElement = document.getElementById(
