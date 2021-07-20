@@ -96,6 +96,7 @@ export default function WerewolfRoom() {
   const [ruleFlg, setRuleFlg] = useState(false);
   const [winMessage, setWinmessage] = useState(null);
   const [modalOwnFlg, setModalOwnFlg] = useState(false);
+  const [rollInfoList, setRollInfoList] = useState([]);
 
   // ルーム入室
   const roomIn = (userName: string) => {
@@ -319,7 +320,9 @@ export default function WerewolfRoom() {
       case 100: // ルーム入室
         dataSet(socketInfo.obj);
         setLimitTime(socketInfo.obj.limitTime);
+        setRollInfoList(socketInfo.obj.rollList);
         break;
+
       case 101: // チャット
         setChatList(socketInfo.obj);
         const messageFirld = document.getElementById("chat-firld");
@@ -329,12 +332,14 @@ export default function WerewolfRoom() {
       case 150: // 役職設定
         dataSet(socketInfo.obj);
         setRollCustum(socketInfo.obj.rollNoList);
+        setRollInfoList(socketInfo.obj.rollList);
         break;
 
       case 200:
         // ルーム入室(同一名ユーザ入室)
         dataSet(socketInfo.obj);
         setLimitTime(socketInfo.obj.limitTime);
+        setRollInfoList(socketInfo.obj.rollList);
         break;
 
       case 300: // ゲーム開始
@@ -758,7 +763,7 @@ export default function WerewolfRoom() {
       {/* 役職情報 */}
       {rollList.length > 0 && (
         <RollInfo
-          rollList={rollList}
+          rollList={rollInfoList}
           setModalRoll={setModalRoll}
           userList={userList}
           turn={turn}
