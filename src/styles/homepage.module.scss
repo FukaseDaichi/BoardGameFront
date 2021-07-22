@@ -23,7 +23,7 @@ main.home {
         color: #ccc;
       }
       > h1 {
-        font-family: "APJapanesefont", sans-seri;
+        font-family: "APJapanesefont_short", "APJapanesefont", sans-seri;
         color: #111;
         line-height: 0.7;
         font-size: 2.5rem;
@@ -96,7 +96,7 @@ main.home {
         color: #111;
         font-weight: 500;
         font-size: 2.5rem;
-        font-family: "APJapanesefont", sans-seri;
+        font-family: "APJapanesefont_short", "APJapanesefont", sans-seri;
       }
 
       &::after {
