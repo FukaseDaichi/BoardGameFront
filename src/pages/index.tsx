@@ -111,7 +111,7 @@ export default function Homepage() {
               gameId="hideout"
             />
             <CreateGameBtn
-              title="ディクリプト"
+              title="ディクリプト（開発中）"
               discription="暗号解読ゲーム！（非公式）"
               imgUrl="/images/decrypt/decryptbackground.png"
               gameId="decrypt"

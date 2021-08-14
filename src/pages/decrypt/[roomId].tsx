@@ -97,8 +97,8 @@ export default function DecryptRoom() {
   );
 
   // 暗号リセット
-  const resetCode = () => {
-    const url = "/app/ecrypt-resetcode";
+  const resetCode = useCallback(() => {
+    const url = "/app/decrypt-resetcode";
 
     const soketInfo: SocketInfo = {
       status: 110,
@@ -108,7 +108,7 @@ export default function DecryptRoom() {
       obj: null,
     };
     conect(url, soketInfo);
-  };
+  }, [playerName]);
 
   // チームリセット
   const resetTeam = useCallback(() => {
@@ -189,7 +189,7 @@ export default function DecryptRoom() {
     (wordList: Array<string>) => {
       const url = "/app/decrypt-createcodeword";
       const soketInfo: SocketInfo = {
-        status: 400,
+        status: 370,
         roomId: roomId as string,
         userName: playerName,
         message: null,
@@ -287,6 +287,11 @@ export default function DecryptRoom() {
         dataSet(socketInfo.obj);
         break;
 
+      case 200: // 同一ユーザ入室
+        dataSet(socketInfo.obj);
+        setMessageList(() => messageList.concat(socketInfo.message));
+        break;
+
       case 300: // ゲーム開始
         // ゲームスタート
         setStartFlg(true);
@@ -297,7 +302,7 @@ export default function DecryptRoom() {
         dataSet(socketInfo.obj);
         break;
 
-      case 400: // 暗号作成
+      case 370: // 暗号作成
         dataSet(socketInfo.obj);
         break;
 
@@ -487,6 +492,10 @@ export default function DecryptRoom() {
           turn={turn}
           playerData={playerData}
           gameTime={gameTime}
+          resetCode={resetCode}
+          resetTeam={resetTeam}
+          choiceTeam={choiceTeam}
+          modeChange={modeChange}
         />
       )}
 
