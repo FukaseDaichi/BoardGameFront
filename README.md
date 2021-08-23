@@ -6,7 +6,7 @@ npx create-next-app boardgamefront --ts --use-npm --example "https://github.com/
 
 - 各種モジュール
 
-* npx browserslist@latest --update-db
+* npm i --save-dev eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin
 * npm install --save react-stomp
 * npm i sass
 * npm install interactjs
