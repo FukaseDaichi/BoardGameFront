@@ -1,11 +1,18 @@
-import "../styles/bootstrap.min.css";
-import "../styles/global.scss";
-import { useEffect } from "react";
+import React from 'react';
+import '../styles/bootstrap.min.css';
+import '../styles/global.scss';
+import { useEffect } from 'react';
 
-export default function App({ Component, pageProps }) {
-	useEffect(() => {
-		document.querySelector("body").setAttribute("ontouchstart", "");
-	});
+interface Props {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Component: any;
+    pageProps: unknown;
+}
 
-	return <Component {...pageProps} />;
+export default function App(props: Props): JSX.Element {
+    useEffect(() => {
+        document.querySelector('body').setAttribute('ontouchstart', '');
+    });
+
+    return <props.Component {...props.pageProps} />;
 }
