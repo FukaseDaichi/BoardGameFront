@@ -33,3 +33,9 @@ npx create-next-app boardgamefront --ts --use-npm --example "https://github.com/
 -   実行
 
     npm run dev
+
+-   ダメだったお絵描きセット
+
+*   npm install react-konva konva --save
+*   npm install react-color --save
+*   npm install --save styled-components

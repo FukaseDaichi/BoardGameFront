@@ -1,0 +1,9 @@
+@import '../../variables';
+@import '../../font';
+
+div.canvas {
+    height: 400px;
+    .stage {
+        position: fixed;
+    }
+}

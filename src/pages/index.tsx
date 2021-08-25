@@ -119,11 +119,17 @@ export default function Homepage(): JSX.Element {
                             gameId="hideout"
                         />
                         <CreateGameBtn
+                            title="エセ芸術家ニューヨークへ行く"
+                            discription="お絵描き人狼（非公式）"
+                            imgUrl="/images/hideout/hideoutbackground.png"
+                            gameId="fakeartist"
+                        />
+                        {/* <CreateGameBtn
                             title="ディクリプト（開発中）"
                             discription="暗号解読ゲーム！（非公式）"
                             imgUrl="/images/decrypt/decryptbackground.png"
                             gameId="decrypt"
-                        />
+                        /> */}
                     </div>
                 </section>
             </main>
