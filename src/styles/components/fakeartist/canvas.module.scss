@@ -1,9 +1,10 @@
 @import '../../variables';
 @import '../../font';
 
-div.canvas {
-    height: 400px;
-    .stage {
-        position: fixed;
+div.canvasmain {
+    position: relative;
+    canvas {
+        border: 1px solid #000000;
+        background-color: white;
     }
 }

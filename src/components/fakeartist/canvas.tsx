@@ -1,114 +1,108 @@
 import React from 'react';
-import { Stage, Layer, Line } from 'react-konva';
-import { SketchPicker } from 'react-color';
-import { KonvaEventObject } from 'konva/lib/Node';
 import styles from '../../styles/components/fakeartist/canvas.module.scss';
+import { useState } from 'react';
+
+// ポジション
+const lastPosition = { x: null, y: null };
 
 const Canvas = (): JSX.Element => {
-    const [tool, setTool] = React.useState('pen');
-    const [size, setSize] = React.useState(5);
-    const [color, setColor] = React.useState('#000000');
-    const [lines, setLines] = React.useState([]);
-    const isDrawing = React.useRef(false);
-    const stageRef = React.useRef();
+    const [isDrag, setIsDrag] = useState(false);
 
-    const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-        isDrawing.current = true;
-        const pos = e.target.getStage().getPointerPosition();
-        setLines([
-            ...lines,
-            {
-                tool,
-                points: [pos.x, pos.y],
-                color,
-                size,
-            },
-        ]);
+    // マウスのドラッグを開始したらisDragのフラグをtrueにしてdraw関数内で
+    const dragStart = () => {
+        const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
+        const context = canvas.getContext('2d');
+
+        // これから新しい線を書き始めることを宣言する
+        // 一連の線を書く処理が終了したらdragEnd関数内のclosePathで終了を宣言する
+        context.beginPath();
+        setIsDrag(true);
     };
 
-    const handleMouseMove = (e) => {
-        // no drawing - skipping
-        if (!isDrawing.current) {
+    // 絵を書く
+    const draw = (x: number, y: number) => {
+        const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
+        const context = canvas.getContext('2d');
+
+        console.log(x + ':' + y);
+
+        // マウスがドラッグされていなかったら処理を中断する。
+        // ドラッグしながらしか絵を書くことが出来ない。
+        if (!isDrag) {
             return;
         }
-        const stage = e.target.getStage();
-        const point = stage.getPointerPosition();
-        const lastLine = lines[lines.length - 1];
-        lastLine.points = lastLine.points.concat([point.x, point.y]);
-        lines.splice(lines.length - 1, 1, lastLine);
-        setLines(lines.concat());
+        // 「context.beginPath()」と「context.closePath()」を都度draw関数内で実行するよりも、
+        // 線の描き始め(dragStart関数)と線の描き終わり(dragEnd)で1回ずつ読んだほうがより綺麗に線画書ける
+        // 線の状態を定義する
+        // MDN CanvasRenderingContext2D: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin
+        context.lineCap = 'round'; // 丸みを帯びた線にする
+        context.lineJoin = 'round'; // 丸みを帯びた線にする
+        context.lineWidth = 5; // 線の太さ
+        context.strokeStyle = 'black'; // 線の色
+
+        // 書き始めは lastPosition.x, lastPosition.y の値はnullとなっているため、
+        // クリックしたところを開始点としている。
+        // この関数(draw関数内)の最後の2行で lastPosition.xとlastPosition.yに
+        // 現在のx, y座標を記録することで、次にマウスを動かした時に、
+        // 前回の位置から現在のマウスの位置まで線を引くようになる。
+        if (lastPosition.x === null || lastPosition.y === null) {
+            // ドラッグ開始時の線の開始位置
+            context.moveTo(x, y);
+        } else {
+            // ドラッグ中の線の開始位置
+            context.moveTo(lastPosition.x, lastPosition.y);
+        }
+        // context.moveToで設定した位置から、context.lineToで設定した位置までの線を引く。
+        // - 開始時はmoveToとlineToの値が同じであるためただの点となる。
+        // - ドラッグ中はlastPosition変数で前回のマウス位置を記録しているため、
+        //   前回の位置から現在の位置までの線(点のつながり)となる
+        context.lineTo(x, y);
+
+        // context.moveTo, context.lineToの値を元に実際に線を引く
+        context.stroke();
+
+        // 現在のマウス位置を記録して、次回線を書くときの開始点に使う
+        lastPosition.x = x;
+        lastPosition.y = y;
     };
 
-    const handleMouseUp = () => {
-        isDrawing.current = false;
+    // canvas上に書いた絵を全部消す
+    const clear = () => {
+        const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
+        const context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
     };
 
-    const handleChangeComplete = (color) => {
-        setColor(color.hex);
+    // マウスのドラッグが終了したら、もしくはマウスがcanvas外に移動したら
+    // isDragのフラグをfalseにしてdraw関数内でお絵かき処理が中断されるようにする
+    const dragEnd = () => {
+        const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
+        const context = canvas.getContext('2d');
+        // 線を書く処理の終了を宣言する
+        context.closePath();
+        setIsDrag(false);
+        // 描画中に記録していた値をリセットする
+        lastPosition.x = null;
+        lastPosition.y = null;
+    };
+
+    const mousemove = (event) => {
+        draw(event.nativeEvent.layerX, event.nativeEvent.layerY);
     };
 
     return (
-        <div className={styles.canvas}>
+        <div className={styles.canvasmain}>
+            <canvas
+                id="draw-area"
+                width="380px"
+                height="400px"
+                onMouseDown={dragStart}
+                onMouseUp={dragEnd}
+                onMouseOut={dragEnd}
+                onMouseMove={mousemove}
+            ></canvas>
             <div>
-                <select
-                    value={tool}
-                    onChange={(e) => {
-                        setTool(e.target.value);
-                    }}
-                >
-                    <option value="pen">ペン</option>
-                    <option value="eraser">消しゴム</option>
-                </select>
-                <select
-                    value={size}
-                    onChange={(e) => {
-                        setSize(Number(e.target.value));
-                    }}
-                >
-                    <option value="3">3</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
-            </div>
-            <div className={styles.stage}>
-                <div>
-                    <Stage
-                        width={300}
-                        height={300}
-                        onMouseDown={handleMouseDown}
-                        onMousemove={handleMouseMove}
-                        onMouseup={handleMouseUp}
-                        style={{
-                            border: 'solid',
-                            marginTop: '10px',
-                        }}
-                        ref={stageRef}
-                    >
-                        <Layer>
-                            {lines.map((line, i) => (
-                                <Line
-                                    key={i}
-                                    points={line.points}
-                                    stroke={line.color}
-                                    strokeWidth={line.size}
-                                    tension={0.5}
-                                    lineCap="round"
-                                    globalCompositeOperation={
-                                        line.tool === 'eraser'
-                                            ? 'destination-out'
-                                            : 'source-over'
-                                    }
-                                />
-                            ))}
-                        </Layer>
-                    </Stage>
-                </div>
-                <SketchPicker
-                    color={color}
-                    onChangeComplete={handleChangeComplete}
-                />
+                <button onClick={clear}>全消し</button>
             </div>
         </div>
     );
