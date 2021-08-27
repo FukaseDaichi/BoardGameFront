@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from '../../styles/components/fakeartist/canvas.module.scss';
 import { useState } from 'react';
 
 // ポジション
 const lastPosition = { x: null, y: null };
+
+// スクロールキャンセル
 
 const Canvas = (): JSX.Element => {
     const [isDrag, setIsDrag] = useState(false);
@@ -24,7 +26,7 @@ const Canvas = (): JSX.Element => {
         const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
         const context = canvas.getContext('2d');
 
-        console.log(x + ':' + y);
+        //console.log(x + ':' + y);
 
         // マウスがドラッグされていなかったら処理を中断する。
         // ドラッグしながらしか絵を書くことが出来ない。
@@ -90,16 +92,41 @@ const Canvas = (): JSX.Element => {
         draw(event.nativeEvent.layerX, event.nativeEvent.layerY);
     };
 
+    const touchmove = (event) => {
+        const target = event.touches[0];
+        console.log(target.pageX + ':' + target.pageY);
+        const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
+        const x =
+            target.pageX - canvas.getBoundingClientRect().left - window.scrollX;
+        const y =
+            target.pageY - canvas.getBoundingClientRect().top - window.scrollY;
+        draw(x, y);
+    };
+
+    useEffect(() => {
+        function handleSubmit(e) {
+            e.preventDefault();
+        }
+        const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
+        canvas.addEventListener('touchmove', handleSubmit, {
+            passive: false,
+        });
+    }, []);
+
     return (
         <div className={styles.canvasmain}>
             <canvas
                 id="draw-area"
-                width="380px"
-                height="400px"
+                width="343px"
+                height="343px"
                 onMouseDown={dragStart}
                 onMouseUp={dragEnd}
                 onMouseOut={dragEnd}
                 onMouseMove={mousemove}
+                // スマートフォン用
+                onTouchStart={dragStart}
+                onTouchEnd={dragEnd}
+                onTouchMove={touchmove}
             ></canvas>
             <div>
                 <button onClick={clear}>全消し</button>
