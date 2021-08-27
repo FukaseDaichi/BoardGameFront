@@ -226,3 +226,92 @@ div.rulebtn {
         }
     }
 }
+
+// 制限時間設定のラジオボタン
+div.rollselect {
+    margin-top: 5px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-family: 'APJapanesefont', sans-seri;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+
+    > div.title {
+        margin: 0;
+        font-size: 1.2em;
+        background: #696b6c;
+        padding: 4px;
+        text-align: center;
+        color: #fff;
+        font-weight: bold;
+        letter-spacing: 0.05em;
+        > button {
+            font-size: 1rem;
+            @include mq(md) {
+                font-size: 0.7rem;
+            }
+        }
+    }
+
+    .limittimeinputarea {
+        display: flex;
+        justify-content: space-around;
+        background-color: rgb(255, 255, 255, 0.5);
+
+        > div {
+            width: 25%;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+
+            input {
+                display: none;
+
+                &:checked ~ div.teban {
+                    display: block;
+                }
+            }
+            label {
+                font-size: 1.4rem;
+                font-family: 'APJapanesefont', sans-seri;
+                margin: 0;
+                cursor: pointer;
+                span {
+                    font-size: 2rem;
+                }
+            }
+            &::after {
+                content: '　';
+                display: block;
+                background-image: url(../../../../public/images/underline.png);
+                width: 80px;
+                margin: -20px auto 0 auto;
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
+            div.teban {
+                display: none;
+                position: absolute;
+                left: 20px;
+                top: 10px;
+                img {
+                    width: 25px;
+                    z-index: 1;
+                    filter: grayscale(50%);
+                    animation: fwari ease-in-out 1.5s infinite alternate;
+                }
+                @keyframes fwari {
+                    0% {
+                        transform: translate(0%, 0%);
+                    }
+                    100% {
+                        transform: translate(0%, -10px);
+                    }
+                }
+            }
+        }
+    }
+}

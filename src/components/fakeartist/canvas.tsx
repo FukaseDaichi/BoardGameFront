@@ -1,14 +1,21 @@
 import React, { useEffect } from 'react';
 import styles from '../../styles/components/fakeartist/canvas.module.scss';
 import { useState } from 'react';
+import { TwitterPicker } from 'react-color';
+import { ArtData } from '../../type/fakeartist';
 
 // ポジション
 const lastPosition = { x: null, y: null };
 
-// スクロールキャンセル
+type CanvasProps = {
+    drawFnc: (artDataArray: Array<ArtData>) => void;
+};
 
-const Canvas = (): JSX.Element => {
+const Canvas = (props: CanvasProps): JSX.Element => {
     const [isDrag, setIsDrag] = useState(false);
+    const [color, setColor] = useState('#010101');
+    const [lineWidth, setLineWidth] = useState<number>(3);
+    const [artDataArray, setArtDataArray] = useState<Array<ArtData>>([]);
 
     // マウスのドラッグを開始したらisDragのフラグをtrueにしてdraw関数内で
     const dragStart = () => {
@@ -26,8 +33,6 @@ const Canvas = (): JSX.Element => {
         const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
         const context = canvas.getContext('2d');
 
-        //console.log(x + ':' + y);
-
         // マウスがドラッグされていなかったら処理を中断する。
         // ドラッグしながらしか絵を書くことが出来ない。
         if (!isDrag) {
@@ -39,8 +44,8 @@ const Canvas = (): JSX.Element => {
         // MDN CanvasRenderingContext2D: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineJoin
         context.lineCap = 'round'; // 丸みを帯びた線にする
         context.lineJoin = 'round'; // 丸みを帯びた線にする
-        context.lineWidth = 5; // 線の太さ
-        context.strokeStyle = 'black'; // 線の色
+        context.lineWidth = lineWidth; // 線の太さ
+        context.strokeStyle = color; // 線の色
 
         // 書き始めは lastPosition.x, lastPosition.y の値はnullとなっているため、
         // クリックしたところを開始点としている。
@@ -66,6 +71,16 @@ const Canvas = (): JSX.Element => {
         // 現在のマウス位置を記録して、次回線を書くときの開始点に使う
         lastPosition.x = x;
         lastPosition.y = y;
+
+        // お絵描き展開
+        const artData: ArtData = {
+            xparamPotision: Math.floor(x),
+            yparamPotision: Math.floor(y),
+            color: color,
+            lineWidth: lineWidth,
+        };
+
+        setArtDataArray([...artDataArray, artData]);
     };
 
     // canvas上に書いた絵を全部消す
@@ -82,6 +97,11 @@ const Canvas = (): JSX.Element => {
         const context = canvas.getContext('2d');
         // 線を書く処理の終了を宣言する
         context.closePath();
+
+        if (isDrag) {
+            props.drawFnc(artDataArray);
+            setArtDataArray([]);
+        }
         setIsDrag(false);
         // 描画中に記録していた値をリセットする
         lastPosition.x = null;
@@ -94,13 +114,20 @@ const Canvas = (): JSX.Element => {
 
     const touchmove = (event) => {
         const target = event.touches[0];
-        console.log(target.pageX + ':' + target.pageY);
         const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
         const x =
             target.pageX - canvas.getBoundingClientRect().left - window.scrollX;
         const y =
             target.pageY - canvas.getBoundingClientRect().top - window.scrollY;
         draw(x, y);
+    };
+
+    const colorChange = (color) => {
+        setColor(color.hex);
+    };
+
+    const lineWidthChange = (event) => {
+        setLineWidth(Number(event.target.value));
     };
 
     useEffect(() => {
@@ -128,6 +155,35 @@ const Canvas = (): JSX.Element => {
                 onTouchEnd={dragEnd}
                 onTouchMove={touchmove}
             ></canvas>
+            <TwitterPicker
+                color={color}
+                onChange={colorChange}
+                colors={[
+                    '#FFFFFF',
+                    '#FF6900',
+                    '#FCB900',
+                    '#7BDCB5',
+                    '#00D084',
+                    '#8ED1FC',
+                    '#0693E3',
+                    '#ABB8C3',
+                    '#EB144C',
+                    '#F78DA7',
+                    '#9900EF',
+                    '#010101',
+                ]}
+            />
+            <div className={styles.lineWidth}>
+                <input
+                    type="range"
+                    name="range"
+                    min="1"
+                    max="12"
+                    value={lineWidth}
+                    onChange={lineWidthChange}
+                />
+                <h3>{lineWidth}</h3>
+            </div>
             <div>
                 <button onClick={clear}>全消し</button>
             </div>

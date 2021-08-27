@@ -10,6 +10,7 @@ npx create-next-app boardgamefront --ts --use-npm --example "https://github.com/
 *   npm install --save react-stomp
 *   npm i sass
 *   npm install interactjs
+*   npm install react-color --save
 
 -   TypeScript と ESLint のインストール
 

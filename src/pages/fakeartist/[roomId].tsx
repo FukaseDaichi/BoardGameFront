@@ -9,18 +9,54 @@ import { SocketInfo } from '../../type';
 import { useEffect, useState, useCallback } from 'react';
 import Chatmessage from '../../components/message/chatmessage';
 import ChatComponent from '../../components/chatcomponent';
-import styles from '../../styles/components/decrypt/room.module.scss';
+import styles from '../../styles/components/fakeartist/room.module.scss';
 import Router from 'next/router';
 
 import Start from '../../components/timebomb/start';
 import Canvas from '../../components/fakeartist/canvas';
+import { ArtData, FakeArtistUser } from '../../type/fakeartist';
+import FakeartistUserInfo from '../../components/fakeartist/fakeartistuserInfo';
 
 // 接続切れ
 const disconnect = () => {
     console.log('接続が切れました');
 };
 
-export default function DecryptRoom(): JSX.Element {
+// お絵描きコールバック
+const callBackDraw = (artDataArray: Array<ArtData>) => {
+    console.log(artDataArray);
+    const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
+    const context = canvas.getContext('2d');
+
+    context.beginPath();
+
+    for (let i = 0; i < artDataArray.length - 1; i++) {
+        console.log(artDataArray[i]);
+        console.log(
+            artDataArray[i].xparamPotision,
+            artDataArray[i].yparamPotision
+        );
+        context.lineCap = 'round'; // 丸みを帯びた線にする
+        context.lineJoin = 'round'; // 丸みを帯びた線にする
+        context.lineWidth = artDataArray[i].lineWidth; // 線の太さ
+        context.strokeStyle = artDataArray[i].color; // 線の色
+
+        context.moveTo(
+            artDataArray[i].xparamPotision,
+            artDataArray[i].yparamPotision
+        );
+        context.lineTo(
+            artDataArray[i + 1].xparamPotision,
+            artDataArray[i + 1].yparamPotision
+        );
+
+        context.stroke();
+    }
+
+    context.closePath();
+};
+
+export default function FakeArtistRoom(): JSX.Element {
     // roomId取得
     const router = useRouter();
     const { roomId } = router.query;
@@ -33,10 +69,11 @@ export default function DecryptRoom(): JSX.Element {
     const [userList, setUserLst] = useState([]);
     const [gameTime, setGameTime] = useState(0);
     const [turn, setTurn] = useState(0);
+    const [limitTime, setLimitTime] = useState(0);
 
     // userInfo
     const [playerName, setPlayerName] = useState(null);
-    const [playerData, setPlayerData] = useState(null);
+    const [playerData, setPlayerData] = useState<FakeArtistUser>(null);
 
     // view
     const [startFlg, setStartFlg] = useState(false);
@@ -109,14 +146,14 @@ export default function DecryptRoom(): JSX.Element {
 
     // お絵描き
     const draw = useCallback(
-        (wordList: Array<string>) => {
+        (artDataArray: Array<ArtData>) => {
             const url = '/app/fakeartist-drawing';
             const soketInfo: SocketInfo = {
                 status: 450,
                 roomId: roomId as string,
                 userName: playerName,
                 message: null,
-                obj: wordList,
+                obj: artDataArray,
             };
             conect(url, soketInfo);
         },
@@ -125,7 +162,7 @@ export default function DecryptRoom(): JSX.Element {
 
     // 投票
     const vote = useCallback(
-        (noList: Array<number>) => {
+        (targetUsername: string) => {
             const url = '/app/fakeartist-voting';
 
             const soketInfo: SocketInfo = {
@@ -133,7 +170,7 @@ export default function DecryptRoom(): JSX.Element {
                 roomId: roomId as string,
                 userName: playerName,
                 message: null,
-                obj: noList,
+                obj: targetUsername,
             };
             conect(url, soketInfo);
         },
@@ -198,7 +235,7 @@ export default function DecryptRoom(): JSX.Element {
                 break;
             }
 
-            case 200: // 同一ユーザ入室
+            case 200: // 同一ユーザ入室(再入室)
                 dataSet(socketInfo.obj);
                 setMessageList(() => messageList.concat(socketInfo.message));
                 break;
@@ -213,8 +250,20 @@ export default function DecryptRoom(): JSX.Element {
                 setMessageList(messageList.concat(socketInfo.message));
                 break;
 
-            case 450: // お絵描き
+            case 450: {
+                // お絵描き
+
+                // 別の人の絵を反映
+                if (socketInfo.userName !== playerName) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const drawData: Array<any> =
+                        socketInfo.obj.artDataStrokeList;
+                    callBackDraw(drawData[drawData.length - 1].artDataList);
+                }
                 dataSet(socketInfo.obj);
+                break;
+            }
+            case 451: // お絵描き（通常）
                 break;
 
             case 500: // 投票
@@ -222,7 +271,7 @@ export default function DecryptRoom(): JSX.Element {
                 break;
 
             case 550: // 制限時間変更
-                dataSet(socketInfo.obj);
+                setLimitTime(socketInfo.obj);
                 break;
 
             case 600: // 制限時間超過
@@ -393,9 +442,110 @@ export default function DecryptRoom(): JSX.Element {
                     Room IN
                 </button>
             </div>
+            {playerData && <Canvas drawFnc={draw} />}
 
-            <Canvas />
+            {/* ユーザ情報 */}
+            <div className={styles.userList}>
+                {playerData &&
+                    userList &&
+                    userList.map((user: FakeArtistUser, index: number) => {
+                        return (
+                            <FakeartistUserInfo
+                                gameTime={gameTime}
+                                playerData={playerData}
+                                turn={turn}
+                                user={user}
+                                key={index}
+                                changeIcon={changeIcon}
+                            />
+                        );
+                    })}
+            </div>
+            {/* 議論中の制限時間 */}
+            {playerData && (turn === 0 || turn === 4) && (
+                <div className={styles.rollselect}>
+                    <div className={styles.title}>議論中の制限時間</div>
 
+                    <div className={styles.limittimeinputarea}>
+                        <div onClick={() => changeLimitTime(0)}>
+                            <input
+                                type="radio"
+                                id="limit-time-0"
+                                name="limit-time"
+                                value="0"
+                                checked={limitTime === 0}
+                                readOnly
+                            />
+                            <label htmlFor="limit-time-0">
+                                <span>なし</span>
+                            </label>
+                            <div className={styles.teban}>
+                                <img
+                                    src={'/images/sunadokei_black.png'}
+                                    alt="手番"
+                                />
+                            </div>
+                        </div>
+                        <div onClick={() => changeLimitTime(180)}>
+                            <input
+                                type="radio"
+                                id="limit-time-180"
+                                name="limit-time"
+                                value="180"
+                                checked={limitTime === 180}
+                                readOnly
+                            />
+                            <label htmlFor="limit-time-180">
+                                <span>3</span>分
+                            </label>
+                            <div className={styles.teban}>
+                                <img
+                                    src={'/images/sunadokei_black.png'}
+                                    alt="手番"
+                                />
+                            </div>
+                        </div>
+                        <div onClick={() => changeLimitTime(300)}>
+                            <input
+                                type="radio"
+                                id="limit-time-300"
+                                name="limit-time"
+                                value="300"
+                                checked={limitTime === 300}
+                                readOnly
+                            />
+                            <label htmlFor="limit-time-300">
+                                <span>5</span>分
+                            </label>
+                            <div className={styles.teban}>
+                                <img
+                                    src={'/images/sunadokei_black.png'}
+                                    alt="手番"
+                                />
+                            </div>
+                        </div>
+                        <div onClick={() => changeLimitTime(420)}>
+                            <input
+                                type="radio"
+                                id="limit-time-420"
+                                name="limit-time"
+                                value="420"
+                                checked={limitTime === 420}
+                                readOnly
+                            />
+                            <label htmlFor="limit-time-420">
+                                <span>7</span>分
+                            </label>
+                            <div className={styles.teban}>
+                                <img
+                                    src={'/images/sunadokei_black.png'}
+                                    alt="手番"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className={styles.btnarea}>
                 <button
                     onClick={() => {
