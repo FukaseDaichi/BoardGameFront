@@ -2,13 +2,15 @@ import React, { useEffect } from 'react';
 import styles from '../../styles/components/fakeartist/canvas.module.scss';
 import { useState } from 'react';
 import { TwitterPicker } from 'react-color';
-import { ArtData } from '../../type/fakeartist';
+import { ArtData, ArtDataStroke, FakeArtistUser } from '../../type/fakeartist';
 
 // ポジション
 const lastPosition = { x: null, y: null };
 
 type CanvasProps = {
-    drawFnc: (artDataArray: Array<ArtData>) => void;
+    drawFnc: (artDataStroke: ArtDataStroke) => void;
+    playerData: FakeArtistUser;
+    gameTime: number;
 };
 
 const Canvas = (props: CanvasProps): JSX.Element => {
@@ -17,8 +19,26 @@ const Canvas = (props: CanvasProps): JSX.Element => {
     const [lineWidth, setLineWidth] = useState<number>(3);
     const [artDataArray, setArtDataArray] = useState<Array<ArtData>>([]);
 
+    useEffect(() => {
+        if (artDataArray.length > 100) {
+            const stroke: ArtDataStroke = {
+                name: props.playerData.userName,
+                artDataList: artDataArray,
+                color: color,
+                lineWidth: lineWidth,
+                endFlg: false,
+            };
+            props.drawFnc(stroke);
+            setArtDataArray([]);
+        }
+    }, [artDataArray.length]);
+
     // マウスのドラッグを開始したらisDragのフラグをtrueにしてdraw関数内で
     const dragStart = () => {
+        // 状態チェック
+        if (!props.playerData.drawFlg) {
+            return;
+        }
         const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
         const context = canvas.getContext('2d');
 
@@ -76,30 +96,31 @@ const Canvas = (props: CanvasProps): JSX.Element => {
         const artData: ArtData = {
             xparamPotision: Math.floor(x),
             yparamPotision: Math.floor(y),
-            color: color,
-            lineWidth: lineWidth,
         };
-
         setArtDataArray([...artDataArray, artData]);
-    };
-
-    // canvas上に書いた絵を全部消す
-    const clear = () => {
-        const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
-        const context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height);
     };
 
     // マウスのドラッグが終了したら、もしくはマウスがcanvas外に移動したら
     // isDragのフラグをfalseにしてdraw関数内でお絵かき処理が中断されるようにする
     const dragEnd = () => {
+        // 状態チェック
+        if (!props.playerData.drawFlg) {
+            return;
+        }
         const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
         const context = canvas.getContext('2d');
         // 線を書く処理の終了を宣言する
         context.closePath();
 
         if (isDrag) {
-            props.drawFnc(artDataArray);
+            const stroke: ArtDataStroke = {
+                name: props.playerData.userName,
+                artDataList: artDataArray,
+                color: color,
+                lineWidth: lineWidth,
+                endFlg: true,
+            };
+            props.drawFnc(stroke);
             setArtDataArray([]);
         }
         setIsDrag(false);
@@ -109,10 +130,20 @@ const Canvas = (props: CanvasProps): JSX.Element => {
     };
 
     const mousemove = (event) => {
+        // 状態チェック
+        if (!props.playerData.drawFlg) {
+            return;
+        }
+
         draw(event.nativeEvent.layerX, event.nativeEvent.layerY);
     };
 
     const touchmove = (event) => {
+        // 状態チェック
+        if (!props.playerData.drawFlg) {
+            return;
+        }
+
         const target = event.touches[0];
         const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
         const x =
@@ -155,6 +186,9 @@ const Canvas = (props: CanvasProps): JSX.Element => {
                 onTouchEnd={dragEnd}
                 onTouchMove={touchmove}
             ></canvas>
+            {props.gameTime === 1 && !props.playerData.drawFlg && (
+                <div className={styles.protected}></div>
+            )}
             <TwitterPicker
                 color={color}
                 onChange={colorChange}
@@ -183,9 +217,6 @@ const Canvas = (props: CanvasProps): JSX.Element => {
                     onChange={lineWidthChange}
                 />
                 <h3>{lineWidth}</h3>
-            </div>
-            <div>
-                <button onClick={clear}>全消し</button>
             </div>
         </div>
     );

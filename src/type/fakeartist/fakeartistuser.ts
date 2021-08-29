@@ -4,7 +4,7 @@ export type FakeArtistUser = {
     userName: string;
     userIconUrl: string;
 
-    roll: number;
+    rollNo: number;
     drawFlg: boolean;
     votingAbleFlg: boolean;
     punishmentFlg: boolean;

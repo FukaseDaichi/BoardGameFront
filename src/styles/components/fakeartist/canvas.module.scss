@@ -12,12 +12,22 @@ div.canvasmain {
         background-color: white;
         box-shadow: 0 1px 4px rgb(0 0 0 / 25%);
     }
+    div.protected {
+        top: 0;
+        position: absolute;
+        width: 343px;
+        height: 343px;
+        z-index: 1;
+        border-radius: 4px;
+        background-color: rgba(10, 10, 10, 0.1);
+        box-shadow: 0 1px 4px rgb(0 0 0 / 25%);
+    }
 
     .lineWidth {
         position: absolute;
+        bottom: 39px;
         right: 0;
         padding: 10px 5px 10px 5px;
-        bottom: 50px;
         line-height: 40px;
         color: #666;
         background-color: white;

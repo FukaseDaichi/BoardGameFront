@@ -14,8 +14,12 @@ import Router from 'next/router';
 
 import Start from '../../components/timebomb/start';
 import Canvas from '../../components/fakeartist/canvas';
-import { ArtData, FakeArtistUser } from '../../type/fakeartist';
+import { ArtData, ArtDataStroke, FakeArtistUser } from '../../type/fakeartist';
 import FakeartistUserInfo from '../../components/fakeartist/fakeartistuserInfo';
+import Countdown from '../../components/werewolf/countdown';
+import Loadingdod from '../../components/text/loadingdod';
+import Modal from '../../components/modal';
+import UserInfoShort from '../../components/fakeartist/userInfoshort';
 
 // 接続切れ
 const disconnect = () => {
@@ -23,37 +27,52 @@ const disconnect = () => {
 };
 
 // お絵描きコールバック
-const callBackDraw = (artDataArray: Array<ArtData>) => {
-    console.log(artDataArray);
+const callBackDraw = (artDataStroke: ArtDataStroke) => {
+    console.log(artDataStroke);
     const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
+    if (!canvas) {
+        return;
+    }
     const context = canvas.getContext('2d');
 
     context.beginPath();
 
-    for (let i = 0; i < artDataArray.length - 1; i++) {
-        console.log(artDataArray[i]);
-        console.log(
-            artDataArray[i].xparamPotision,
-            artDataArray[i].yparamPotision
-        );
+    for (let i = 0; i < artDataStroke.artDataList.length - 1; i++) {
         context.lineCap = 'round'; // 丸みを帯びた線にする
         context.lineJoin = 'round'; // 丸みを帯びた線にする
-        context.lineWidth = artDataArray[i].lineWidth; // 線の太さ
-        context.strokeStyle = artDataArray[i].color; // 線の色
+        context.lineWidth = artDataStroke.lineWidth; // 線の太さ
+        context.strokeStyle = artDataStroke.color; // 線の色
 
         context.moveTo(
-            artDataArray[i].xparamPotision,
-            artDataArray[i].yparamPotision
+            artDataStroke.artDataList[i].xparamPotision,
+            artDataStroke.artDataList[i].yparamPotision
         );
         context.lineTo(
-            artDataArray[i + 1].xparamPotision,
-            artDataArray[i + 1].yparamPotision
+            artDataStroke.artDataList[i + 1].xparamPotision,
+            artDataStroke.artDataList[i + 1].yparamPotision
         );
 
         context.stroke();
     }
 
     context.closePath();
+};
+
+// canvas上に書いた絵を全部消す
+const clear = () => {
+    const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
+    if (!canvas) {
+        return;
+    }
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const drawCanvas = (artDataStrokeList: Array<any>) => {
+    artDataStrokeList.forEach((obj) => {
+        callBackDraw(obj);
+    });
 };
 
 export default function FakeArtistRoom(): JSX.Element {
@@ -70,6 +89,7 @@ export default function FakeArtistRoom(): JSX.Element {
     const [gameTime, setGameTime] = useState(0);
     const [turn, setTurn] = useState(0);
     const [limitTime, setLimitTime] = useState(0);
+    const [theme, setTheme] = useState('');
 
     // userInfo
     const [playerName, setPlayerName] = useState(null);
@@ -77,6 +97,8 @@ export default function FakeArtistRoom(): JSX.Element {
 
     // view
     const [startFlg, setStartFlg] = useState(false);
+    const [disscuttionStartFlg, setDisscuttionStartFlg] = useState(false);
+    const [votingStartFlg, setVotingStartFlg] = useState(false);
 
     // ルーム入室
     const roomIn = (userName: string) => {
@@ -93,6 +115,22 @@ export default function FakeArtistRoom(): JSX.Element {
         };
 
         setPlayerName(userName);
+        conect(url, soketInfo);
+    };
+
+    // ルーム退出
+    const roomRemove = (userName: string) => {
+        if (userName === '') {
+            return;
+        }
+        const url = '/app/game-removeuser';
+        const soketInfo: SocketInfo = {
+            status: 150,
+            roomId: roomId as string,
+            userName: userName,
+            message: null,
+            obj: userName,
+        };
         conect(url, soketInfo);
     };
 
@@ -146,14 +184,15 @@ export default function FakeArtistRoom(): JSX.Element {
 
     // お絵描き
     const draw = useCallback(
-        (artDataArray: Array<ArtData>) => {
+        (artDataStroke: ArtDataStroke) => {
+            artDataStroke.name = playerName;
             const url = '/app/fakeartist-drawing';
             const soketInfo: SocketInfo = {
                 status: 450,
                 roomId: roomId as string,
                 userName: playerName,
                 message: null,
-                obj: artDataArray,
+                obj: artDataStroke,
             };
             conect(url, soketInfo);
         },
@@ -164,7 +203,7 @@ export default function FakeArtistRoom(): JSX.Element {
     const vote = useCallback(
         (targetUsername: string) => {
             const url = '/app/fakeartist-voting';
-
+            console.log(gameTime);
             const soketInfo: SocketInfo = {
                 status: 500,
                 roomId: roomId as string,
@@ -195,6 +234,7 @@ export default function FakeArtistRoom(): JSX.Element {
 
     // 議論制限時間超過
     const limittimeDone = useCallback(() => {
+        console.log(gameTime);
         if (gameTime === 2) {
             const url = '/app/game-dooverLimit';
             const soketInfo: SocketInfo = {
@@ -206,7 +246,7 @@ export default function FakeArtistRoom(): JSX.Element {
             };
             conect(url, soketInfo);
         }
-    }, [turn]);
+    }, [gameTime]);
 
     const conect = (url: string, soketInfo: SocketInfo) => {
         try {
@@ -225,6 +265,12 @@ export default function FakeArtistRoom(): JSX.Element {
         switch (socketInfo.status) {
             case 100: // ルーム入室
                 dataSet(socketInfo.obj);
+
+                // 初回入室時
+                if (socketInfo.userName === playerName) {
+                    // 既存キャンパスの反映
+                    drawCanvas(socketInfo.obj.artDataStrokeList);
+                }
                 break;
 
             case 101: {
@@ -235,14 +281,35 @@ export default function FakeArtistRoom(): JSX.Element {
                 break;
             }
 
+            case 150: // ルーム退出
+                dataSet(socketInfo.obj);
+                if (playerName === socketInfo.userName) {
+                    setPlayerData(null);
+                    const btnDom = document.querySelector(
+                        '.' + styles.roominbtn
+                    );
+                    if (btnDom.classList.contains(styles.in)) {
+                        btnDom.classList.remove(styles.in);
+                    }
+                }
+                break;
+
             case 200: // 同一ユーザ入室(再入室)
                 dataSet(socketInfo.obj);
                 setMessageList(() => messageList.concat(socketInfo.message));
+
+                // 初回入室時
+                if (socketInfo.userName === playerName) {
+                    // 既存キャンパスの反映
+                    drawCanvas(socketInfo.obj.artDataStrokeList);
+                }
                 break;
 
             case 300: // ゲーム開始
                 // ゲームスタート
                 setStartFlg(true);
+                // キャンパス初期化
+                clear();
                 dataSet(socketInfo.obj);
                 break;
 
@@ -253,14 +320,18 @@ export default function FakeArtistRoom(): JSX.Element {
             case 450: {
                 // お絵描き
 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const drawData: Array<any> = socketInfo.obj.artDataStrokeList;
+
                 // 別の人の絵を反映
                 if (socketInfo.userName !== playerName) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const drawData: Array<any> =
-                        socketInfo.obj.artDataStrokeList;
-                    callBackDraw(drawData[drawData.length - 1].artDataList);
+                    callBackDraw(drawData[drawData.length - 1]);
                 }
-                dataSet(socketInfo.obj);
+
+                // エンドフラグがある場合反映
+                if (drawData[drawData.length - 1].endFlg) {
+                    dataSet(socketInfo.obj);
+                }
                 break;
             }
             case 451: // お絵描き（通常）
@@ -302,7 +373,17 @@ export default function FakeArtistRoom(): JSX.Element {
         setUserLst(obj.userList);
         setTurn(obj.turn);
         setGameTime(obj.gameTime);
+        setTheme(obj.theme);
     };
+
+    // ゲーム監視
+    useEffect(() => {
+        if (gameTime === 2) {
+            setDisscuttionStartFlg(true);
+        } else if (gameTime === 3) {
+            setVotingStartFlg(true);
+        }
+    }, [gameTime]);
 
     // スタートフラグの監視
     useEffect(() => {
@@ -313,6 +394,24 @@ export default function FakeArtistRoom(): JSX.Element {
             }, 4000);
         }
     }, [startFlg]);
+
+    // 投票フラグの監視
+    useEffect(() => {
+        if (votingStartFlg) {
+            window.setTimeout(() => {
+                setVotingStartFlg(false);
+            }, 4000);
+        }
+    }, [votingStartFlg]);
+
+    // 議論開始フラグの監視
+    useEffect(() => {
+        if (disscuttionStartFlg) {
+            window.setTimeout(() => {
+                setDisscuttionStartFlg(false);
+            }, 4000);
+        }
+    }, [votingStartFlg]);
 
     // 入室時
     useEffect(() => {
@@ -349,7 +448,7 @@ export default function FakeArtistRoom(): JSX.Element {
                 {`
                     body {
                         overflow-x: hidden;
-                        background-color: #f3f3f3;
+                        background-color: #d1d1d1;
                     }
 
                     body:before {
@@ -359,7 +458,7 @@ export default function FakeArtistRoom(): JSX.Element {
                         z-index: -1;
                         width: 100vw;
                         height: 100vh;
-                        background: url(/images/decrypt/decryptbackground2.png);
+                        background: url(/images/fakeartist/fakeartistbackground.png);
                         -webkit-background-size: 370px;
                         background-size: 370px;
                         background-position: bottom left;
@@ -387,8 +486,59 @@ export default function FakeArtistRoom(): JSX.Element {
                 />
                 <title>エセ芸術家ニューヨークへ行く</title>
             </Head>
+
             {/* 開始合図 */}
             {startFlg && <Start />}
+
+            {/* 議論開始合図 */}
+            {disscuttionStartFlg && (
+                <Modal type="one">
+                    <div className={styles.roundMessage}>
+                        誰がエセ芸術家かな？
+                    </div>
+                </Modal>
+            )}
+
+            {/* 投票開始合図 */}
+            {votingStartFlg && (
+                <Modal type="one">
+                    <div className={styles.roundMessage}>投票開始！</div>
+                </Modal>
+            )}
+
+            {/* お絵描き中情報エリア */}
+            {playerData && gameTime === 1 && (
+                <div className={styles.infomessage}>
+                    <div className={styles.message}>
+                        {playerData.rollNo === 1 ? (
+                            <>
+                                テーマ
+                                <span>「{theme}」</span>
+                                を一筆ずつ描こう！
+                            </>
+                        ) : (
+                            <>
+                                あなたは
+                                <span>エセ芸術家</span>
+                                だ。それっぽく描こう！
+                            </>
+                        )}
+                    </div>
+                    <div className={styles.message}>
+                        「
+                        <span>
+                            {userList.find(
+                                (user: FakeArtistUser) => user.drawFlg
+                            )
+                                ? userList.find(
+                                      (user: FakeArtistUser) => user.drawFlg
+                                  ).userName
+                                : ''}
+                        </span>
+                        」さんの番
+                    </div>
+                </div>
+            )}
 
             {/* メッセージエリア */}
             {messageList.map((value, index) => {
@@ -398,6 +548,50 @@ export default function FakeArtistRoom(): JSX.Element {
                     );
                 }
             })}
+            {/* ゲームメッセージ */}
+            {gameTime === 2 && (
+                <div className={styles.messagearea}>
+                    <div className={styles.countdown}>
+                        {limitTime > 0 && gameTime === 2 && (
+                            <Countdown
+                                timeLimit={limitTime}
+                                limitDone={limittimeDone}
+                            />
+                        )}
+                    </div>
+                    議論中 <Loadingdod color={'rgb(17, 17, 17)'} />
+                    {'　'}
+                    <button className={styles.endbtn} onClick={limittimeDone}>
+                        議論終了
+                    </button>
+                </div>
+            )}
+
+            {gameTime === 3 && (
+                <div className={styles.messagearea}>
+                    投票中 <Loadingdod color={'rgb(17, 17, 17)'} />
+                </div>
+            )}
+
+            {/* ユーザ情報ショート */}
+            <div className={styles.userinfofirld}>
+                {playerData &&
+                    userList &&
+                    userList.map((user: FakeArtistUser, index: number) => {
+                        return (
+                            <UserInfoShort
+                                gameTime={gameTime}
+                                playerData={playerData}
+                                turn={turn}
+                                user={user}
+                                key={index}
+                                changeIcon={changeIcon}
+                                vote={vote}
+                                roomRemove={roomRemove}
+                            />
+                        );
+                    })}
+            </div>
 
             <SockJsClient
                 url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
@@ -442,10 +636,18 @@ export default function FakeArtistRoom(): JSX.Element {
                     Room IN
                 </button>
             </div>
-            {playerData && <Canvas drawFnc={draw} />}
+
+            {/* キャンパス */}
+            {playerData && (
+                <Canvas
+                    drawFnc={draw}
+                    playerData={playerData}
+                    gameTime={gameTime}
+                />
+            )}
 
             {/* ユーザ情報 */}
-            <div className={styles.userList}>
+            <div className={styles.userfirld}>
                 {playerData &&
                     userList &&
                     userList.map((user: FakeArtistUser, index: number) => {
@@ -457,12 +659,14 @@ export default function FakeArtistRoom(): JSX.Element {
                                 user={user}
                                 key={index}
                                 changeIcon={changeIcon}
+                                vote={vote}
+                                roomRemove={roomRemove}
                             />
                         );
                     })}
             </div>
             {/* 議論中の制限時間 */}
-            {playerData && (turn === 0 || turn === 4) && (
+            {playerData && (gameTime === 0 || gameTime === 4) && (
                 <div className={styles.rollselect}>
                     <div className={styles.title}>議論中の制限時間</div>
 
@@ -546,6 +750,7 @@ export default function FakeArtistRoom(): JSX.Element {
                     </div>
                 </div>
             )}
+
             <div className={styles.btnarea}>
                 <button
                     onClick={() => {

@@ -1,0 +1,108 @@
+@import '../../variables';
+@import '../../font';
+
+@keyframes heartbeat {
+    from {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        transform-origin: center center;
+        animation-timing-function: ease-out;
+    }
+    10% {
+        -webkit-transform: scale(0.91);
+        transform: scale(0.91);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+    }
+    17% {
+        -webkit-transform: scale(0.98);
+        transform: scale(0.98);
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+    33% {
+        -webkit-transform: scale(0.87);
+        transform: scale(0.87);
+        -webkit-animation-timing-function: ease-in;
+        animation-timing-function: ease-in;
+    }
+    45% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;
+    }
+}
+
+@keyframes attention {
+    0% {
+        box-shadow: 1px 0px 9px 7px rgba(255, 255, 255, 0.6);
+    }
+    50% {
+        box-shadow: 1px 0px 9px 0px rgba(255, 255, 255, 0.6);
+    }
+    100% {
+        box-shadow: 1px 0px 9px 7px rgba(255, 255, 255, 0.6);
+    }
+}
+
+div.userinfoshort {
+    position: relative;
+    width: 60px;
+    margin: 0 3px 0 3px;
+    text-align: center;
+    font-family: 'APJapanesefont', sans-seri;
+
+    p.you {
+        top: -15px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        font-weight: 700;
+        position: absolute;
+        z-index: 1;
+    }
+
+    div.icon {
+        margin: 0 auto;
+        width: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
+        img {
+            width: 100%;
+        }
+    }
+
+    &.turn {
+        font-weight: 600;
+        div.icon {
+            box-shadow: 1px 0px 9px 7px rgba(255, 255, 255, 0.6);
+            animation: attention 3s infinite;
+        }
+    }
+
+    &.unview {
+        color: rgba(0, 0, 0, 0.6);
+        div.icon {
+            opacity: 0.6;
+            img {
+                filter: grayscale(1);
+            }
+        }
+    }
+
+    &.vote {
+        div.icon {
+            animation: heartbeat 2s infinite;
+        }
+    }
+
+    p.name {
+        text-align: center;
+        width: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

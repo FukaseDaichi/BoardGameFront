@@ -121,7 +121,7 @@ export default function Homepage(): JSX.Element {
                         <CreateGameBtn
                             title="エセ芸術家ニューヨークへ行く"
                             discription="お絵描き人狼（非公式）"
-                            imgUrl="/images/hideout/hideoutbackground.png"
+                            imgUrl="/images/fakeartist/fakeartistbackground.png"
                             gameId="fakeartist"
                         />
                         {/* <CreateGameBtn

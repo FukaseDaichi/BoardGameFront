@@ -227,6 +227,74 @@ div.rulebtn {
     }
 }
 
+div.countdown {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.roundMessage {
+    color: white;
+    font-family: 'APJapanesefont', sans-seri;
+    font-size: 3rem;
+}
+
+.infomessage {
+    width: 90%;
+    text-align: center;
+    font-size: 2rem;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
+    color: rgba(50, 50, 50, 0.87);
+    font-family: 'APJapanesefont', sans-seri;
+    z-index: 1;
+
+    > div.message {
+        animation: focus-in-expand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+            both;
+        @include mq(md) {
+            font-size: 1.2rem;
+        }
+        span {
+            color: rgb(17, 17, 17);
+            font-size: 2.1rem;
+            @include mq(md) {
+                font-size: 1.4rem;
+            }
+        }
+    }
+}
+
+// ユーザ情報リスト
+div.userinfofirld {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    margin-top: 120px;
+    margin-bottom: -180px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    z-index: 1;
+}
+
+// ユーザリスト
+div.userfirld {
+    position: relative;
+    margin-top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    z-index: 1;
+}
+
 // 制限時間設定のラジオボタン
 div.rollselect {
     margin-top: 5px;
