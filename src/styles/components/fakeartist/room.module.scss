@@ -60,6 +60,12 @@ div.messagearea {
         font-size: 2.4rem;
     }
 
+    &.endmessage {
+        animation: focus-in-expand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+            both;
+        animation-delay: 2s;
+    }
+
     > button {
         &.endbtn {
             outline: none;
@@ -79,6 +85,8 @@ div.messagearea {
 }
 
 .roominbtn {
+    margin-top: 100px;
+    margin-bottom: -100px;
     height: 180px;
     animation: first-view 1s forwards;
     p {

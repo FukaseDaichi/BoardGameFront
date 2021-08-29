@@ -11,6 +11,7 @@ type CanvasProps = {
     drawFnc: (artDataStroke: ArtDataStroke) => void;
     playerData: FakeArtistUser;
     gameTime: number;
+    personCanpasZindex: number;
 };
 
 const Canvas = (props: CanvasProps): JSX.Element => {
@@ -186,8 +187,20 @@ const Canvas = (props: CanvasProps): JSX.Element => {
                 onTouchEnd={dragEnd}
                 onTouchMove={touchmove}
             ></canvas>
+            {/* お絵描き中のマスク */}
             {props.gameTime === 1 && !props.playerData.drawFlg && (
                 <div className={styles.protected}></div>
+            )}
+
+            {/* 第二キャンパス */}
+            {props.gameTime === 2 && (
+                <canvas
+                    id="person-draw-area"
+                    className={styles.person}
+                    width="343px"
+                    height="343px"
+                    style={{ zIndex: props.personCanpasZindex }}
+                ></canvas>
             )}
             <TwitterPicker
                 color={color}

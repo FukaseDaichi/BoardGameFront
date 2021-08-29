@@ -1,6 +1,8 @@
 @import '../../variables';
 @import '../../font';
 
+$animetiondelay: 2s;
+
 @keyframes heartbeat {
     from {
         -webkit-transform: scale(1);
@@ -45,6 +47,77 @@
         box-shadow: 1px 0px 9px 7px rgba(255, 255, 255, 0.6);
     }
 }
+@keyframes shake-top {
+    0%,
+    100% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        -webkit-transform-origin: 50% 0;
+        transform-origin: 50% 0;
+    }
+    10% {
+        -webkit-transform: rotate(2deg);
+        transform: rotate(2deg);
+    }
+    20%,
+    40%,
+    60% {
+        -webkit-transform: rotate(-4deg);
+        transform: rotate(-4deg);
+    }
+    30%,
+    50%,
+    70% {
+        -webkit-transform: rotate(4deg);
+        transform: rotate(4deg);
+    }
+    80% {
+        -webkit-transform: rotate(-2deg);
+        transform: rotate(-2deg);
+    }
+    90% {
+        -webkit-transform: rotate(2deg);
+        transform: rotate(2deg);
+    }
+}
+
+@keyframes view {
+    0% {
+        opacity: 0;
+    }
+
+    99% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes jello-vertical {
+    0% {
+        transform: scale3d(1, 1, 1);
+    }
+    30% {
+        transform: scale3d(0.75, 1.25, 1);
+    }
+    40% {
+        transform: scale3d(1.25, 0.75, 1);
+    }
+    50% {
+        transform: scale3d(0.85, 1.15, 1);
+    }
+    65% {
+        transform: scale3d(1.05, 0.95, 1);
+    }
+    75% {
+        transform: scale3d(0.95, 1.05, 1);
+    }
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}
 
 div.userinfoshort {
     position: relative;
@@ -69,6 +142,9 @@ div.userinfoshort {
         border-radius: 50%;
         overflow: hidden;
         box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
+        &.voted {
+            animation: jello-vertical 0.9s both;
+        }
         img {
             width: 100%;
         }
@@ -104,5 +180,30 @@ div.userinfoshort {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    div.punishmentimgdiv {
+        position: absolute;
+        top: 0;
+        opacity: 1;
+        animation: view $animetiondelay forwards;
+        border: none !important;
+        img {
+            width: 100%;
+        }
+    }
+
+    &.punishment {
+        animation: shake-top 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+        animation-delay: $animetiondelay;
+        z-index: 1;
+    }
+
+    .fake {
+        transform: rotate(-25deg);
+        width: 50px;
+        position: absolute;
+        top: -20px;
+        left: -15px;
     }
 }

@@ -28,7 +28,6 @@ const disconnect = () => {
 
 // お絵描きコールバック
 const callBackDraw = (artDataStroke: ArtDataStroke) => {
-    console.log(artDataStroke);
     const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
     if (!canvas) {
         return;
@@ -69,9 +68,49 @@ const clear = () => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const drawCanvas = (artDataStrokeList: Array<any>) => {
-    artDataStrokeList.forEach((obj) => {
+const drawCanvas = (artDataStrokeArray: Array<any>) => {
+    artDataStrokeArray.forEach((obj) => {
         callBackDraw(obj);
+    });
+};
+
+// セカンドキャンパスの描画
+const drawPersonCanvas = (
+    artDataStrokeArray: Array<ArtDataStroke>,
+    userName: string
+) => {
+    const canvas: HTMLCanvasElement =
+        document.querySelector('#person-draw-area');
+    if (!canvas) {
+        return;
+    }
+    const context = canvas.getContext('2d');
+
+    //既存削除
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    artDataStrokeArray.forEach((artDataStroke: ArtDataStroke) => {
+        if (artDataStroke.name === userName) {
+            context.beginPath();
+            for (let i = 0; i < artDataStroke.artDataList.length - 1; i++) {
+                context.lineCap = 'round'; // 丸みを帯びた線にする
+                context.lineJoin = 'round'; // 丸みを帯びた線にする
+                context.lineWidth = artDataStroke.lineWidth; // 線の太さ
+                context.strokeStyle = artDataStroke.color; // 線の色
+
+                context.moveTo(
+                    artDataStroke.artDataList[i].xparamPotision,
+                    artDataStroke.artDataList[i].yparamPotision
+                );
+                context.lineTo(
+                    artDataStroke.artDataList[i + 1].xparamPotision,
+                    artDataStroke.artDataList[i + 1].yparamPotision
+                );
+
+                context.stroke();
+            }
+            context.closePath();
+        }
     });
 };
 
@@ -90,6 +129,8 @@ export default function FakeArtistRoom(): JSX.Element {
     const [turn, setTurn] = useState(0);
     const [limitTime, setLimitTime] = useState(0);
     const [theme, setTheme] = useState('');
+    const [artDataStrokeList, setArtDataStrokeList] = useState([]);
+    const [endMessage, setEndMessage] = useState('');
 
     // userInfo
     const [playerName, setPlayerName] = useState(null);
@@ -99,6 +140,20 @@ export default function FakeArtistRoom(): JSX.Element {
     const [startFlg, setStartFlg] = useState(false);
     const [disscuttionStartFlg, setDisscuttionStartFlg] = useState(false);
     const [votingStartFlg, setVotingStartFlg] = useState(false);
+    const [personCanvasZindex, setPersonCanvasZindex] = useState(-1);
+
+    // 個人描画削除
+    const personCanpasMouseUp = useCallback(() => {
+        setPersonCanvasZindex(-1);
+    }, []);
+
+    const personCanpasMouseDown = useCallback(
+        (userName: string) => {
+            setPersonCanvasZindex(1);
+            drawPersonCanvas(artDataStrokeList, userName);
+        },
+        [artDataStrokeList]
+    );
 
     // ルーム入室
     const roomIn = (userName: string) => {
@@ -331,6 +386,7 @@ export default function FakeArtistRoom(): JSX.Element {
                 // エンドフラグがある場合反映
                 if (drawData[drawData.length - 1].endFlg) {
                     dataSet(socketInfo.obj);
+                    setArtDataStrokeList(drawData);
                 }
                 break;
             }
@@ -374,6 +430,7 @@ export default function FakeArtistRoom(): JSX.Element {
         setTurn(obj.turn);
         setGameTime(obj.gameTime);
         setTheme(obj.theme);
+        setEndMessage(obj.endMessage);
     };
 
     // ゲーム監視
@@ -535,7 +592,7 @@ export default function FakeArtistRoom(): JSX.Element {
                                   ).userName
                                 : ''}
                         </span>
-                        」さんの番
+                        」さんの番です。一筆でテーマを描こう！
                     </div>
                 </div>
             )}
@@ -567,9 +624,15 @@ export default function FakeArtistRoom(): JSX.Element {
                 </div>
             )}
 
-            {gameTime === 3 && (
+            {playerData && gameTime === 3 && (
                 <div className={styles.messagearea}>
                     投票中 <Loadingdod color={'rgb(17, 17, 17)'} />
+                </div>
+            )}
+
+            {playerData && gameTime === 4 && (
+                <div className={`${styles.messagearea} ${styles.endmessage}`}>
+                    {endMessage}
                 </div>
             )}
 
@@ -588,6 +651,8 @@ export default function FakeArtistRoom(): JSX.Element {
                                 changeIcon={changeIcon}
                                 vote={vote}
                                 roomRemove={roomRemove}
+                                mouseon={personCanpasMouseDown}
+                                mouseout={personCanpasMouseUp}
                             />
                         );
                     })}
@@ -643,6 +708,7 @@ export default function FakeArtistRoom(): JSX.Element {
                     drawFnc={draw}
                     playerData={playerData}
                     gameTime={gameTime}
+                    personCanpasZindex={personCanvasZindex}
                 />
             )}
 
@@ -650,6 +716,7 @@ export default function FakeArtistRoom(): JSX.Element {
             <div className={styles.userfirld}>
                 {playerData &&
                     userList &&
+                    (gameTime === 0 || gameTime === 4) &&
                     userList.map((user: FakeArtistUser, index: number) => {
                         return (
                             <FakeartistUserInfo
@@ -768,7 +835,15 @@ export default function FakeArtistRoom(): JSX.Element {
             {false && <ChatComponent chatList={chatList} chat={chat} />}
 
             <div className={styles.rulebtn}>
-                <button>遊び方</button>
+                <button
+                    onClick={() => {
+                        window.open(
+                            'https://bdg.kirinnox.com/entry/ese-geijutsuka'
+                        );
+                    }}
+                >
+                    遊び方
+                </button>
             </div>
         </Layout>
     );
