@@ -12,6 +12,7 @@ type CanvasProps = {
     playerData: FakeArtistUser;
     gameTime: number;
     personCanpasZindex: number;
+    theme: string;
 };
 
 const Canvas = (props: CanvasProps): JSX.Element => {
@@ -172,6 +173,7 @@ const Canvas = (props: CanvasProps): JSX.Element => {
         });
     }, []);
 
+    const themeFlg = props.gameTime > 1 && props.playerData.rollNo === 1;
     return (
         <div className={styles.canvasmain}>
             <canvas
@@ -201,6 +203,12 @@ const Canvas = (props: CanvasProps): JSX.Element => {
                     height="343px"
                     style={{ zIndex: props.personCanpasZindex }}
                 ></canvas>
+            )}
+            {/* テーマ */}
+            {themeFlg && (
+                <div className={styles.theme}>
+                    テーマ<span>「{props.theme}」</span>
+                </div>
             )}
             <TwitterPicker
                 color={color}

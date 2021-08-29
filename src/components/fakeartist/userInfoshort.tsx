@@ -59,11 +59,11 @@ export default function UserInfoShort(props: UserInfoShortProps): JSX.Element {
                 className={styles.icon}
                 onClick={(e: BaseSyntheticEvent) => {
                     if (voteFlg) {
-                        e.target.parentNode.classList.add(styles.voted);
+                        e.target.classList.add(styles.voted);
                         props.vote(props.user.userName);
 
                         window.setTimeout(() => {
-                            e.target.parentNode.classList.remove(styles.voted);
+                            e.target.classList.remove(styles.voted);
                         }, 1000);
                     }
                 }}
