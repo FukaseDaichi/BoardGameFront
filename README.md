@@ -1,23 +1,42 @@
 # セットアップ
 
-- クローン
+-   クローン
 
-npx create-next-app boardgamefront --use-npm --example "https://github.com/FukaseDaichi/BoardGameFront/tree/develop"
+npx create-next-app boardgamefront --ts --use-npm --example "https://github.com/FukaseDaichi/BoardGameFront/tree/develop"
 
-- 各種
+-   各種モジュール
 
-  npx browserslist@latest --update-db
-  npm install --save react-stomp
-  npm i sass
-  npm install interactjs
-  npm install react@17.0.2 react-dom@17.0.2
-  npm i next @ latest
-  npm i typescript@latest
+*   npx browserslist@latest --update-db
+*   npm install --save react-stomp
+*   npm i sass
+*   npm install interactjs
+*   npm install react-color --save
 
-- 追跡
+-   TypeScript と ESLint のインストール
 
-  git remote add origin https://FukaseDaichi@github.com/FukaseDaichi/BoardGameFront.git
+*   npm i --save-dev eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin
+*   npx tsc --init
+*   npx eslint --init
 
-- 実行
+*   npm install --save-dev prettier
+*   npm install --save-dev eslint-config-prettier
 
-  npm run dev
+-   react の最新化
+
+*   npm install react@latest react-dom@latest
+*   npm i next @latest
+*   npm i typescript@latest
+
+-   追跡
+
+    git remote add origin https://FukaseDaichi@github.com/FukaseDaichi/BoardGameFront.git
+
+-   実行
+
+    npm run dev
+
+-   ダメだったお絵描きセット
+
+*   npm install react-konva konva --save
+*   npm install react-color --save
+*   npm install --save styled-components
