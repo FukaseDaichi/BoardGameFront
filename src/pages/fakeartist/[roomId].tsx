@@ -468,7 +468,7 @@ export default function FakeArtistRoom(): JSX.Element {
                 setDisscuttionStartFlg(false);
             }, 4000);
         }
-    }, [votingStartFlg]);
+    }, [disscuttionStartFlg]);
 
     // 入室時
     useEffect(() => {
@@ -551,7 +551,7 @@ export default function FakeArtistRoom(): JSX.Element {
             {disscuttionStartFlg && (
                 <Modal type="one">
                     <div className={styles.roundMessage}>
-                        誰がエセ芸術家かな？
+                        エセ芸術家は誰だ？
                     </div>
                 </Modal>
             )}
@@ -571,7 +571,6 @@ export default function FakeArtistRoom(): JSX.Element {
                             <>
                                 テーマ
                                 <span>「{theme}」</span>
-                                を一筆ずつ描こう！
                             </>
                         ) : (
                             <>
@@ -592,7 +591,7 @@ export default function FakeArtistRoom(): JSX.Element {
                                   ).userName
                                 : ''}
                         </span>
-                        」さんの番です。一筆でテーマを描こう！
+                        」さんの番です。
                     </div>
                 </div>
             )}
@@ -637,10 +636,9 @@ export default function FakeArtistRoom(): JSX.Element {
             )}
 
             {/* ユーザ情報ショート */}
-            <div className={styles.userinfofirld}>
-                {playerData &&
-                    userList &&
-                    userList.map((user: FakeArtistUser, index: number) => {
+            {playerData && userList && (
+                <div className={styles.userinfofirld}>
+                    {userList.map((user: FakeArtistUser, index: number) => {
                         return (
                             <UserInfoShort
                                 gameTime={gameTime}
@@ -656,8 +654,8 @@ export default function FakeArtistRoom(): JSX.Element {
                             />
                         );
                     })}
-            </div>
-
+                </div>
+            )}
             <SockJsClient
                 url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
                 topics={['/topic/' + roomId]}
@@ -709,6 +707,7 @@ export default function FakeArtistRoom(): JSX.Element {
                     playerData={playerData}
                     gameTime={gameTime}
                     personCanpasZindex={personCanvasZindex}
+                    theme={theme}
                 />
             )}
 
