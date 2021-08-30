@@ -530,7 +530,7 @@ export default function FakeArtistRoom(): JSX.Element {
                     property="og:image"
                     content={
                         SystemConst.Server.SITE_URL +
-                        '/images/decrypt/decryptbackground2.png'
+                        '/images/fakeartist/fakeartistbackground.png'
                     }
                 />
                 <meta
