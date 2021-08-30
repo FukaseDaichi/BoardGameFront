@@ -207,6 +207,9 @@ div.btnarea {
             background-color: rgb(255, 255, 255);
             color: rgb(31, 30, 30);
         }
+        @include mq(md) {
+            font-size: 1.6rem;
+        }
     }
 }
 
@@ -306,6 +309,36 @@ div.userfirld {
     z-index: 1;
 }
 
+//　テーマ選択
+div.theme {
+    font-family: 'APJapanesefont', sans-seri;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+
+    > div.title {
+        margin: 0;
+        font-size: 1.2em;
+        background: #696b6c;
+        padding: 4px;
+        text-align: center;
+        color: #fff;
+        font-weight: bold;
+        letter-spacing: 0.05em;
+        > button {
+            font-size: 1rem;
+            @include mq(md) {
+                font-size: 0.7rem;
+            }
+        }
+    }
+
+    .pattern {
+        position: relative;
+        justify-content: space-around;
+    }
+}
+
 // 制限時間設定のラジオボタン
 div.rollselect {
     margin-top: 5px;
@@ -334,7 +367,6 @@ div.rollselect {
             }
         }
     }
-
     .limittimeinputarea {
         display: flex;
         justify-content: space-around;
