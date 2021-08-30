@@ -20,6 +20,7 @@ import Countdown from '../../components/werewolf/countdown';
 import Loadingdod from '../../components/text/loadingdod';
 import Modal from '../../components/modal';
 import UserInfoShort from '../../components/fakeartist/userInfoshort';
+import RadioChips from '../../components/chips/radiochips';
 
 // 接続切れ
 const disconnect = () => {
@@ -131,6 +132,7 @@ export default function FakeArtistRoom(): JSX.Element {
     const [theme, setTheme] = useState('');
     const [artDataStrokeList, setArtDataStrokeList] = useState([]);
     const [endMessage, setEndMessage] = useState('');
+    const [patternList, setPatternList] = useState([]);
 
     // userInfo
     const [playerName, setPlayerName] = useState(null);
@@ -172,6 +174,29 @@ export default function FakeArtistRoom(): JSX.Element {
         setPlayerName(userName);
         conect(url, soketInfo);
     };
+
+    // テーマ変更
+    const changeRadio = useCallback(
+        (patternNo: number) => {
+            let dataList = [];
+            if (patternList.includes(patternNo)) {
+                dataList = patternList.filter((no) => no !== patternNo);
+            } else {
+                dataList = [...patternList, patternNo];
+            }
+            const url = '/app/fakeartist-setpattern';
+            console.log(gameTime);
+            const soketInfo: SocketInfo = {
+                status: 160,
+                roomId: roomId as string,
+                userName: playerName,
+                message: null,
+                obj: dataList,
+            };
+            conect(url, soketInfo);
+        },
+        [playerName, patternList]
+    );
 
     // ルーム退出
     const roomRemove = (userName: string) => {
@@ -349,6 +374,10 @@ export default function FakeArtistRoom(): JSX.Element {
                 }
                 break;
 
+            case 160: //テーマ変更
+                setPatternList(socketInfo.obj.patternList);
+                break;
+
             case 200: // 同一ユーザ入室(再入室)
                 dataSet(socketInfo.obj);
                 setMessageList(() => messageList.concat(socketInfo.message));
@@ -431,6 +460,7 @@ export default function FakeArtistRoom(): JSX.Element {
         setGameTime(obj.gameTime);
         setTheme(obj.theme);
         setEndMessage(obj.endMessage);
+        setPatternList(obj.patternList);
     };
 
     // ゲーム監視
@@ -731,6 +761,50 @@ export default function FakeArtistRoom(): JSX.Element {
                         );
                     })}
             </div>
+
+            {playerData && (gameTime === 0 || gameTime === 4) && (
+                <div className={styles.theme}>
+                    <div className={styles.title}>テーマの種類</div>
+                    <div className={styles.pattern}>
+                        <RadioChips
+                            id="theme_5"
+                            onChangeFnc={() => changeRadio(5)}
+                            checked={patternList.includes(5)}
+                            tooltip={'食べ物のテーマを含む'}
+                            rabel="食べ物"
+                        />
+                        <RadioChips
+                            id="theme_4"
+                            onChangeFnc={() => changeRadio(4)}
+                            checked={patternList.includes(4)}
+                            tooltip={'人の形をしたテーマを含む'}
+                            rabel="人の形"
+                        />
+                        <RadioChips
+                            id="theme_1"
+                            onChangeFnc={() => changeRadio(1)}
+                            checked={patternList.includes(1)}
+                            tooltip={'おとぎ話のテーマを含む'}
+                            rabel="おとぎ話"
+                        />
+                        <RadioChips
+                            id="theme_2"
+                            onChangeFnc={() => changeRadio(2)}
+                            checked={patternList.includes(2)}
+                            tooltip={'動物のテーマを含む'}
+                            rabel="動物"
+                        />
+                        <RadioChips
+                            id="theme_3"
+                            onChangeFnc={() => changeRadio(3)}
+                            checked={patternList.includes(3)}
+                            tooltip={'スポーツのテーマを含む'}
+                            rabel="スポーツ"
+                        />
+                    </div>
+                </div>
+            )}
+
             {/* 議論中の制限時間 */}
             {playerData && (gameTime === 0 || gameTime === 4) && (
                 <div className={styles.rollselect}>
