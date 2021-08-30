@@ -314,7 +314,6 @@ export default function FakeArtistRoom(): JSX.Element {
 
     // 議論制限時間超過
     const limittimeDone = useCallback(() => {
-        console.log(gameTime);
         if (gameTime === 2) {
             const url = '/app/game-dooverLimit';
             const soketInfo: SocketInfo = {
@@ -340,7 +339,7 @@ export default function FakeArtistRoom(): JSX.Element {
 
     const getMessage = (socketInfo: SocketInfo) => {
         // デバッグ用
-        console.log(socketInfo);
+        //onsole.log(socketInfo);
 
         switch (socketInfo.status) {
             case 100: // ルーム入室
