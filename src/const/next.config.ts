@@ -32,6 +32,14 @@ export namespace SystemConst {
         'icon7.jpg',
         'icon8.jpeg',
         'icon8.jpg',
+        'icon9.jpg',
+        'icon10.jpg',
+        'icon11.jpg',
+        'icon12.jpg',
+        'icon13.jpg',
+        'icon14.jpg',
+        'icon15.jpg',
+        'icon16.jpg',
     ];
 
     export const PLAYER_COLOR_LIST: string[] = [
