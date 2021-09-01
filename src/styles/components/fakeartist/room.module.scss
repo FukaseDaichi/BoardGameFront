@@ -51,7 +51,7 @@ div.messagearea {
     position: absolute;
     width: 90%;
     text-align: center;
-    font-size: 3rem;
+    font-size: 2.5rem;
     top: 50px;
     left: 50%;
     transform: translateX(-50%);
@@ -252,7 +252,7 @@ div.countdown {
 .infomessage {
     width: 90%;
     text-align: center;
-    font-size: 2rem;
+    font-size: 1.5rem;
     top: 50px;
     left: 50%;
     transform: translateX(-50%);
@@ -265,7 +265,7 @@ div.countdown {
         animation: focus-in-expand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)
             both;
         @include mq(md) {
-            font-size: 1.2rem;
+            font-size: 1rem;
         }
         span {
             color: rgb(17, 17, 17);
