@@ -122,7 +122,7 @@ $animetiondelay: 2s;
 div.userinfoshort {
     position: relative;
     width: 60px;
-    margin: 0 3px 0 3px;
+    margin: 0 1px 0 1px;
     text-align: center;
     font-family: 'APJapanesefont', sans-seri;
     user-select: none;
@@ -185,6 +185,10 @@ div.userinfoshort {
         text-overflow: ellipsis;
         white-space: nowrap;
         pointer-events: none;
+
+        @include mq(md) {
+            font-size: 0.7rem;
+        }
     }
 
     div.punishmentimgdiv {
