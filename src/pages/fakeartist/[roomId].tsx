@@ -21,6 +21,7 @@ import Loadingdod from '../../components/text/loadingdod';
 import Modal from '../../components/modal';
 import UserInfoShort from '../../components/fakeartist/userInfoshort';
 import RadioChips from '../../components/chips/radiochips';
+import HeaderInfo from '../../components/fakeartist/headInfo';
 
 // 接続切れ
 const disconnect = () => {
@@ -568,10 +569,90 @@ export default function FakeArtistRoom(): JSX.Element {
                 />
                 <meta
                     property="og:description"
-                    content="エセ芸術家ニューヨークへ行く　オンライン"
+                    content="エセ芸術家ニューヨークへ行く　オンライン！"
                 />
                 <title>エセ芸術家ニューヨークへ行く</title>
             </Head>
+
+            {playerData && playerData.rollNo > 0 && (
+                <HeaderInfo bgc={'rgb(105,107,108,0.9)'}>
+                    <div className={styles.headerinfo}>
+                        <div className={styles.headertheme}>
+                            {playerData.rollNo === 1 ? (
+                                <>
+                                    <p>テーマ</p>
+                                    <span>「{theme}」</span>
+                                </>
+                            ) : (
+                                <>
+                                    <p>テーマ</p>
+                                    <span>「？？？？」</span>
+                                </>
+                            )}
+                        </div>
+                        <div className={styles.headermessage}>
+                            {gameTime === 1 && (
+                                <div className={styles.message}>
+                                    「
+                                    <span>
+                                        {userList.find(
+                                            (user: FakeArtistUser) =>
+                                                user.drawFlg
+                                        )
+                                            ? userList.find(
+                                                  (user: FakeArtistUser) =>
+                                                      user.drawFlg
+                                              ).userName
+                                            : ''}
+                                    </span>
+                                    」さんの番です。
+                                </div>
+                            )}
+                            {gameTime === 2 && (
+                                <div className={styles.headerinfomation}>
+                                    <p>議論中</p>{' '}
+                                    <button onClick={limittimeDone}>
+                                        議論終了
+                                    </button>
+                                </div>
+                            )}
+                            {gameTime === 3 && (
+                                <div className={styles.headerinfomation}>
+                                    投票中
+                                </div>
+                            )}
+                        </div>
+                        {limitTime > 0 && gameTime === 2 && (
+                            <div className={styles.countdown}>
+                                <Countdown
+                                    timeLimit={limitTime}
+                                    limitDone={limittimeDone}
+                                />
+                            </div>
+                        )}
+                        <div className={styles.roll}>
+                            <p>
+                                {playerData.rollNo === 1
+                                    ? '芸術家'
+                                    : 'エセ芸術家'}
+                            </p>
+                            <img
+                                src={`/images/fakeartist/${playerData.rollNo}.png`}
+                                alt="役職"
+                            />
+                        </div>
+                    </div>
+                </HeaderInfo>
+            )}
+            {playerData && !startFlg && playerData.rollNo > 0 && (
+                <div className={styles.pcroll}>
+                    <p>{playerData.rollNo === 1 ? '芸術家' : 'エセ芸術家'}</p>
+                    <img
+                        src={`/images/fakeartist/${playerData.rollNo}.png`}
+                        alt="役職"
+                    />
+                </div>
+            )}
 
             {/* 開始合図 */}
             {startFlg && <Start />}
