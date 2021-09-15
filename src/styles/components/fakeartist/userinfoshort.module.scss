@@ -136,6 +136,10 @@ div.userinfoshort {
         position: absolute;
         z-index: 1;
         pointer-events: none;
+
+        @include mq(md) {
+            font-size: 1rem;
+        }
     }
 
     div.icon {
@@ -185,6 +189,7 @@ div.userinfoshort {
         text-overflow: ellipsis;
         white-space: nowrap;
         pointer-events: none;
+        font-size: 0.9rem;
 
         @include mq(md) {
             font-size: 0.7rem;
@@ -214,5 +219,7 @@ div.userinfoshort {
         position: absolute;
         top: -20px;
         left: -15px;
+        opacity: 0;
+        animation: view $animetiondelay forwards;
     }
 }

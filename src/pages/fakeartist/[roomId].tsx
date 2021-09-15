@@ -14,13 +14,15 @@ import Router from 'next/router';
 
 import Start from '../../components/timebomb/start';
 import Canvas from '../../components/fakeartist/canvas';
-import { ArtData, ArtDataStroke, FakeArtistUser } from '../../type/fakeartist';
+import { ArtDataStroke, FakeArtistUser } from '../../type/fakeartist';
 import FakeartistUserInfo from '../../components/fakeartist/fakeartistuserInfo';
 import Countdown from '../../components/werewolf/countdown';
 import Loadingdod from '../../components/text/loadingdod';
 import Modal from '../../components/modal';
 import UserInfoShort from '../../components/fakeartist/userInfoshort';
 import RadioChips from '../../components/chips/radiochips';
+import HeaderInfo from '../../components/fakeartist/headInfo';
+import CountdownClock from '../../components/clock/countdownClock';
 
 // 接続切れ
 const disconnect = () => {
@@ -143,6 +145,7 @@ export default function FakeArtistRoom(): JSX.Element {
     const [disscuttionStartFlg, setDisscuttionStartFlg] = useState(false);
     const [votingStartFlg, setVotingStartFlg] = useState(false);
     const [personCanvasZindex, setPersonCanvasZindex] = useState(-1);
+    const [endFlg, setEndFlg] = useState(false);
 
     // 個人描画削除
     const personCanpasMouseUp = useCallback(() => {
@@ -185,7 +188,7 @@ export default function FakeArtistRoom(): JSX.Element {
                 dataList = [...patternList, patternNo];
             }
             const url = '/app/fakeartist-setpattern';
-            console.log(gameTime);
+
             const soketInfo: SocketInfo = {
                 status: 160,
                 roomId: roomId as string,
@@ -392,8 +395,15 @@ export default function FakeArtistRoom(): JSX.Element {
                 // ゲームスタート
                 setStartFlg(true);
                 // キャンパス初期化
-                clear();
                 dataSet(socketInfo.obj);
+
+                // 画面描画リセット
+                clear();
+                setPersonCanvasZindex(-1);
+                setDisscuttionStartFlg(false);
+                setVotingStartFlg(false);
+                setEndFlg(false);
+
                 break;
 
             case 404: // 例外
@@ -421,10 +431,20 @@ export default function FakeArtistRoom(): JSX.Element {
             case 451: // お絵描き（通常）
                 break;
 
-            case 500: // 投票
+            case 500: {
+                // 投票
                 dataSet(socketInfo.obj);
-                break;
 
+                if (socketInfo.obj.gameTime == 4) {
+                    //終了時、画面にメッセージ表示
+                    if (document.documentElement.clientWidth < 769) {
+                        window.setTimeout(() => {
+                            setEndFlg(true);
+                        }, 3000);
+                    }
+                }
+                break;
+            }
             case 550: // 制限時間変更
                 setLimitTime(socketInfo.obj);
                 break;
@@ -474,30 +494,66 @@ export default function FakeArtistRoom(): JSX.Element {
     // スタートフラグの監視
     useEffect(() => {
         if (startFlg) {
+            const headerDom = document.querySelector(
+                '.fakeartistcheck'
+            ) as HTMLInputElement;
+            if (headerDom) {
+                headerDom.checked = false;
+            }
+
             scrollTo(0, 0);
             window.setTimeout(() => {
                 setStartFlg(false);
+                clear();
+
+                if (document.documentElement.clientWidth < 769) {
+                    window.setTimeout(() => {
+                        const headerDomCheck = document.querySelector(
+                            '.fakeartistcheck'
+                        ) as HTMLInputElement;
+                        if (headerDomCheck) {
+                            headerDomCheck.checked = true;
+                        }
+                    }, 500);
+                }
             }, 4000);
         }
     }, [startFlg]);
-
-    // 投票フラグの監視
-    useEffect(() => {
-        if (votingStartFlg) {
-            window.setTimeout(() => {
-                setVotingStartFlg(false);
-            }, 4000);
-        }
-    }, [votingStartFlg]);
 
     // 議論開始フラグの監視
     useEffect(() => {
         if (disscuttionStartFlg) {
             window.setTimeout(() => {
                 setDisscuttionStartFlg(false);
-            }, 4000);
+            }, 3500);
         }
     }, [disscuttionStartFlg]);
+
+    // 投票フラグの監視
+    useEffect(() => {
+        if (votingStartFlg) {
+            // ヘッダーをオフ
+            const headerDom = document.querySelector(
+                '.fakeartistcheck'
+            ) as HTMLInputElement;
+            if (headerDom) {
+                headerDom.checked = false;
+            }
+
+            window.setTimeout(() => {
+                setVotingStartFlg(false);
+            }, 3500);
+        }
+    }, [votingStartFlg]);
+
+    // 終了フラグの監視
+    useEffect(() => {
+        if (endFlg) {
+            window.setTimeout(() => {
+                setEndFlg(false);
+            }, 3500);
+        }
+    }, [endFlg]);
 
     // 入室時
     useEffect(() => {
@@ -568,10 +624,93 @@ export default function FakeArtistRoom(): JSX.Element {
                 />
                 <meta
                     property="og:description"
-                    content="エセ芸術家ニューヨークへ行く　オンライン"
+                    content="エセ芸術家ニューヨークへ行く　オンライン！"
                 />
                 <title>エセ芸術家ニューヨークへ行く</title>
             </Head>
+
+            {playerData && playerData.rollNo > 0 && (
+                <HeaderInfo bgc={'rgb(105,107,108,0.9)'}>
+                    <div className={styles.headerinfo}>
+                        <div className={styles.headertheme}>
+                            {playerData.rollNo === 1 ? (
+                                <>
+                                    <p>テーマ</p>
+                                    <span>「{theme}」</span>
+                                </>
+                            ) : (
+                                <>
+                                    <p>テーマ</p>
+                                    <span>「？？？？」</span>
+                                </>
+                            )}
+                        </div>
+                        <div className={styles.headermessage}>
+                            {gameTime === 1 && (
+                                <div className={styles.message}>
+                                    「
+                                    <span>
+                                        {userList.find(
+                                            (user: FakeArtistUser) =>
+                                                user.drawFlg
+                                        )
+                                            ? userList.find(
+                                                  (user: FakeArtistUser) =>
+                                                      user.drawFlg
+                                              ).userName
+                                            : ''}
+                                    </span>
+                                    」さんの番です。
+                                </div>
+                            )}
+                            {gameTime === 2 && (
+                                <div className={styles.headerinfomation}>
+                                    <p>議論中</p>{' '}
+                                    <button onClick={limittimeDone}>
+                                        議論終了
+                                    </button>
+                                </div>
+                            )}
+                            {limitTime > 0 && gameTime === 2 && (
+                                <div className={styles.countdown}>
+                                    <CountdownClock
+                                        timeLimit={limitTime}
+                                        limitDone={limittimeDone}
+                                    />
+                                </div>
+                            )}
+
+                            {gameTime === 3 && (
+                                <div className={styles.headerinfomation}>
+                                    投票中
+                                </div>
+                            )}
+                        </div>
+
+                        <div className={styles.roll}>
+                            <p>
+                                {playerData.rollNo === 1
+                                    ? '芸術家'
+                                    : 'エセ芸術家'}
+                            </p>
+                            <img
+                                src={`/images/fakeartist/${playerData.rollNo}.png`}
+                                alt="役職"
+                            />
+                        </div>
+                    </div>
+                </HeaderInfo>
+            )}
+
+            {playerData && !startFlg && playerData.rollNo > 0 && (
+                <div className={styles.pcroll}>
+                    <p>{playerData.rollNo === 1 ? '芸術家' : 'エセ芸術家'}</p>
+                    <img
+                        src={`/images/fakeartist/${playerData.rollNo}.png`}
+                        alt="役職"
+                    />
+                </div>
+            )}
 
             {/* 開始合図 */}
             {startFlg && <Start />}
@@ -579,9 +718,7 @@ export default function FakeArtistRoom(): JSX.Element {
             {/* 議論開始合図 */}
             {disscuttionStartFlg && (
                 <Modal type="one">
-                    <div className={styles.roundMessage}>
-                        エセ芸術家は誰だ？
-                    </div>
+                    <div className={styles.roundMessage}>議論開始</div>
                 </Modal>
             )}
 
@@ -589,6 +726,13 @@ export default function FakeArtistRoom(): JSX.Element {
             {votingStartFlg && (
                 <Modal type="one">
                     <div className={styles.roundMessage}>投票開始！</div>
+                </Modal>
+            )}
+
+            {/* 投票開始合図 */}
+            {endFlg && (
+                <Modal type="two">
+                    <div className={styles.roundMessage}>{endMessage}</div>
                 </Modal>
             )}
 
@@ -685,6 +829,7 @@ export default function FakeArtistRoom(): JSX.Element {
                     })}
                 </div>
             )}
+
             <SockJsClient
                 url={SystemConst.Server.AP_HOST + SystemConst.Server.ENDPOINT}
                 topics={['/topic/' + roomId]}
@@ -829,6 +974,44 @@ export default function FakeArtistRoom(): JSX.Element {
                                 />
                             </div>
                         </div>
+                        <div onClick={() => changeLimitTime(60)}>
+                            <input
+                                type="radio"
+                                id="limit-time-60"
+                                name="limit-time"
+                                value="60"
+                                checked={limitTime === 60}
+                                readOnly
+                            />
+                            <label htmlFor="limit-time-60">
+                                <span>1</span>分
+                            </label>
+                            <div className={styles.teban}>
+                                <img
+                                    src={'/images/sunadokei_black.png'}
+                                    alt="手番"
+                                />
+                            </div>
+                        </div>
+                        <div onClick={() => changeLimitTime(120)}>
+                            <input
+                                type="radio"
+                                id="limit-time-120"
+                                name="limit-time"
+                                value="120"
+                                checked={limitTime === 120}
+                                readOnly
+                            />
+                            <label htmlFor="limit-time-120">
+                                <span>2</span>分
+                            </label>
+                            <div className={styles.teban}>
+                                <img
+                                    src={'/images/sunadokei_black.png'}
+                                    alt="手番"
+                                />
+                            </div>
+                        </div>
                         <div onClick={() => changeLimitTime(180)}>
                             <input
                                 type="radio"
@@ -840,44 +1023,6 @@ export default function FakeArtistRoom(): JSX.Element {
                             />
                             <label htmlFor="limit-time-180">
                                 <span>3</span>分
-                            </label>
-                            <div className={styles.teban}>
-                                <img
-                                    src={'/images/sunadokei_black.png'}
-                                    alt="手番"
-                                />
-                            </div>
-                        </div>
-                        <div onClick={() => changeLimitTime(300)}>
-                            <input
-                                type="radio"
-                                id="limit-time-300"
-                                name="limit-time"
-                                value="300"
-                                checked={limitTime === 300}
-                                readOnly
-                            />
-                            <label htmlFor="limit-time-300">
-                                <span>5</span>分
-                            </label>
-                            <div className={styles.teban}>
-                                <img
-                                    src={'/images/sunadokei_black.png'}
-                                    alt="手番"
-                                />
-                            </div>
-                        </div>
-                        <div onClick={() => changeLimitTime(420)}>
-                            <input
-                                type="radio"
-                                id="limit-time-420"
-                                name="limit-time"
-                                value="420"
-                                checked={limitTime === 420}
-                                readOnly
-                            />
-                            <label htmlFor="limit-time-420">
-                                <span>7</span>分
                             </label>
                             <div className={styles.teban}>
                                 <img

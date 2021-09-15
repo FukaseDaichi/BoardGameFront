@@ -351,6 +351,9 @@ div.rulebtn {
         &:active {
             transform: scale(0.9);
         }
+        @include mq(md) {
+            font-size: 1.6rem;
+        }
     }
 }
 
