@@ -29,6 +29,11 @@ const disconnect = () => {
     console.log('接続が切れました');
 };
 
+// sleeep
+const sleep = (msec: number) => {
+    return new Promise((resolve) => setTimeout(resolve, msec));
+};
+
 // お絵描きコールバック
 const callBackDraw = (artDataStroke: ArtDataStroke) => {
     const canvas: HTMLCanvasElement = document.querySelector('#draw-area');
@@ -53,7 +58,6 @@ const callBackDraw = (artDataStroke: ArtDataStroke) => {
             artDataStroke.artDataList[i + 1].xparamPotision,
             artDataStroke.artDataList[i + 1].yparamPotision
         );
-
         context.stroke();
     }
 
@@ -92,7 +96,7 @@ const drawPersonCanvas = (
     //既存削除
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    artDataStrokeArray.forEach((artDataStroke: ArtDataStroke) => {
+    for (const artDataStroke of artDataStrokeArray) {
         if (artDataStroke.name === userName) {
             context.beginPath();
             for (let i = 0; i < artDataStroke.artDataList.length - 1; i++) {
@@ -109,12 +113,11 @@ const drawPersonCanvas = (
                     artDataStroke.artDataList[i + 1].xparamPotision,
                     artDataStroke.artDataList[i + 1].yparamPotision
                 );
-
                 context.stroke();
             }
             context.closePath();
         }
-    });
+    }
 };
 
 export default function FakeArtistRoom(): JSX.Element {
@@ -150,7 +153,7 @@ export default function FakeArtistRoom(): JSX.Element {
     // 個人描画削除
     const personCanpasMouseUp = useCallback(() => {
         setPersonCanvasZindex(-1);
-    }, []);
+    }, [gameTime]);
 
     const personCanpasMouseDown = useCallback(
         (userName: string) => {
@@ -480,6 +483,7 @@ export default function FakeArtistRoom(): JSX.Element {
         setTheme(obj.theme);
         setEndMessage(obj.endMessage);
         setPatternList(obj.patternList);
+        setLimitTime(obj.limitTime);
     };
 
     // ゲーム監視
@@ -685,6 +689,11 @@ export default function FakeArtistRoom(): JSX.Element {
                                     投票中
                                 </div>
                             )}
+                            {gameTime === 4 && (
+                                <div className={styles.headerinfomation}>
+                                    {endMessage}
+                                </div>
+                            )}
                         </div>
 
                         <div className={styles.roll}>
@@ -729,10 +738,10 @@ export default function FakeArtistRoom(): JSX.Element {
                 </Modal>
             )}
 
-            {/* 投票開始合図 */}
+            {/* 最後のメッセージ */}
             {endFlg && (
                 <Modal type="two">
-                    <div className={styles.roundMessage}>{endMessage}</div>
+                    <div className={styles.roundEndMessage}>{endMessage}</div>
                 </Modal>
             )}
 
