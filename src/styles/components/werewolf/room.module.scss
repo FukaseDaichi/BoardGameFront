@@ -257,6 +257,9 @@ div.btnarea {
             background-color: rgb(255, 255, 255);
             color: rgb(31, 30, 30);
         }
+        @include mq(md) {
+            font-size: 1.6rem;
+        }
     }
 }
 
@@ -350,9 +353,6 @@ div.rulebtn {
 
         &:active {
             transform: scale(0.9);
-        }
-        @include mq(md) {
-            font-size: 1.6rem;
         }
     }
 }
