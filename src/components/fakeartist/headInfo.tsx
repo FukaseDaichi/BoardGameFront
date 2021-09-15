@@ -9,7 +9,11 @@ type HeadInfoProps = {
 export default function HeaderInfo(props: HeadInfoProps): JSX.Element {
     return (
         <div className={styles.headerinfo}>
-            <input type="checkbox" id={styles['menu-toggle']} />
+            <input
+                type="checkbox"
+                id={styles['menu-toggle']}
+                className="fakeartistcheck"
+            />
             <label id={styles.trigger} htmlFor={styles['menu-toggle']}></label>
             <label id={styles.burger} htmlFor={styles['menu-toggle']}></label>
 

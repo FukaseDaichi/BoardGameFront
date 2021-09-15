@@ -86,7 +86,7 @@
 div.headerinfo {
     font-family: 'APJapanesefont', sans-seri;
     div.countdown {
-        transform: translateX(-50%);
+        margin-top: 80px;
     }
     > .headertheme {
         text-align: center;
@@ -106,7 +106,7 @@ div.headerinfo {
         font-size: 2rem;
 
         .headerinfomation {
-            margin-top: 150px;
+            margin-top: 100px;
             font-size: 3rem;
             p {
                 margin: 0;
@@ -115,7 +115,6 @@ div.headerinfo {
             button {
                 outline: none;
                 height: 2rem;
-                line-height: 2rem;
                 font-size: 1.2rem;
                 border-radius: 15px;
                 background: #f3f3f3;
@@ -188,7 +187,7 @@ div.messagearea {
     transform: translateX(-50%);
     color: rgb(17, 17, 17);
     @include mq(md) {
-        font-size: 2rem;
+        display: none;
     }
 
     &.endmessage {
@@ -392,6 +391,10 @@ div.countdown {
     color: rgba(50, 50, 50, 0.87);
     font-family: 'APJapanesefont', sans-seri;
     z-index: 1;
+
+    @include mq(md) {
+        display: none;
+    }
 
     > div.message {
         animation: focus-in-expand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)
