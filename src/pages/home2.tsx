@@ -68,7 +68,7 @@ export default function CreateRoom(): JSX.Element {
     };
 
     return (
-        <Layout home={true}>
+        <Layout>
             <Head>
                 <meta
                     property="og:image"
