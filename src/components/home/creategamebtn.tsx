@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import styles from '../../styles/components/home/creategamebtn.module.scss';
 import { useState } from 'react';
 import { SystemConst } from '../../const/next.config';
@@ -11,11 +11,18 @@ type CreateGameBtnProps = {
     gameId: string;
 };
 
+const addCleckedStyle = (dom: HTMLElement) => {
+    if (dom) {
+        dom.classList.add(styles.clicked);
+    }
+};
+
 export default function CreateGameBtn(props: CreateGameBtnProps): JSX.Element {
     const [createFlg, setCreateFlg] = useState(false);
     const [roomId, setRoomId] = useState('');
 
-    const copyText = () => {
+    const copyText = (event: SyntheticEvent) => {
+        const target = event.target as HTMLElement;
         const roomUrlDom = document.querySelector('#' + props.gameId + '_url');
         document.getSelection().selectAllChildren(roomUrlDom);
         // 選択範囲のコピー
@@ -23,9 +30,8 @@ export default function CreateGameBtn(props: CreateGameBtnProps): JSX.Element {
         // テキスト選択の解除
         document.getSelection().empty();
 
-        const btnDom = document.getElementById(props.gameId + '_copy');
-        btnDom.classList.add(styles.copyed);
-        btnDom.innerText = 'OK';
+        addCleckedStyle(target);
+        target.innerText = 'OK';
     };
 
     // ルーム作成
@@ -63,7 +69,9 @@ export default function CreateGameBtn(props: CreateGameBtnProps): JSX.Element {
     };
 
     // ルーム入室
-    const roomIn = () => {
+    const roomIn = (event: SyntheticEvent) => {
+        const target = event.target as HTMLElement;
+        addCleckedStyle(target);
         Router.push('/' + props.gameId + '/' + roomId);
     };
 
