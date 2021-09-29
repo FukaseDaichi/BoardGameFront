@@ -23,6 +23,7 @@ import UserInfoShort from '../../components/fakeartist/userInfoshort';
 import RadioChips from '../../components/chips/radiochips';
 import HeaderInfo from '../../components/fakeartist/headInfo';
 import CountdownClock from '../../components/clock/countdownClock';
+import Socialbtn from '../../components/button/sosialbtn';
 
 // 接続切れ
 const disconnect = () => {
@@ -1071,6 +1072,11 @@ export default function FakeArtistRoom(): JSX.Element {
                     遊び方
                 </button>
             </div>
+            <Socialbtn
+                url={SystemConst.Server.SITE_URL + '/fakeartist/' + roomId}
+                title={'セカンドワンナイト人狼'}
+                via={'ブラウザ上で正体隠匿ゲームが遊べます。'}
+            />
         </Layout>
     );
 }
