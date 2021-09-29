@@ -52,41 +52,10 @@ export default function Homepage(): JSX.Element {
                         '/images/werewolf/werewolfbackground.png'
                     }
                 />
-
                 <meta
                     property="og:description"
                     content="ブラウザ上で正体隠匿ゲームが遊べます。役職が選べて１日で終わる人狼ゲーム「セカンドワンナイト人狼」を公開しています。「タイムボム」「ハイドアウト」などのボードゲームがブラウザで遊べます。"
                 />
-                <link
-                    rel="apple-touch-icon"
-                    sizes="180x180"
-                    href="/favicons/apple-touch-icon.png"
-                />
-                <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="32x32"
-                    href="/favicons/favicon-32x32.png"
-                />
-                <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="16x16"
-                    href="/favicons/favicon-16x16.png"
-                />
-                <link rel="manifest" href="/favicons/site.webmanifest" />
-                <link
-                    rel="mask-icon"
-                    href="/favicons/safari-pinned-tab.svg"
-                    color="#000000"
-                />
-                <link rel="shortcut icon" href="/favicons/favicon.ico" />
-                <meta name="msapplication-TileColor" content="#ffffff" />
-                <meta
-                    name="msapplication-config"
-                    content="/favicons/browserconfig.xml"
-                />
-                <meta name="theme-color" content="#ffffff" />
                 <title>セカンドワンナイト人狼</title>
             </Head>
             <style jsx global>
