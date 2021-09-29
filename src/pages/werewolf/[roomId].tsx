@@ -26,6 +26,7 @@ import { WerewolfRoll, WerewolfUser } from '../../type/werewolf';
 import Modal from '../../components/modal';
 import CircleBtn from '../../components/button/circlebtn';
 import Loadingdod from '../../components/text/loadingdod';
+import Socialbtn from '../../components/button/sosialbtn';
 
 // 接続切れ
 const disconnect = () => {
@@ -985,6 +986,13 @@ export default function WerewolfRoom(): JSX.Element {
                 <button onClick={() => setRuleFlg(true)}>遊び方</button>
                 {ruleFlg && <Rule endFnc={() => setRuleFlg(false)} />}
             </div>
+            <Socialbtn
+                url={SystemConst.Server.SITE_URL + '/werewolf/' + roomId}
+                title={'セカンドワンナイト人狼'}
+                via={
+                    'セカンドワンナイト人狼　リアルタイムに能力が使えるオンラインならではのスタイリッシュアクション招待隠匿ゲーム！'
+                }
+            />
         </Layout>
     );
 }

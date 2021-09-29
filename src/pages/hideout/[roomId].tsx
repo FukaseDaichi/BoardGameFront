@@ -17,6 +17,7 @@ import HideoutHeadInfo from '../../components/hideout/hideoutheadinfo';
 import GameInfo from '../../components/hideout/gameinfo';
 import Router from 'next/router';
 import Start from '../../components/timebomb/start';
+import Socialbtn from '../../components/button/sosialbtn';
 
 // 接続切れ
 const disconnect = () => {
@@ -458,6 +459,14 @@ export default function HideoutRoom(): JSX.Element {
                     RULE official
                 </button>
             </div>
+
+            <Socialbtn
+                url={SystemConst.Server.SITE_URL + '/hideout/' + roomId}
+                title={'ハイドアウト'}
+                via={
+                    'ハイドアウトオンライン！　ゲームデザイナー佐藤雄介様の招待隠匿ゲーム'
+                }
+            />
         </Layout>
     );
 }

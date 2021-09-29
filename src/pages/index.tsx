@@ -4,6 +4,7 @@ import { SystemConst } from '../const/next.config';
 import { useEffect } from 'react';
 import styles from '../styles/homepage.module.scss';
 import CreateGameBtn from '../components/home/creategamebtn';
+import Socialbtn from '../components/button/sosialbtn';
 
 // パララックス
 const scrollEvent = () => {
@@ -25,7 +26,7 @@ export default function Homepage(): JSX.Element {
                     name="google-site-verification"
                     content="PL4mFXSOkoRJNiMOigMC2VmfdZ3X3nOMzuvZmMPmbmc"
                 />
-                <meta name="title" content="セカンドワンナイト人狼"></meta>
+                <meta name="title" content="セカンドワンナイト人狼" />
                 <meta
                     name="description"
                     content="ブラウザで遊べる人狼ゲーム「セカンドワンナイト人狼」を公開しています。"
@@ -33,7 +34,7 @@ export default function Homepage(): JSX.Element {
                 <meta
                     name="keywords"
                     content="人狼ゲーム,ブラウザゲーム,セカンドワンナイト人狼,オンライン,ボードゲーム,ブラウザ,アプリ,タイムボム,ハイドアウト,エセ芸術家,ニューヨークへ行く"
-                ></meta>
+                />
                 <meta property="og:url" content={SystemConst.Server.SITE_URL} />
                 <meta property="og:type" content="website" />
                 <meta property="og:title" content="セカンドワンナイト人狼" />
@@ -54,7 +55,7 @@ export default function Homepage(): JSX.Element {
 
                 <meta
                     property="og:description"
-                    content="ブラウザ上で正体隠匿ゲームが遊べるページです。役職が選べて１日で終わる人狼ゲーム「セカンドワンナイト人狼」を公開しています。「タイムボム」「ハイドアウト」などのボードゲームがブラウザで遊べます。"
+                    content="ブラウザ上で正体隠匿ゲームが遊べます。役職が選べて１日で終わる人狼ゲーム「セカンドワンナイト人狼」を公開しています。「タイムボム」「ハイドアウト」などのボードゲームがブラウザで遊べます。"
                 />
                 <link
                     rel="apple-touch-icon"
@@ -159,6 +160,12 @@ export default function Homepage(): JSX.Element {
                         /> */}
                     </div>
                 </section>
+
+                <Socialbtn
+                    url={SystemConst.Server.SITE_URL}
+                    title={'セカンドワンナイト人狼'}
+                    via={'ブラウザ上で正体隠匿ゲームが遊べます。'}
+                />
             </main>
         </>
     );

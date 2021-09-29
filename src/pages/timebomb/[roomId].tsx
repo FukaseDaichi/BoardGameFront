@@ -14,6 +14,7 @@ import HeaderInfo from '../../components/timebomb/headInfo';
 import CountdownClock from '../../components/countdownclock';
 import Router from 'next/router';
 import Head from 'next/head';
+import Socialbtn from '../../components/button/sosialbtn';
 
 // 接続切れ
 const disconnect = () => {
@@ -631,6 +632,13 @@ export default function Room(): JSX.Element {
                     RULE official
                 </button>
             </div>
+            <Socialbtn
+                url={SystemConst.Server.SITE_URL + '/timebomb/' + roomId}
+                title={'タイムボム'}
+                via={
+                    'タイムボムオンライン！　ゲームデザイナー佐藤雄介様の招待隠匿ゲーム'
+                }
+            />
         </Layout>
     );
 }
