@@ -60,6 +60,7 @@ export default function Homepage(): JSX.Element {
             </Head>
             <style jsx global>
                 {`
+                    html,
                     body {
                         background-color: #f9fbee;
                     }

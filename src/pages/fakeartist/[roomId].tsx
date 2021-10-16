@@ -599,6 +599,7 @@ export default function FakeArtistRoom(): JSX.Element {
                     }
 
                     body:before {
+                        background-color: #d1d1d1;
                         position: fixed;
                         top: 0;
                         left: 0;
