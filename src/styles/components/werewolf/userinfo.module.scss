@@ -1,187 +1,188 @@
-@import "../../variables";
+@import '../../variables';
 
 $animetiondelay: 2s;
 
 @keyframes shake-top {
-	0%,
-	100% {
-		-webkit-transform: rotate(0deg);
-		transform: rotate(0deg);
-		-webkit-transform-origin: 50% 0;
-		transform-origin: 50% 0;
-	}
-	10% {
-		-webkit-transform: rotate(2deg);
-		transform: rotate(2deg);
-	}
-	20%,
-	40%,
-	60% {
-		-webkit-transform: rotate(-4deg);
-		transform: rotate(-4deg);
-	}
-	30%,
-	50%,
-	70% {
-		-webkit-transform: rotate(4deg);
-		transform: rotate(4deg);
-	}
-	80% {
-		-webkit-transform: rotate(-2deg);
-		transform: rotate(-2deg);
-	}
-	90% {
-		-webkit-transform: rotate(2deg);
-		transform: rotate(2deg);
-	}
+    0%,
+    100% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+        -webkit-transform-origin: 50% 0;
+        transform-origin: 50% 0;
+    }
+    10% {
+        -webkit-transform: rotate(2deg);
+        transform: rotate(2deg);
+    }
+    20%,
+    40%,
+    60% {
+        -webkit-transform: rotate(-4deg);
+        transform: rotate(-4deg);
+    }
+    30%,
+    50%,
+    70% {
+        -webkit-transform: rotate(4deg);
+        transform: rotate(4deg);
+    }
+    80% {
+        -webkit-transform: rotate(-2deg);
+        transform: rotate(-2deg);
+    }
+    90% {
+        -webkit-transform: rotate(2deg);
+        transform: rotate(2deg);
+    }
 }
 
 @keyframes view {
-	0% {
-		opacity: 0;
-	}
+    0% {
+        opacity: 0;
+    }
 
-	99% {
-		opacity: 0;
-	}
+    99% {
+        opacity: 0;
+    }
 
-	100% {
-		opacity: 1;
-	}
+    100% {
+        opacity: 1;
+    }
 }
 
 // 人狼ユーザ
 div.main {
-	position: relative;
-	margin: 2.2em 1em 1.5em 1em;
-	padding: 1em 1em;
-	box-sizing: border-box;
-	background-color: #fff; /* 背景色 */
-	border: 4px solid; /*線の太さ・色*/
-	border-radius: 3em 0.8em 3em 0.7em/0.9em 2em 0.8em 3em;
-	box-shadow: 5px 4px 10px 3px rgb(0 0 0 / 60%);
-	width: 180px;
+    position: relative;
+    margin: 2.2em 1em 1.5em 1em;
+    padding: 1em 1em;
+    box-sizing: border-box;
+    background-color: #fff; /* 背景色 */
+    border: 4px solid; /*線の太さ・色*/
+    border-radius: 3em 0.8em 3em 0.7em/0.9em 2em 0.8em 3em;
+    box-shadow: 5px 4px 10px 3px rgb(0 0 0 / 60%);
+    width: 180px;
 
-	@include mq(md) {
-		width: 120px;
-		padding: 1em 0.2em;
-		margin: 1em 0.15em 1.5em 0.15em;
-	}
+    @include mq(md) {
+        width: 120px;
+        padding: 1em 0.2em;
+        margin: 1em 0.15em 1.5em 0.15em;
+    }
 
-	span.you {
-		position: absolute;
-		font-family: "APJapanesefont", sans-seri;
-		top: 5px;
-		left: 10px;
-		font-size: 1.2rem;
-		font-weight: 600;
+    span.you {
+        position: absolute;
+        font-family: 'APJapanesefont', sans-seri;
+        top: 5px;
+        left: 10px;
+        font-size: 1.2rem;
+        font-weight: 600;
 
-		@include mq(md) {
-			left: 2px;
-			font-size: 1rem;
-		}
-	}
+        @include mq(md) {
+            left: 2px;
+            font-size: 1rem;
+        }
+    }
 
-	div.icon {
-		position: relative;
-		width: 100%;
-		height: 50px;
-		top: -55px;
+    div.icon {
+        position: relative;
+        width: 100%;
+        height: 50px;
+        top: -55px;
 
-		div.win {
-			font-family: "APJapanesefont", sans-seri;
-			position: absolute;
-			top: -20px;
-			left: 50%;
-			transform: translateX(-50%);
-			text-align: center;
-			z-index: 4;
-			font-size: 1.5rem;
-			color: rgb(221, 112, 127);
-			opacity: 0;
-			animation: view 0.2s forwards;
-			animation-delay: 3.2s;
-		}
+        div.win {
+            font-family: 'APJapanesefont', sans-seri;
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 4;
+            font-size: 1.5rem;
+            color: rgb(221, 112, 127);
+            opacity: 0;
+            animation: view 0.2s forwards;
+            animation-delay: 3.2s;
+        }
 
-		div.imgdiv {
-			margin: 0 auto;
-			width: 80px;
-			border-radius: 50%;
-			overflow: hidden;
-			box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
-			z-index: 2;
+        div.imgdiv {
+            margin: 0 auto;
+            width: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 5px 4px 10px 3px rgba(0, 0, 0, 0.6);
+            z-index: 2;
 
-			@include mq(md) {
-				width: 65px;
-			}
-			img {
-				width: 100%;
-			}
-		}
-		div.content {
-			width: 100%;
-			text-align: center;
-			margin-top: 3px;
-			div.text {
-				font-family: "APJapanesefont", sans-seri;
-				white-space: nowrap;
-				overflow: hidden;
-				label {
-					font-size: 1.2rem;
-					font-weight: 500;
-					color: #252525;
-					text-shadow: 0 0 1px #ffffff;
-					@include mq(md) {
-						font-size: 1rem;
-					}
-				}
-			}
-		}
-	}
+            @include mq(md) {
+                width: 65px;
+            }
+            img {
+                width: 100%;
+            }
+        }
+        div.content {
+            width: 100%;
+            text-align: center;
+            margin-top: 3px;
+            div.text {
+                font-family: 'APJapanesefont', sans-seri;
+                white-space: nowrap;
+                overflow: hidden;
+                label {
+                    font-size: 1.2rem;
+                    font-weight: 500;
+                    color: #252525;
+                    text-shadow: 0 0 1px #ffffff;
+                    @include mq(md) {
+                        font-size: 1rem;
+                    }
+                }
+            }
+        }
+    }
 
-	.btn {
-		position: absolute;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		width: 50px;
-		top: 100px;
-		z-index: 3;
-		@include mq(md) {
-			font-size: 0.7rem;
-			top: 80px;
-		}
-	}
-	div.rollcard {
-		position: relative;
-		margin: 0 auto;
-		width: 100px;
-		height: 100px;
+    .btn {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px;
+        top: 100px;
+        z-index: 3;
+        @include mq(lg) {
+            font-size: 0.7rem;
+            top: 80px;
+        }
+    }
+    div.rollcard {
+        position: relative;
+        margin: 0 auto;
+        width: 100px;
+        height: 100px;
 
-		> div.back {
-			position: absolute;
-			width: 100px;
-			height: 100px;
-			border-radius: 10px;
-			overflow: hidden;
-			top: 0;
-			border: 2px solid #fff;
-			box-shadow: 16px 11px 22px -3px rgba(0, 0, 0, 0.6);
+        > div.back {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            overflow: hidden;
+            top: 0;
+            border: 2px solid #fff;
+            box-shadow: 16px 11px 22px -3px rgba(0, 0, 0, 0.6);
 
-			img {
-				width: 100%;
-			}
-		}
+            img {
+                width: 100%;
+            }
+        }
 
-		> div.punishmentimgdiv {
-			opacity: 0;
-			animation: view $animetiondelay forwards;
-			border: none !important;
-		}
+        > div.punishmentimgdiv {
+            opacity: 0;
+            animation: view $animetiondelay forwards;
+            border: none !important;
+        }
 
-		&.punishment {
-			animation: shake-top 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
-			animation-delay: $animetiondelay;
-			z-index: 1;
-		}
-	}
+        &.punishment {
+            animation: shake-top 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955)
+                both;
+            animation-delay: $animetiondelay;
+            z-index: 1;
+        }
+    }
 }
