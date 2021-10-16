@@ -165,7 +165,8 @@ div.userinfo {
         width: 50px;
         top: 70px;
         z-index: 3;
-        @include mq(md) {
+
+        @include mq(lg) {
             font-size: 0.7rem;
             top: 70px;
         }
