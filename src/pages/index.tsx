@@ -29,7 +29,7 @@ export default function Homepage(): JSX.Element {
                 <meta name="title" content="セカンドワンナイト人狼" />
                 <meta
                     name="description"
-                    content="ブラウザで遊べる人狼ゲーム「セカンドワンナイト人狼」を公開しています。"
+                    content="ブラウザで遊べる人狼ゲーム「セカンドワンナイト人狼」を公開しています。「タイムボム」「ハイドアウト」「エセ芸術家ニューヨークへ行く」などのボードゲームがブラウザで遊べます。"
                 />
                 <meta
                     name="keywords"

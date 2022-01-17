@@ -13,6 +13,8 @@ class DocumentTsx extends Document {
         return (
             <Html lang="ja">
                 <Head>
+                    <meta name="mobile-web-app-capable" content="yes" />
+                    <meta name="apple-mobile-web-app-capable" content="yes" />
                     <link
                         rel="apple-touch-icon"
                         sizes="180x180"
