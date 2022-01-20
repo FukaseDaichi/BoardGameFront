@@ -35,6 +35,10 @@ const disconnect = () => {
 
 // 情報設定
 const setRollCustum = (rollNoList: Array<number>) => {
+    if (!rollNoList) {
+        return;
+    }
+
     const maxRollNo = Math.max(...rollNoList);
 
     for (let i = 1; i <= maxRollNo; i++) {
@@ -321,12 +325,13 @@ export default function WerewolfRoom(): JSX.Element {
 
     const getMessage = (socketInfo: SocketInfo) => {
         // デバッグ用
-        //console.log(socketInfo);
+        console.log(socketInfo);
 
         switch (socketInfo.status) {
             case 100: // ルーム入室
                 dataSet(socketInfo.obj);
                 setLimitTime(socketInfo.obj.limitTime);
+                setRollCustum(socketInfo.obj.rollNoList);
                 setRollInfoList(socketInfo.obj.rollList);
                 break;
 
@@ -347,6 +352,7 @@ export default function WerewolfRoom(): JSX.Element {
                 // ルーム入室(同一名ユーザ入室)
                 dataSet(socketInfo.obj);
                 setLimitTime(socketInfo.obj.limitTime);
+                setRollCustum(socketInfo.obj.rollNoList);
                 setRollInfoList(socketInfo.obj.rollList);
                 break;
 
@@ -428,6 +434,9 @@ export default function WerewolfRoom(): JSX.Element {
 
             case 700: // 投票
                 dataSet(socketInfo.obj);
+
+                //終了時に設定を反映
+                setRollCustum(socketInfo.obj.rollNoList);
                 break;
 
             case 998: // エラーメッセージ表示(個人)
