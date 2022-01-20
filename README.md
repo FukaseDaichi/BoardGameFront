@@ -12,6 +12,7 @@ npx create-next-app boardgamefront --ts --use-npm --example "https://github.com/
 -   npm install interactjs
 -   npm install react-color --save
 -   npm install react-share
+-   npm install react-tsparticles
 
 ## TypeScript と ESLint のインストール
 

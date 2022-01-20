@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import styles from '../styles/homepage.module.scss';
 import CreateGameBtn from '../components/home/creategamebtn';
 import Socialbtn from '../components/button/sosialbtn';
+import Background from '../components/home/background';
 
 // パララックス
 const scrollEvent = () => {
@@ -66,6 +67,7 @@ export default function Homepage(): JSX.Element {
                     }
                 `}
             </style>
+
             <main className={styles.home}>
                 <section className={styles.mainsection}>
                     <div className={styles['main-content']}>
@@ -137,6 +139,7 @@ export default function Homepage(): JSX.Element {
                     via={'ブラウザ上で正体隠匿ゲームが遊べます。'}
                 />
             </main>
+            <Background />
         </>
     );
 }
