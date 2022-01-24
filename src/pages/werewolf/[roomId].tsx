@@ -325,7 +325,7 @@ export default function WerewolfRoom(): JSX.Element {
 
     const getMessage = (socketInfo: SocketInfo) => {
         // デバッグ用
-        console.log(socketInfo);
+        //console.log(socketInfo);
 
         switch (socketInfo.status) {
             case 100: // ルーム入室
