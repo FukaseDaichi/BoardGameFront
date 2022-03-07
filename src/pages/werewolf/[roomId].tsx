@@ -392,10 +392,13 @@ export default function WerewolfRoom(): JSX.Element {
                 if (actionUser) {
                     switch (actionUser.roll.rollNo) {
                         // 独裁者
-                        case 6:
+                        case 6: {
                             setCutInNo(6);
+                            //銃声
+                            const audio = new Audio('/se/snip.mp3');
+                            audio.play();
                             break;
-
+                        }
                         // 占い師
                         case 8:
                             // 同一ユーザなら表示
@@ -413,9 +416,13 @@ export default function WerewolfRoom(): JSX.Element {
                             break;
 
                         //  暗殺者
-                        case 10:
+                        case 10: {
                             setCutInNo(10);
+                            //銃声
+                            const audio = new Audio('/se/snip.mp3');
+                            audio.play();
                             break;
+                        }
                     }
                 }
                 break;
