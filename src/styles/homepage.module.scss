@@ -128,4 +128,8 @@ main.home {
             }
         }
     }
+
+    .beforeobj{
+        @include before();
+    }
 }
