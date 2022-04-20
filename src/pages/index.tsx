@@ -132,12 +132,13 @@ export default function Homepage(): JSX.Element {
                         /> */}
                     </div>
                 </section>
-
-                <Socialbtn
-                    url={SystemConst.Server.SITE_URL}
-                    title={'セカンドワンナイト人狼'}
-                    via={'ブラウザ上で正体隠匿ゲームが遊べます。'}
-                />
+                <div className={styles.beforeobj}>
+                    <Socialbtn
+                        url={SystemConst.Server.SITE_URL}
+                        title={'セカンドワンナイト人狼'}
+                        via={'ブラウザ上で正体隠匿ゲームが遊べます。'}
+                    />
+                </div>
             </main>
             <Background />
         </>
