@@ -6,7 +6,7 @@ body {
 .modal_active {
   min-height: 100vh;
   height: 100%;
-  background-image: url(http://theartmad.com/wp-content/uploads/Dark-Grey-Texture-Wallpaper-5.jpg);
+  background-image: url("/images/werewolf/dark.jpg");
   background-size: cover;
   background-position: top center;
   overflow: hidden;
@@ -18,7 +18,7 @@ body {
 .modal_active_overflow_view {
   min-height: 100vh;
   height: 100%;
-  background-image: url(http://theartmad.com/wp-content/uploads/Dark-Grey-Texture-Wallpaper-5.jpg);
+  background-image: url("/images/werewolf/dark.jpg");
   background-size: cover;
   background-position: top center;
   &::before {
@@ -29,7 +29,7 @@ body {
 .modal_active_second {
   min-height: 100vh;
   height: 100%;
-  background-image: url(http://theartmad.com/wp-content/uploads/Dark-Grey-Texture-Wallpaper-5.jpg);
+  background-image: url("/images/werewolf/dark.jpg");
   background-size: cover;
   background-position: top center;
   &::before {
