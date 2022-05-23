@@ -28,6 +28,7 @@ export default function Room(): JSX.Element {
 
     // react hooks state
     const [clientObj, setClientObj] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
     const [playerName, setPlayerName] = useState('');
     const [timeBombUserList, setTimeBombUserList] = useState([]);
     const [leadCardsList, setLeadCardsList] = useState([]);
@@ -91,7 +92,7 @@ export default function Room(): JSX.Element {
 
         if (userArray.length > 0) {
             const btnDom = document.querySelector('.' + styles.roominbtn);
-            if (btnDom.classList.contains(styles.in)) {
+            if (btnDom && btnDom.classList.contains(styles.in)) {
                 return;
             }
             btnDom.classList.add(styles.in);
@@ -358,15 +359,19 @@ export default function Room(): JSX.Element {
                     // console.log(msg);
                     receve(msg);
                 }}
+                onConnect={() => {
+                    setIsConnected(true);
+                }}
                 onDisconnect={disconnect}
             />
 
-            {turn < 1 && clientObj && (
+            {turn < 1 && (
                 <div className={styles.roominbtn}>
                     <p>
                         <label htmlFor="username">Name</label>
                     </p>
                     <input
+                        disabled={!isConnected}
                         type="text"
                         id="username"
                         maxLength={20}
@@ -393,6 +398,7 @@ export default function Room(): JSX.Element {
                         }}
                     />
                     <button
+                        disabled={!isConnected}
                         onClick={() => {
                             const usernameDom: HTMLInputElement =
                                 document.getElementById(

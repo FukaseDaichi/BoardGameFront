@@ -127,6 +127,7 @@ export default function FakeArtistRoom(): JSX.Element {
     const { roomId } = router.query;
 
     const [clientObj, setClientObj] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
     const [messageList, setMessageList] = useState([]);
     const [chatList, setChatList] = useState([]);
 
@@ -850,6 +851,9 @@ export default function FakeArtistRoom(): JSX.Element {
                 onMessage={(msg) => {
                     getMessage(msg);
                 }}
+                onConnect={() => {
+                    setIsConnected(true);
+                }}
                 onDisconnect={disconnect}
             />
             <div className={styles.roominbtn}>
@@ -857,6 +861,7 @@ export default function FakeArtistRoom(): JSX.Element {
                     <label htmlFor="username">Name</label>
                 </p>
                 <input
+                    disabled={!isConnected}
                     type="text"
                     id="username"
                     maxLength={20}
@@ -873,6 +878,7 @@ export default function FakeArtistRoom(): JSX.Element {
                     }}
                 />
                 <button
+                    disabled={!isConnected}
                     onClick={() => {
                         const usernameDom: HTMLInputElement =
                             document.getElementById(
