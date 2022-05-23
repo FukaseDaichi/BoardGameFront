@@ -30,6 +30,7 @@ export default function HideoutRoom(): JSX.Element {
     const { roomId } = router.query;
 
     const [clientObj, setClientObj] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
     const [messageList, setMessageList] = useState([]);
     const [playerName, setPlayerName] = useState(null);
     const [chatList, setChatList] = useState([]);
@@ -329,6 +330,9 @@ export default function HideoutRoom(): JSX.Element {
                 onMessage={(msg) => {
                     getMessage(msg);
                 }}
+                onConnect={() => {
+                    setIsConnected(true);
+                }}
                 onDisconnect={disconnect}
             />
             <div className={styles.roominbtn}>
@@ -336,6 +340,7 @@ export default function HideoutRoom(): JSX.Element {
                     <label htmlFor="username">Name</label>
                 </p>
                 <input
+                    disabled={!isConnected}
                     type="text"
                     id="username"
                     maxLength={20}
@@ -351,6 +356,7 @@ export default function HideoutRoom(): JSX.Element {
                     }}
                 />
                 <button
+                    disabled={!isConnected}
                     onClick={() => {
                         const usernameDom: HTMLInputElement =
                             document.getElementById(

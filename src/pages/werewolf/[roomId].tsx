@@ -77,6 +77,7 @@ export default function WerewolfRoom(): JSX.Element {
     const { roomId } = router.query;
 
     const [clientObj, setClientObj] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
     const [messageList, setMessageList] = useState([]);
     const [playerName, setPlayerName] = useState(null);
     const [chatList, setChatList] = useState([]);
@@ -719,6 +720,9 @@ export default function WerewolfRoom(): JSX.Element {
                 ref={(client) => {
                     setClientObj(client);
                 }}
+                onConnect={() => {
+                    setIsConnected(true);
+                }}
                 onMessage={(msg) => {
                     getMessage(msg);
                 }}
@@ -743,6 +747,7 @@ export default function WerewolfRoom(): JSX.Element {
                             roomIn(usernameDom.value);
                         }
                     }}
+                    disabled={!isConnected}
                 />
                 <button
                     onClick={() => {
@@ -752,6 +757,7 @@ export default function WerewolfRoom(): JSX.Element {
                             ) as HTMLInputElement;
                         roomIn(usernameDom.value);
                     }}
+                    disabled={!isConnected}
                 >
                     Room IN
                 </button>

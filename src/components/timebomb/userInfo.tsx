@@ -22,6 +22,16 @@ const getImgUrl = (cardType: number) => {
     return url;
 };
 
+const getCardTypeSize = (cardlist: Array<LeadCards>, cardType: number) => {
+    if (!cardlist) {
+        return 0;
+    }
+
+    return cardlist.filter((element) => {
+        return element.cardType === cardType;
+    }).length;
+};
+
 const getIconImgUrl = (userNo: number, userIconUrl: string) => {
     if (userIconUrl) {
         return userIconUrl;
@@ -70,6 +80,7 @@ type UserInfoProps = {
 
 export default function UserInfo(userInfoProps: UserInfoProps): JSX.Element {
     const [infoFlg, setInfoFlg] = useState(false);
+
     return (
         <div
             className={`${styles.main} ${
@@ -174,6 +185,14 @@ export default function UserInfo(userInfoProps: UserInfoProps): JSX.Element {
                     />
                 </div>
             )}
+            {userInfoProps.round > 0 && userInfoProps.ownFlg && (
+                <div className={styles.ownroll}>
+                    <img
+                        src={getRollMarkImgUrl(userInfoProps.user.userRoleNo)}
+                        alt="役職マーク"
+                    />
+                </div>
+            )}
             <div className={`row ${styles.handcatd}`}>
                 {userInfoProps.cardlist.map(
                     (value: LeadCards, index: number) => {
@@ -233,12 +252,7 @@ export default function UserInfo(userInfoProps: UserInfoProps): JSX.Element {
                                 <img src={getImgUrl(1)} alt="解除" />
                             </div>
                             <span>
-                                ×{' '}
-                                {
-                                    userInfoProps.cardlist.filter((element) => {
-                                        return element.cardType === 1;
-                                    }).length
-                                }
+                                × {getCardTypeSize(userInfoProps.cardlist, 1)}
                             </span>
                         </div>
                         <div>
@@ -246,12 +260,7 @@ export default function UserInfo(userInfoProps: UserInfoProps): JSX.Element {
                                 <img src={getImgUrl(2)} alt="爆弾" />
                             </div>
                             <span>
-                                ×{' '}
-                                {
-                                    userInfoProps.cardlist.filter((element) => {
-                                        return element.cardType === 2;
-                                    }).length
-                                }
+                                × {getCardTypeSize(userInfoProps.cardlist, 2)}
                             </span>
                         </div>
                     </div>
