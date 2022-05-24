@@ -23,7 +23,6 @@ const getImgUrl = (cardType: number) => {
 };
 
 const getCardTypeSize = (cardlist: Array<LeadCards>, cardType: number) => {
-    console.log('再計算');
     if (!cardlist) {
         return 0;
     }
@@ -93,7 +92,6 @@ export default function UserInfo(userInfoProps: UserInfoProps): JSX.Element {
     );
 
     const UserCard = React.memo(function userCard() {
-        console.log('render Child');
         return (
             <div
                 className={styles.card}
