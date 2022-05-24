@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TimeBombUser, LeadCards } from '../../type';
 import styles from '../../styles/components/timebomb/userinfo.module.scss';
 import Icon from '../../components/userInfo/icon';
@@ -23,6 +23,7 @@ const getImgUrl = (cardType: number) => {
 };
 
 const getCardTypeSize = (cardlist: Array<LeadCards>, cardType: number) => {
+    console.log('再計算');
     if (!cardlist) {
         return 0;
     }
@@ -76,10 +77,47 @@ type UserInfoProps = {
     playfnc: (cardIndex: number) => void;
     changeIcon: (url: string) => void;
     secretFlg: boolean;
+    startFlg: boolean;
 };
 
 export default function UserInfo(userInfoProps: UserInfoProps): JSX.Element {
     const [infoFlg, setInfoFlg] = useState(false);
+
+    const releaseCount: number = useMemo(
+        () => getCardTypeSize(userInfoProps.cardlist, 1),
+        [userInfoProps.round, userInfoProps.startFlg]
+    );
+    const bombCount: number = useMemo(
+        () => getCardTypeSize(userInfoProps.cardlist, 2),
+        [userInfoProps.round, userInfoProps.startFlg]
+    );
+
+    const UserCard = React.memo(function userCard() {
+        console.log('render Child');
+        return (
+            <div
+                className={styles.card}
+                onClick={() => {
+                    const checkDom = document.getElementById(
+                        'chk1'
+                    ) as HTMLInputElement;
+                    checkDom.checked = false;
+                    setInfoFlg(false);
+                }}
+            >
+                <div>
+                    <div
+                        className={styles['card-roll']}
+                        style={{
+                            backgroundImage: `url(${getRollImgUrl(
+                                userInfoProps.user.userRoleNo
+                            )})`,
+                        }}
+                    ></div>
+                </div>
+            </div>
+        );
+    });
 
     return (
         <div
@@ -144,39 +182,7 @@ export default function UserInfo(userInfoProps: UserInfoProps): JSX.Element {
                     <img src={'/images/hasami.png'} alt="手番" />
                 </div>
             )}
-            {userInfoProps.ownFlg && infoFlg && (
-                <div
-                    className={styles.card}
-                    onClick={() => {
-                        const checkDom = document.getElementById(
-                            'chk1'
-                        ) as HTMLInputElement;
-                        checkDom.checked = false;
-                        setInfoFlg(false);
-                    }}
-                >
-                    <div>
-                        <div
-                            className={styles['card-roll']}
-                            style={{
-                                backgroundImage: `url(${getRollImgUrl(
-                                    userInfoProps.user.userRoleNo
-                                )})`,
-                            }}
-                        ></div>
-                    </div>
-                    {/* <div className={styles["card-icon"]}>
-            <img
-              src={getIconImgUrl(userInfoProps.user.userNo)}
-              alt="アイコン"
-            />
-          </div>
-          <div className={styles["card-info"]}>
-            <label>{userInfoProps.user.userName}</label>
-            <p></p>
-          </div> */}
-                </div>
-            )}
+            {userInfoProps.ownFlg && infoFlg && <UserCard />}
             {userInfoProps.endFlg && (
                 <div className={styles.roll}>
                     <img
@@ -251,17 +257,13 @@ export default function UserInfo(userInfoProps: UserInfoProps): JSX.Element {
                             <div>
                                 <img src={getImgUrl(1)} alt="解除" />
                             </div>
-                            <span>
-                                × {getCardTypeSize(userInfoProps.cardlist, 1)}
-                            </span>
+                            <span>× {releaseCount}</span>
                         </div>
                         <div>
                             <div>
                                 <img src={getImgUrl(2)} alt="爆弾" />
                             </div>
-                            <span>
-                                × {getCardTypeSize(userInfoProps.cardlist, 2)}
-                            </span>
+                            <span>× {bombCount}</span>
                         </div>
                     </div>
                 )}
