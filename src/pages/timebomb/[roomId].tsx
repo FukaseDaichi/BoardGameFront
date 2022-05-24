@@ -95,7 +95,9 @@ export default function Room(): JSX.Element {
             if (btnDom && btnDom.classList.contains(styles.in)) {
                 return;
             }
-            btnDom.classList.add(styles.in);
+            if (btnDom) {
+                btnDom.classList.add(styles.in);
+            }
         }
     }, [playerName, timeBombUserList.length]);
 
@@ -220,7 +222,7 @@ export default function Room(): JSX.Element {
             };
             coneect(url, usrInfo);
         },
-        [clientObj, playerName]
+        [isConnected, playerName]
     );
 
     const limittimeDone = useCallback(
@@ -511,6 +513,7 @@ export default function Room(): JSX.Element {
                             changeIcon={changeIcon}
                             endFlg={endFlg}
                             secretFlg={secretFlg}
+                            startFlg={startFlg}
                         ></UserInfo>
                     );
                 })}
