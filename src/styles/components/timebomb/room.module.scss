@@ -1,6 +1,7 @@
 @import '../../variables';
 
 .roominbtn {
+    position: relative;
     animation: first-view 1s forwards;
     p {
         font-family: 'Patrick Hand SC', cursive;
@@ -15,6 +16,12 @@
         border: none;
         box-shadow: 0 0 0 1px #ccc inset;
         appearance: none;
+    }
+    >div{
+        left: 20%;
+        top: 57%;
+        position: absolute;
+        transform: translate(-50%, -50%);
     }
     button {
         font-family: 'Patrick Hand SC', cursive;

@@ -399,6 +399,14 @@ export default function Room(): JSX.Element {
                             }
                         }}
                     />
+                    {!isConnected && (
+                        <div
+                            className="spinner-grow text-secondary"
+                            role="status"
+                        >
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    )}
                     <button
                         disabled={!isConnected}
                         onClick={() => {
