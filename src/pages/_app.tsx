@@ -6,7 +6,8 @@ import { useEffect } from 'react';
 interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Component: any;
-    pageProps: unknown;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pageProps: any;
 }
 
 export default function App(props: Props): JSX.Element {
